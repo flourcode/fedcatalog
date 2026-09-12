@@ -25,9 +25,9 @@
 <a class="skip" href="#main">Skip to content</a>
 <header class="top">
   <div class="top-row">
-    <a class="brand" href="../"><b>FedCatalog</b><small>Independent federal software reference</small></a>
+    <a class="brand" href="../"><b>FedCatalog</b><small data-text="tagline">A practical guide to federal software</small></a>
     <nav class="nav" aria-label="Primary">
-      <a href="../software/">Software</a><a href="../vendors/">Vendors</a><a href="../agencies/">Agencies</a><a href="../categories/">Browse</a><a href="../new/">New</a>
+      <a href="../software/">Software</a><a href="../vendors/">Vendors</a><a href="../buy/">Buy</a><a href="../agencies/">Agencies</a><a href="../categories/">Browse</a><a href="../new/">New</a>
     </nav>
   </div>
   <div class="searchbar">
@@ -43,6 +43,9 @@
 <section class="panel narrow"><article class="doc">
 <h1>Data Sources &amp; Methodology</h1>
 <p class="lede">FedCatalog is designed around a simple rule: show what the public evidence supports and label everything else clearly.</p>
+<p><strong>FedCatalog doesn’t rank vendors, sell placement, or decide what software is “best.”</strong> It organizes public information so buyers and sellers can understand the path from authorization to procurement.</p>
+<p><strong>Vendor-submitted links are labeled.</strong> Authorization, agency records and federal spending data come from public government sources and aren’t edited by vendors.</p>
+<p>Independence is shown structurally rather than claimed: no sponsored ranking, no “best vendors” lists, no preferred marketplace, every important fact linked to its source, a date on the data, this methodology in the open, corrections encouraged, and the builder’s real name and background on the <a href="../about/mark-flournoy/">About page</a>.</p>
 <h2>FedRAMP Marketplace</h2>
 <p><strong>Source:</strong> the FedRAMP Marketplace public data published by GSA (<a href="https://www.fedramp.gov/marketplace/" target="_blank" rel="noopener noreferrer">fedramp.gov/marketplace</a>), which FedRAMP republishes as machine-readable files updated daily.</p>
 <p><strong>Imported:</strong> vendor, offering name, status (Authorized, Ready, In Process), impact level, authorization path and dates, deployment and service model, business categories, agency authorization and reuse records, description, website, assessor, published sales contact, and which offerings leverage which authorized platforms.</p>
@@ -60,6 +63,15 @@
 <p><strong>Meaning:</strong> these figures are an observed floor, not a vendor revenue estimate. Most software is bought through resellers whose award descriptions may not name the software vendor; many descriptions are generic; name matching can undercount or occasionally match the wrong thing; and obligations are not bookings or revenue. FedCatalog therefore shows, separately: obligations on awards that mention the vendor; the portion paid directly to the vendor entity; who received the money (vendor direct versus reseller or prime); and the number of buying departments, next to the number of FedRAMP authorization records, because approved is not the same as purchased.</p>
 <h2>GSA eLibrary, NASA SEWP, Section 508 ACR Repository, SAM.gov</h2>
 <p>Until records from these sources are joined directly to FedCatalog data, the links on product and vendor pages open searches or lookup pages. They do not mean FedCatalog has confirmed that a product is available on a vehicle or has an accessibility conformance report.</p>
+<h2 id="procurement">Procurement paths and evidence states</h2>
+<p>Each offering’s Procurement section lists every path FedCatalog tracks with one of four states:</p>
+<ul>
+<li><strong>Verified listing</strong> — FedCatalog opened the exact marketplace or vehicle listing and matched it to this FedRAMP offering and boundary. The listing ID and verification date are shown.</li>
+<li><strong>Vendor-confirmed listing</strong> — the vendor supplied the listing and FedCatalog reviewed it; labeled as vendor-supplied.</li>
+<li><strong>Search available</strong> — the vendor can be searched on that marketplace or vehicle, but FedCatalog has not matched a listing to this authorization boundary. A commercial listing is not a government offering.</li>
+<li><strong>No verified path yet</strong> — nothing found or submitted.</li>
+</ul>
+<p>Vendor direct is treated as verified when the government sales page comes from the FedRAMP record. GSA OneGov is treated as verified when the vendor appears on GSA’s current agreements list; the agreement may cover only some of the vendor’s offerings.</p>
 <h2>Cloud marketplaces</h2>
 <p>AWS Marketplace, Azure Marketplace and Google Cloud Marketplace links open a search for the vendor on each marketplace. Listing availability, terms and private offers are confirmed there. Vendors can submit direct listing links through the <a href="../contact/">contact page</a>; those are reviewed and labeled as vendor-supplied.</p>
 <h2>Corrections</h2>
@@ -76,11 +88,13 @@
 </main>
 <footer class="site-footer">
   <div class="foot-grid">
-    <div><b>FedCatalog</b><br>Independent federal software reference.<br><span class="foot-muted">Data refreshed Sep 12, 2026</span></div>
+    <div><b>FedCatalog</b><br><span data-text="footerTagline">A practical guide to federal software.</span><br><span class="foot-muted">Data updated Sep 12, 2026 · <a href="../methodology/">How the data works</a></span></div>
     <nav aria-label="Footer"><a href="../categories/">Browse</a> · <a href="../vendors/">Vendors</a> · <a href="../agencies/">Agencies</a> · <a href="../new/">New</a> · <a href="../methodology/">Methodology</a> · <a href="../about/">About</a> · <a href="../contact/">Contact</a><br><a href="../privacy/">Privacy</a> · <a href="../terms/">Terms</a></nav>
   </div>
-  <p class="foot-muted">Created by <a href="../about/mark-flournoy/">Mark Flournoy</a>. FedCatalog is not affiliated with or endorsed by the U.S. Government. © 2026 FedCatalog.</p>
+  <p class="foot-muted">Built by <a href="../about/mark-flournoy/">Mark Flournoy</a>, retired Marine Corps officer and former AWS federal partner sales leader. FedCatalog doesn’t rank vendors or sell placement. Not affiliated with or endorsed by the U.S. Government. © 2026 FedCatalog.</p>
 </footer>
+<script src="../assets/site-text.js"></script>
+<script src="../assets/analytics.js"></script>
 <script src="../assets/site.js" defer></script>
 </body>
 </html>

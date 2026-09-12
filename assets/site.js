@@ -123,9 +123,11 @@
     if (/\baws\b|\bgovcloud\b/.test(q) && !/^aws$/.test(q)) filters.family = 'aws';
     if (/\bazure\b/.test(q) && !/^azure$/.test(q)) filters.family = 'azure';
     if (/\bgcp\b|\bgoogle cloud\b|\bon google\b/.test(q)) filters.family = 'google';
+    const il = q.match(/\bil ?([2456])\b/); if (il) filters.dod = 'IL' + il[1];
+    if (/\bonegov\b/.test(q)) filters.onegov = '1';
     const functions = new Set(), covered = new Set();
     for (const [re, fns] of SYN) { const m = q.match(new RegExp(re.source, 'gi')); if (!m) continue; for (const f of fns) functions.add(f); for (const hit of m) for (const t of hit.toLowerCase().split(/[^a-z0-9+#.]+/)) if (t) covered.add(t); }
-    const terms = q.replace(/\b(fedramp|high|moderate|low|li-?saas|authori[sz]ed|certified|in[ -]process|on aws|aws|azure|gcp|google|govcloud)\b/g, ' ').split(/[^a-z0-9+#.]+/).filter(t => t.length > 1 && !STOP.has(t) && !covered.has(t));
+    const terms = q.replace(/\b(fedramp|high|moderate|low|li-?saas|authori[sz]ed|certified|in[ -]process|on aws|aws|azure|gcp|google|govcloud|il ?[2456]|dod|onegov|marketplace)\b/g, ' ').split(/[^a-z0-9+#.]+/).filter(t => t.length > 1 && !STOP.has(t) && !covered.has(t));
     return { filters, functions: Array.from(functions), terms, soft: Array.from(covered).filter(t => t.length > 2 && !STOP.has(t)) };
   }
   let INDEX = null;
@@ -140,6 +142,8 @@
       if (f.status && p.s !== f.status) continue;
       if (f.family && !p.fam.includes(f.family)) continue;
       if (f.agencies && p.a < Number(f.agencies)) continue;
+      if (f.dod && !(p.dod || []).includes(f.dod)) continue;
+      if (f.onegov && !p.og) continue;
       let score = 0; const vend = p.v.toLowerCase(), name = p.n.toLowerCase(), text = (p.v + ' ' + p.n + ' ' + p.d).toLowerCase();
       for (const t of it.terms) { if (vend.includes(t)) score += vend === t ? 30 : 12; else if (name.includes(t)) score += 8; else if (text.includes(t)) score += 2; else score -= 6; }
       for (const t of it.soft) { if (name.includes(t)) score += 6; else if (text.includes(t)) score += 3; }
@@ -170,12 +174,17 @@
     const { it, results } = search(q, {});
     clear(out);
     title.textContent = results.length ? '“' + q + '”' : 'Nothing matches “' + q + '”';
-    const read = []; if (it.functions.length) read.push(it.functions.join(', ')); if (it.filters.impact) read.push('impact ' + it.filters.impact); if (it.filters.status) read.push(it.filters.status.replace('-', ' ')); if (it.filters.family) read.push('runs on ' + FAMILY_LABEL[it.filters.family]);
+    const read = []; if (it.functions.length) read.push(it.functions.join(', ')); if (it.filters.impact) read.push('impact ' + it.filters.impact); if (it.filters.status) read.push(it.filters.status.replace('-', ' ')); if (it.filters.family) read.push('runs on ' + FAMILY_LABEL[it.filters.family]); if (it.filters.dod) read.push('vendor with DoD ' + it.filters.dod + ' provisional authorization'); if (it.filters.onegov) read.push('OneGov vendor');
     if (read.length) title.append(el('small', { text: 'Read as ' + read.join(' · ') }));
     if (vs) { const a = findVendor(vs[1]), b = findVendor(vs[2]); if (a && b) out.append(el('p', { class: 'note', style: 'margin-bottom:12px' }, ['Compare: ', el('a', { href: BASE + a.u.replace(/^\//, ''), text: a.n }), ' and ', el('a', { href: BASE + b.u.replace(/^\//, ''), text: b.n }), ' — open each vendor page for offerings, impact levels, agency records and purchasing options side by side.'])); }
     const vendor = !/\s(on|for|with)\s/.test(q) ? findVendor(q) : null;
     if (vendor) out.append(el('p', { class: 'note', style: 'margin-bottom:12px' }, [vendor.n.toLowerCase() === q.trim().toLowerCase() ? 'Vendor page: ' : 'Did you mean the vendor ', el('a', { href: BASE + vendor.u.replace(/^\//, ''), text: vendor.n }), vendor.n.toLowerCase() === q.trim().toLowerCase() ? ' →' : '?']));
-    if (!results.length) { out.append(el('p', { class: 'note', text: 'Try fewer words, a category, or describe the need differently, for example “document management”.' })); return; }
+    if (vendor && it.filters.dod) {
+      const rows = (vendor.dod || []).filter(r => r.il === it.filters.dod);
+      out.append(el('p', { class: 'note', style: 'margin-bottom:12px' }, rows.length ? ['On the DoD Cyber Exchange list, ' + vendor.n + ' at ' + it.filters.dod + ': ' + rows.map(r => r.cso + ' — ' + r.st).join('; ') + '. ', el('a', { href: BASE + vendor.u.replace(/^\//, '') + '#dod', text: 'Details on the vendor page →' })] : ['The DoD Cyber Exchange list has no ' + it.filters.dod + ' entry for ' + vendor.n + '. ', el('a', { href: BASE + 'dod/' + it.filters.dod.toLowerCase() + '/', text: 'See all ' + it.filters.dod + ' listings →' })]));
+    }
+    if (vendor && it.filters.onegov && !vendor.og) out.append(el('p', { class: 'note', style: 'margin-bottom:12px' }, ['GSA lists no current OneGov agreement for ' + vendor.n + '. ', el('a', { href: BASE + 'onegov/', text: 'See all OneGov agreements →' })]));
+    if (!results.length) { out.append(el('p', { class: 'note', text: 'No offerings match the filters read from your search. Try fewer words, a category, or describe the need differently.' })); return; }
     const list = el('div', { class: 'rows is-table', 'data-rows': '' });
     list.append(el('div', { class: 'thead', 'aria-hidden': 'true' }, ['', 'Product', 'FedRAMP', 'Impact', 'Runs on', 'Agencies', ''].map(t => el('span', { text: t }))));
     let shown = 0; const PAGE = 40;
@@ -229,6 +238,7 @@
 
   /* ---------- 4. Small behaviours ---------- */
   function setup() {
+    if (window.FEDCATALOG_TEXT) for (const n of $$('[data-text]')) { const t = window.FEDCATALOG_TEXT[n.dataset.text]; if (typeof t === 'string' && t.trim() && n.textContent.trim() !== t.trim()) n.textContent = t; }
     const here = location.pathname;
     for (const a of $$('.nav a')) { const h = new URL(a.getAttribute('href'), location.href).pathname; if (h !== '/' && (here === h || here.startsWith(h) || (/\/categories\/$/.test(h) && /\/(categories|cloud|fedramp|dod|onegov)\//.test(here)))) a.classList.add('is-current'); }
     for (const b of $$('[data-copy]')) b.addEventListener('click', async () => { try { await navigator.clipboard.writeText(b.dataset.copy); b.classList.add('is-copied'); b.textContent = 'Copied'; setTimeout(() => { b.classList.remove('is-copied'); b.textContent = 'Copy summary'; }, 1400); } catch (_) { window.prompt('Copy this:', b.dataset.copy); } });
