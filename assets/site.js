@@ -129,7 +129,8 @@
     return { filters, functions: Array.from(functions), terms, soft: Array.from(covered).filter(t => t.length > 2 && !STOP.has(t)) };
   }
   let INDEX = null;
-  async function loadIndex() { if (!INDEX) { const r = await fetch('/assets/search-index.json'); INDEX = await r.json(); } return INDEX; }
+  const BASE = (document.querySelector('meta[name="fc-base"]') || {}).content || '/';
+  async function loadIndex() { if (!INDEX) { const r = await fetch(BASE + 'assets/search-index.json'); INDEX = await r.json(); } return INDEX; }
   function vendorKey(name) { return String(name || '').replace(/\s*\(.*?\)\s*/g, ' ').replace(/[.,]+$/, '').replace(/,?\s*\b(inc|llc|corp|corporation|incorporated|company|co|ltd|lp|plc|pbc)\b\.?$/i, '').trim(); }
   function findVendor(text) { const key = vendorKey(text).toLowerCase(); if (!key) return null; const hits = INDEX.vendors.filter(v => v.n.toLowerCase() === key); if (hits.length) return hits[0]; const part = INDEX.vendors.filter(v => v.n.toLowerCase().includes(key) || key.includes(v.n.toLowerCase())); return part.sort((a, b) => a.n.length - b.n.length)[0] || null; }
   function search(q, extra) {
@@ -154,7 +155,7 @@
   function mono(name) { const words = String(name || '?').replace(/[^A-Za-z0-9 ]/g, ' ').split(/\s+/).filter(Boolean); const text = (words.length >= 2 ? words[0][0] + words[1][0] : (words[0] || '?').slice(0, 2)).toUpperCase(); let h = 0; for (const ch of String(name || '')) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return el('div', { class: 'mono m' + (h % 6), 'aria-hidden': 'true', text }); }
   function rowFromIndex(p) {
     const runs = []; p.r.forEach((r, i) => { if (i) runs.push(' · '); runs.push(RUNS[r]); }); p.rn.forEach(r => { if (runs.length) runs.push(' · '); runs.push(el('span', { class: 'named', text: RUNS[r] })); });
-    return el('a', { class: 'row', href: p.u, 'data-status': p.s, 'data-impact': p.i, 'data-family': p.fam.join(' '), 'data-agencies': String(p.a), 'data-name': p.n.toLowerCase(), 'data-vendor': p.v.toLowerCase() }, [
+    return el('a', { class: 'row', href: BASE + p.u.replace(/^\//, ''), 'data-status': p.s, 'data-impact': p.i, 'data-family': p.fam.join(' '), 'data-agencies': String(p.a), 'data-name': p.n.toLowerCase(), 'data-vendor': p.v.toLowerCase() }, [
       mono(p.v), el('div', { class: 'main' }, [el('div', { class: 'name', text: p.n }), el('div', { class: 'sub', text: p.v + (p.f.length ? ' · ' + p.f.slice(0, 2).join(' · ') : '') })]),
       el('div', { class: 'meta' }, [el('span', { class: 'c-st' }, el('span', { class: 'status s-' + p.s, text: p.sl })), el('span', { class: 'c-im', text: p.i }), el('span', { class: 'c-ro' }, runs.length ? runs : ['—']), el('span', { class: 'c-ag', text: p.a ? p.a + (p.a === 1 ? ' agency' : ' agencies') : '—' })]),
       el('span', { class: 'chev', 'aria-hidden': 'true', text: '›' })]);
@@ -171,9 +172,9 @@
     title.textContent = results.length ? '“' + q + '”' : 'Nothing matches “' + q + '”';
     const read = []; if (it.functions.length) read.push(it.functions.join(', ')); if (it.filters.impact) read.push('impact ' + it.filters.impact); if (it.filters.status) read.push(it.filters.status.replace('-', ' ')); if (it.filters.family) read.push('runs on ' + FAMILY_LABEL[it.filters.family]);
     if (read.length) title.append(el('small', { text: 'Read as ' + read.join(' · ') }));
-    if (vs) { const a = findVendor(vs[1]), b = findVendor(vs[2]); if (a && b) out.append(el('p', { class: 'note', style: 'margin-bottom:12px' }, ['Compare: ', el('a', { href: a.u, text: a.n }), ' and ', el('a', { href: b.u, text: b.n }), ' — open each vendor page for offerings, impact levels, agency records and purchasing options side by side.'])); }
+    if (vs) { const a = findVendor(vs[1]), b = findVendor(vs[2]); if (a && b) out.append(el('p', { class: 'note', style: 'margin-bottom:12px' }, ['Compare: ', el('a', { href: BASE + a.u.replace(/^\//, ''), text: a.n }), ' and ', el('a', { href: BASE + b.u.replace(/^\//, ''), text: b.n }), ' — open each vendor page for offerings, impact levels, agency records and purchasing options side by side.'])); }
     const vendor = !/\s(on|for|with)\s/.test(q) ? findVendor(q) : null;
-    if (vendor) out.append(el('p', { class: 'note', style: 'margin-bottom:12px' }, [vendor.n.toLowerCase() === q.trim().toLowerCase() ? 'Vendor page: ' : 'Did you mean the vendor ', el('a', { href: vendor.u, text: vendor.n }), vendor.n.toLowerCase() === q.trim().toLowerCase() ? ' →' : '?']));
+    if (vendor) out.append(el('p', { class: 'note', style: 'margin-bottom:12px' }, [vendor.n.toLowerCase() === q.trim().toLowerCase() ? 'Vendor page: ' : 'Did you mean the vendor ', el('a', { href: BASE + vendor.u.replace(/^\//, ''), text: vendor.n }), vendor.n.toLowerCase() === q.trim().toLowerCase() ? ' →' : '?']));
     if (!results.length) { out.append(el('p', { class: 'note', text: 'Try fewer words, a category, or describe the need differently, for example “document management”.' })); return; }
     const list = el('div', { class: 'rows is-table', 'data-rows': '' });
     list.append(el('div', { class: 'thead', 'aria-hidden': 'true' }, ['', 'Product', 'FedRAMP', 'Impact', 'Runs on', 'Agencies', ''].map(t => el('span', { text: t }))));
@@ -229,7 +230,7 @@
   /* ---------- 4. Small behaviours ---------- */
   function setup() {
     const here = location.pathname;
-    for (const a of $$('.nav a')) { const h = a.getAttribute('href'); if (h !== '/' && (here === h || (here.startsWith(h) && h !== '/') || (h === '/categories/' && /^\/(categories|cloud|fedramp|dod|onegov)\//.test(here)))) a.classList.add('is-current'); }
+    for (const a of $$('.nav a')) { const h = new URL(a.getAttribute('href'), location.href).pathname; if (h !== '/' && (here === h || here.startsWith(h) || (/\/categories\/$/.test(h) && /\/(categories|cloud|fedramp|dod|onegov)\//.test(here)))) a.classList.add('is-current'); }
     for (const b of $$('[data-copy]')) b.addEventListener('click', async () => { try { await navigator.clipboard.writeText(b.dataset.copy); b.classList.add('is-copied'); b.textContent = 'Copied'; setTimeout(() => { b.classList.remove('is-copied'); b.textContent = 'Copy summary'; }, 1400); } catch (_) { window.prompt('Copy this:', b.dataset.copy); } });
     const form = $('[data-contact-form]');
     if (form) {
