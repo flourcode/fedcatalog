@@ -258,9 +258,7 @@ a { color: inherit; }
 .az a:hover b { color: var(--orange-hover); }
 .letters { display: flex; flex-wrap: wrap; gap: 4px; margin: 10px 0 16px; } .letters a { min-width: 32px; min-height: 32px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--separator-2); border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; }
 .procs { border-top: 1px solid var(--separator); }
-.proc { display: grid; grid-template-columns: 22px 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--separator); }
-.proc .glyph { font-weight: 700; text-align: center; }
-.proc.p-verified .glyph, .proc.p-vendor .glyph { color: var(--authorized); } .proc.p-search .glyph { color: var(--secondary); } .proc.p-none .glyph { color: var(--tertiary); }
+.proc { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--separator); }
 .proc b { display: block; font-size: 15px; font-weight: 600; } .proc small { display: block; font-size: 13px; color: var(--secondary); line-height: 1.4; }
 .proc a { font-size: 14px; font-weight: 600; text-decoration: none; color: var(--orange-hover); white-space: nowrap; }
 .pillars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; max-width: 800px; margin: 14px auto 0; }
@@ -272,6 +270,15 @@ a { color: inherit; }
 .hero .counts { margin-top: 10px; font-size: 14px; color: var(--secondary); }
 .hero .cred { max-width: 800px; margin: 12px auto 0; font-size: 12.5px; color: var(--secondary); line-height: 1.5; }
 .hero .cred b { font-weight: 600; color: var(--text); } .hero .cred a { font-weight: 600; color: var(--orange-hover); text-decoration: none; white-space: nowrap; }
+.signup { margin-top: 24px; padding: 18px; border: 1px solid var(--separator); border-radius: 14px; background: var(--canvas); }
+.signup h2 { font-size: 18px; font-weight: 700; letter-spacing: -.02em; margin: 0 0 4px; }
+.signup p { font-size: 14px; color: var(--secondary); line-height: 1.5; margin: 0 0 12px; max-width: 66ch; }
+.signup form { display: flex; gap: 8px; flex-wrap: wrap; }
+.signup input { flex: 1 1 220px; min-height: 44px; padding: 0 12px; border: 1px solid var(--separator-2); border-radius: 10px; background: var(--page); font: inherit; }
+.signup input:focus-visible { outline: none; border-color: var(--orange); box-shadow: 0 0 0 4px var(--orange-soft); }
+.signup button { min-height: 44px; padding: 0 16px; border: 0; border-radius: 10px; background: var(--orange); color: #fff; font-weight: 600; cursor: pointer; }
+.signup button:hover { background: var(--orange-hover); }
+.signup small { display: block; margin-top: 8px; font-size: 12px; color: var(--secondary); }
 .prov { margin-top: 10px; font-size: 13px; color: var(--secondary); line-height: 1.5; } .prov a { color: var(--orange-hover); }
 .builtby { border-top: 1px solid var(--separator); padding-top: 22px; } .builtby h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; } .builtby p { margin-top: 8px; font-size: 16px; line-height: 1.55; max-width: 66ch; color: var(--secondary); } .builtby a { color: var(--orange-hover); font-weight: 600; text-decoration: none; }
 .hero .try a { color: var(--text); font-weight: 600; text-decoration: none; } .hero .try a:hover { color: var(--orange-hover); }

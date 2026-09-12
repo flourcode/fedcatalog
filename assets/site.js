@@ -237,7 +237,18 @@
   }
 
   /* ---------- 4. Small behaviours ---------- */
+  function renderSignup() {
+    const cfg = window.FEDCATALOG_SIGNUP; if (!cfg || !/^https?:\/\//.test(cfg.formUrl || '')) return;
+    for (const slot of $$('[data-signup]')) {
+      const ctx = slot.dataset.context, h1 = document.querySelector('h1');
+      const heading = ctx === 'list' && h1 ? 'New ' + h1.childNodes[0].textContent.trim() + ' authorizations, weekly' : cfg.heading;
+      const input = el('input', { type: 'email', name: 'email', placeholder: 'you@agency.gov', 'aria-label': 'Email address', required: 'required' });
+      const form = el('form', { onsubmit: (e) => { e.preventDefault(); const u = cfg.formUrl + (cfg.formUrl.includes('?') ? '&' : '?') + 'email=' + encodeURIComponent(input.value.trim()); if (window.gtag) gtag('event', 'sign_up', { method: 'newsletter', page_path: location.pathname }); window.open(u, '_blank', 'noopener'); } }, [input, el('button', { type: 'submit', text: cfg.button || 'Subscribe' })]);
+      clear(slot); slot.append(el('h2', { text: heading }), el('p', { text: cfg.blurb }), form, el('small', { text: 'Opens the subscribe page in a new tab. No spam; unsubscribe anytime.' })); slot.hidden = false;
+    }
+  }
   function setup() {
+    renderSignup();
     if (window.FEDCATALOG_TEXT) for (const n of $$('[data-text]')) { const t = window.FEDCATALOG_TEXT[n.dataset.text]; if (typeof t === 'string' && t.trim() && n.textContent.trim() !== t.trim()) n.textContent = t; }
     const here = location.pathname;
     for (const a of $$('.nav a')) { const h = new URL(a.getAttribute('href'), location.href).pathname; if (h !== '/' && (here === h || here.startsWith(h) || (/\/categories\/$/.test(h) && /\/(categories|cloud|fedramp|dod|onegov)\//.test(here)))) a.classList.add('is-current'); }
