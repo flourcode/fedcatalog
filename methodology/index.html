@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Data Sources &amp; Methodology | FedCatalog</title>
+<meta name="description" content="Where every FedCatalog figure comes from: FedRAMP Marketplace, DoD Cyber Exchange, GSA OneGov, USAspending and procurement sources, what each means, and the editorial policy.">
+<link rel="canonical" href="https://fedcatalog.com/methodology/">
+
+<meta property="og:site_name" content="FedCatalog">
+<meta property="og:title" content="Data Sources &amp; Methodology | FedCatalog">
+<meta property="og:description" content="Where every FedCatalog figure comes from: FedRAMP Marketplace, DoD Cyber Exchange, GSA OneGov, USAspending and procurement sources, what each means, and the editorial policy.">
+<meta property="og:url" content="https://fedcatalog.com/methodology/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://fedcatalog.com/assets/fedcatalog-og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/site.css">
+
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="top-row">
+    <a class="brand" href="/"><b>FedCatalog</b><small>Independent federal software reference</small></a>
+    <nav class="nav" aria-label="Primary">
+      <a href="/software/">Software</a><a href="/vendors/">Vendors</a><a href="/agencies/">Agencies</a><a href="/categories/">Browse</a><a href="/new/">New</a>
+    </nav>
+  </div>
+  <div class="searchbar">
+    <form class="search" action="/search/" method="get" role="search">
+      <span class="glyph" aria-hidden="true">⌕</span>
+      <label for="q" class="sr-only">Search software, a vendor, or describe a need</label>
+      <input id="q" name="q" type="search" autocomplete="off" placeholder="Search software, a vendor, or describe a need…">
+      <button type="submit">Search</button>
+    </form>
+  </div>
+</header>
+<main class="shell" id="main">
+<section class="panel narrow"><article class="doc">
+<h1>Data Sources &amp; Methodology</h1>
+<p class="lede">FedCatalog is designed around a simple rule: show what the public evidence supports and label everything else clearly.</p>
+<h2>FedRAMP Marketplace</h2>
+<p><strong>Source:</strong> the FedRAMP Marketplace public data published by GSA (<a href="https://www.fedramp.gov/marketplace/" target="_blank" rel="noopener noreferrer">fedramp.gov/marketplace</a>), which FedRAMP republishes as machine-readable files updated daily.</p>
+<p><strong>Imported:</strong> vendor, offering name, status (Authorized, Ready, In Process), impact level, authorization path and dates, deployment and service model, business categories, agency authorization and reuse records, description, website, assessor, published sales contact, and which offerings leverage which authorized platforms.</p>
+<p><strong>Refresh:</strong> daily. Each page shows the date of the data it was built from.</p>
+<p><strong>Meaning:</strong> an authorization belongs to the specific offering and security boundary listed, not to the vendor or to the vendor’s other products. Agency authorization records show that an agency issued or reused an authorization; they do not by themselves show that the agency purchased or deployed the product.</p>
+<p><strong>Runs on:</strong> FedRAMP records which authorized infrastructure platform an offering leverages. FedCatalog shows that relationship as “runs on.” Where a platform is only named in the offering’s title and no relationship is on record, it is shown with a dashed underline and labeled as such. Running on a cloud is not the same as being sold in that cloud’s marketplace.</p>
+<h2>DoD Cyber Exchange</h2>
+<p><strong>Source:</strong> the “Current Authorized CSOs” table on the DoD Cyber Exchange (<a href="https://public.cyber.mil/dccs/cso/" target="_blank" rel="noopener noreferrer">public.cyber.mil</a>).</p>
+<p><strong>Meaning:</strong> FedCatalog preserves the exact DoD status string: Provisional Authorization, Provisional Authorization to Connect (PA-C), IATT – Not Authorized for Operational Use, or Suspended. These are never rewritten into a FedCatalog score. A Provisional Authorization is not an agency ATO. Where the listed expiration date has passed, the site says so and asks you to verify on the DoD page. A DoD listing may describe a different offering or boundary from the vendor’s FedRAMP listing; FedCatalog links DoD rows to vendors, not to specific FedRAMP offerings.</p>
+<h2>GSA OneGov</h2>
+<p><strong>Source:</strong> GSA’s IT Vendor Management Office list of current OneGov agreements (<a href="https://itvmo.gsa.gov/onegov/" target="_blank" rel="noopener noreferrer">itvmo.gsa.gov/onegov</a>), curated by hand and checked against GSA’s feed for new agreements.</p>
+<p><strong>Meaning:</strong> discount, expiry, vehicle, eligibility and included products are shown as GSA publishes them. Agreements are linked to vendors only where the match is clear. Ordering details are behind a government login; agencies still follow their ordinary FAR 8.4 ordering procedures, and pricing and eligibility should be confirmed with GSA. Expiry dates matter and are shown.</p>
+<h2>USAspending</h2>
+<p><strong>Source:</strong> the USAspending.gov API, queried live when a vendor page opens, for federal prime contract records (award types A–D) whose recipient name or award description mentions the vendor or, for short or ambiguous names, its offering names. The search terms used are printed on the page.</p>
+<p><strong>Meaning:</strong> these figures are an observed floor, not a vendor revenue estimate. Most software is bought through resellers whose award descriptions may not name the software vendor; many descriptions are generic; name matching can undercount or occasionally match the wrong thing; and obligations are not bookings or revenue. FedCatalog therefore shows, separately: obligations on awards that mention the vendor; the portion paid directly to the vendor entity; who received the money (vendor direct versus reseller or prime); and the number of buying departments, next to the number of FedRAMP authorization records, because approved is not the same as purchased.</p>
+<h2>GSA eLibrary, NASA SEWP, Section 508 ACR Repository, SAM.gov</h2>
+<p>Until records from these sources are joined directly to FedCatalog data, the links on product and vendor pages open searches or lookup pages. They do not mean FedCatalog has confirmed that a product is available on a vehicle or has an accessibility conformance report.</p>
+<h2>Cloud marketplaces</h2>
+<p>AWS Marketplace, Azure Marketplace and Google Cloud Marketplace links open a search for the vendor on each marketplace. Listing availability, terms and private offers are confirmed there. Vendors can submit direct listing links through the <a href="/contact/">contact page</a>; those are reviewed and labeled as vendor-supplied.</p>
+<h2>Corrections</h2>
+<p>Anyone can <a href="/contact/">submit a correction</a>. Public-source facts are corrected by re-checking the source. Vendor-supplied links are reviewed before publication.</p>
+<h2>Editorial policy</h2>
+<ul>
+<li>No pay-to-rank. No vendor is placed or ranked because it sponsors the site.</li>
+<li>No star ratings, reviews, or any “federal readiness” score.</li>
+<li>Public-source facts are preferred over vendor claims; vendor-submitted data is labeled and reviewed.</li>
+<li>Comparisons show factual differences and never declare a winner.</li>
+<li>Corrections are welcomed and acknowledged.</li>
+</ul>
+<p>FedCatalog is written and maintained by <a href="/about/mark-flournoy/">Mark Flournoy</a>.</p></article></section>
+</main>
+<footer class="site-footer">
+  <div class="foot-grid">
+    <div><b>FedCatalog</b><br>Independent federal software reference.<br><span class="foot-muted">Data refreshed Sep 12, 2026</span></div>
+    <nav aria-label="Footer"><a href="/categories/">Browse</a> · <a href="/vendors/">Vendors</a> · <a href="/agencies/">Agencies</a> · <a href="/new/">New</a> · <a href="/methodology/">Methodology</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a><br><a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></nav>
+  </div>
+  <p class="foot-muted">Created by <a href="/about/mark-flournoy/">Mark Flournoy</a>. FedCatalog is not affiliated with or endorsed by the U.S. Government. © 2026 FedCatalog.</p>
+</footer>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>
