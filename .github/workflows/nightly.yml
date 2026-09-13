@@ -2,8 +2,8 @@ name: Nightly rebuild from public sources
 
 # Rebuilds the whole site from FedRAMP, the DoD Cyber Exchange and GSA every night,
 # verifies it, and commits it. Amplify redeploys on the commit. If a source can't be
-# read, the previous good data is kept. If the build or verification fails, nothing is
-# committed and GitHub emails the repo owner.
+# read, the previous good data is kept and the build continues. If page generation
+# or verification fails, nothing is committed and GitHub emails the repo owner.
 
 on:
   schedule:
@@ -17,34 +17,59 @@ jobs:
   rebuild:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install image library for the OG image
-        run: pip install pillow
-      - name: Refresh FedRAMP, DoD and OneGov data
+
+      - name: Install the image library (for the share image)
+        run: python3 -m pip install --quiet pillow
+
+      - name: Refresh FedRAMP, DoD and OneGov data (keeps last good copy on failure)
+        continue-on-error: true
         run: python3 src/build_snapshot.py --refresh
-        working-directory: ${{ github.workspace }}
-      - name: Refresh FedRAMP changelog
+
+      - name: Refresh the FedRAMP changelog (keeps last good copy on failure)
+        continue-on-error: true
         run: |
-          curl -fsSL https://raw.githubusercontent.com/FedRAMP/marketplace-fedramp-gov-data/main/fedramp-status-changelog.json -o /tmp/changelog.json && python3 -c "import json;json.load(open('/tmp/changelog.json'))" && cp /tmp/changelog.json src/data/changelog.json || echo "changelog unchanged"
+          curl -fsSL https://raw.githubusercontent.com/FedRAMP/marketplace-fedramp-gov-data/main/fedramp-status-changelog.json -o /tmp/changelog.json
+          python3 -c "import json; json.load(open('/tmp/changelog.json'))"
+          cp /tmp/changelog.json src/data/changelog.json
+
       - name: Generate the site
         run: python3 src/build.py
-      - name: Write the newsletter draft (drafts/latest.html, last 14 days)
-        run: python3 src/weekly_draft.py --days 14 && cp "drafts/$(date -u +%Y-%m-%d).html" drafts/latest.html && cp "drafts/$(date -u +%Y-%m-%d).md" drafts/latest.md && ls drafts | grep -v latest | sort | head -n -8 | sed 's#^#drafts/#' | xargs -r rm -f
+
       - name: Verify links, titles, canonicals
-        run: python3 src/verify.py | tee /tmp/verify.txt && ! grep -q "broken link" /tmp/verify.txt
+        run: |
+          python3 src/verify.py | tee /tmp/verify.txt
+          if grep -q "broken link" /tmp/verify.txt; then echo "Broken links found; not publishing."; exit 1; fi
+
+      - name: Write the newsletter draft (drafts/latest.html, last 14 days)
+        continue-on-error: true
+        run: |
+          python3 src/weekly_draft.py --days 14
+          cp "drafts/$(date -u +%Y-%m-%d).html" drafts/latest.html
+          cp "drafts/$(date -u +%Y-%m-%d).md" drafts/latest.md
+
       - name: Publish generated pages to the repo root (what Amplify serves)
         run: |
-          # Remove previously generated pages, keep the project files, then copy the fresh build in.
-          find . -maxdepth 1 -mindepth 1 ! -name src ! -name .github ! -name dist ! -name README.md ! -name drafts ! -name .git ! -name .gitignore ! -name amplify.yml -exec rm -rf {} +
+          find . -maxdepth 1 -mindepth 1 ! -name src ! -name .github ! -name dist ! -name README.md ! -name HANDOFF.md ! -name drafts ! -name .git ! -name .gitignore ! -name amplify.yml -exec rm -rf {} +
           cp -r dist/. .
           rm -rf dist
+
       - name: Commit if anything changed
         run: |
           git config user.name "fedcatalog-bot"
           git config user.email "fedcatalog-bot@users.noreply.github.com"
+          # If anything was pushed to the repo while this ran, keep those source edits.
+          git fetch origin main
+          git checkout origin/main -- src .github README.md HANDOFF.md 2>/dev/null || true
           git add -A
-          git diff --cached --quiet || git commit -m "Nightly rebuild $(date -u +%Y-%m-%d)"
-          git push
+          if git diff --cached --quiet; then echo "No changes tonight."; exit 0; fi
+          git commit -m "Nightly rebuild $(date -u +%Y-%m-%d)"
+          # Put tonight's commit on top of whatever is now on main, then push.
+          git pull --rebase origin main || { git rebase --abort; echo "Could not reconcile with new commits on main; will try again tomorrow."; exit 1; }
+          git push origin HEAD:main
