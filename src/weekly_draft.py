@@ -30,7 +30,7 @@ def main():
     if '--days' in sys.argv: days = int(sys.argv[sys.argv.index('--days') + 1])
     today = datetime.date.today(); since = today - datetime.timedelta(days=days)
     db = B.load()
-    changes = [x for x in load_changelog(refresh) if x.get('transition_date') and since.isoformat() <= x['transition_date'][:10] <= today.isoformat()]
+    changes = [x for x in load_changelog(refresh) if x.get('transition_date') and since.isoformat() <= x['transition_date'][:10] <= today.isoformat() and x.get('from_status') != x.get('to_status')]   # skip re-recorded, unchanged statuses
     changes.sort(key=lambda x: x['transition_date'], reverse=True)
     def link(x):
         p = db['by_id'].get(x['product_id'])
@@ -97,10 +97,11 @@ def main():
             elif line.startswith('- '): out.append(f'<p style="margin:0 0 6px 12px">• {line[2:]}</p>')
             elif line == '---': out.append('<hr style="border:0;border-top:1px solid #E5E5EA;margin:20px 0">')
             elif line.strip(): out.append(f'<p style="margin:0 0 8px">{line}</p>')
-        return '<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:15px;line-height:1.5;color:#1D1D1F;max-width:640px">' + '\n'.join(out) + '</div>'
+        body = '\n'.join(out).replace('·', '&middot;').replace('—', '&mdash;').replace('–', '&ndash;').replace('’', '&rsquo;').replace('“', '&ldquo;').replace('”', '&rdquo;')
+        return '<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><title>FedCatalog weekly draft</title></head><body>\n<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:15px;line-height:1.5;color:#1D1D1F;max-width:640px">' + body + '</div>\n</body></html>'
     os.makedirs(os.path.join(ROOT, 'drafts'), exist_ok=True)
     base = os.path.join(ROOT, 'drafts', today.isoformat())
-    open(base + '.md', 'w').write(text); open(base + '.html', 'w').write(md_to_html(text))
+    open(base + '.md', 'w', encoding='utf-8').write(text); open(base + '.html', 'w', encoding='utf-8').write(md_to_html(text))
     print(f'{len(authorized)} authorized · {len(ready)} ready · {len(inproc)} in process · {len(other)} other · {len(expiring)} DoD PAs expiring within 60 days · {len(og_expiring)} OneGov expiring')
     print('wrote', base + '.md', 'and .html')
 
