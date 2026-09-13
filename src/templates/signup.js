@@ -5,7 +5,7 @@
    3. Save and upload this one file. The signup box appears on the home page,
       the New page and every category page. Leave the URL empty to hide it. */
 var FEDCATALOG_SIGNUP = {
-  formUrl: "",
+  formUrl: "https://fedcatalog.kit.com/e0bfccee98",
   heading: "What changed in federal software this week",
   blurb: "New FedRAMP authorizations, Ready and In-Process entries, delistings, DoD Impact Level changes and OneGov deals. One email on Tuesday, source-linked. Unsubscribe anytime.",
   button: "Subscribe"
