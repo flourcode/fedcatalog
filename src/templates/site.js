@@ -171,7 +171,7 @@
     out.sort((a, b) => b.score - a.score || b.p.a - a.p.a);
     return { it, results: out.map(x => x.p) };
   }
-  function mono(name) { const words = String(name || '?').replace(/[^A-Za-z0-9 ]/g, ' ').split(/\s+/).filter(Boolean); const text = (words.length >= 2 ? words[0][0] + words[1][0] : (words[0] || '?').slice(0, 2)).toUpperCase(); let h = 0; for (const ch of String(name || '')) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return el('div', { class: 'mono m' + (h % 6), 'aria-hidden': 'true', text }); }
+  function mono(name) { const m = String(name || '').match(/[A-Za-z0-9]/); return el('div', { class: 'mono', 'aria-hidden': 'true', text: m ? m[0].toUpperCase() : '·' }); }
   function rowFromIndex(p) {
     const runs = []; p.r.forEach((r, i) => { if (i) runs.push(' · '); runs.push(RUNS[r]); }); p.rn.forEach(r => { if (runs.length) runs.push(' · '); runs.push(el('span', { class: 'named', text: RUNS[r] })); });
     return el('a', { class: 'row', href: BASE + p.u.replace(/^\//, ''), 'data-status': p.s, 'data-impact': p.i, 'data-family': p.fam.join(' '), 'data-agencies': String(p.a), 'data-name': p.n.toLowerCase(), 'data-vendor': p.v.toLowerCase() }, [

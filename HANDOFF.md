@@ -28,6 +28,8 @@ See the table in README.md ("The one rule"). Short version: text in
 
 ## Editorial rules the code enforces
 No rankings, ratings, scores, sponsored placement or vendor edits to data.
+No vendor logos; rows carry a single-initial monogram of the vendor name as a
+visual anchor only (it is decorative, never an acronym).
 Exact source status strings are preserved (FedRAMP Authorized/Ready/In
 Process; DoD PA/PA-C/IATT/Suspended). "Runs on" (a FedRAMP relationship) is
 kept distinct from "sold on a marketplace" (a search link unless an exact

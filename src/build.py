@@ -201,11 +201,10 @@ def url_cloud(code): return f'/cloud/{CLOUD_SLUG[code]}/'
 
 # ------------------------------------------------------------------ components
 def monogram(name, cls=''):
-    words = [w for w in re.sub(r'[^A-Za-z0-9 ]', ' ', name or '?').split() if w]
-    text = (words[0][0] + words[1][0]) if len(words) >= 2 else (words[0] if words else '?')[:2]
-    h = 0
-    for ch in name or '': h = (h * 31 + ord(ch)) & 0xFFFFFFFF
-    return f'<div class="mono m{h % 6} {cls}" aria-hidden="true">{esc(text.upper())}</div>'
+    """Decorative single initial of the canonical vendor name. Same letter for every offering from a vendor;
+    never an acronym. Exists so rows chunk visually; the text carries the information."""
+    m = re.search(r'[A-Za-z0-9]', name or '')
+    return f'<div class="mono {cls}" aria-hidden="true">{esc(m.group(0).upper() if m else "·")}</div>'
 def status_label(p): return f'<span class="status s-{p["status_code"]}">{esc(p["status_label"])}</span>'
 def runs_text(p):
     parts = [esc(RUNS[r]) for r in p['runs']] + [f'<span class="named" title="Named in the offering title; no leveraged-system record">{esc(RUNS[r])}</span>' for r in p['runs_named']]
@@ -759,6 +758,13 @@ def build_assets(db):
 .caution { grid-column: 1 / -1; margin-top: 4px; padding: 12px 14px; border: 1px solid #E8C9A0; background: #FFF7EA; border-radius: 12px; font-size: 14px; line-height: 1.5; color: var(--text); }
 .caution a { color: var(--orange-hover); }
 .agency-hits { margin: 0 0 18px; } .agency-hits .cat { border-top: 1px solid var(--separator); }
+.lost { text-align: center; padding-top: 48px; }
+.lost .shrug { font-size: 56px; line-height: 1; color: var(--secondary); margin: 0 0 18px; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
+.lost h1 { font-size: 32px; font-weight: 700; letter-spacing: -.03em; margin: 0 0 10px; }
+.lost p { color: var(--secondary); max-width: 48ch; margin: 0 auto; font-size: 16px; }
+.lost .search { max-width: 560px; margin: 22px auto 0; }
+.lost .links { margin-top: 18px; font-size: 14px; } .lost .links a { color: var(--text); text-decoration: none; font-weight: 500; } .lost .links a:hover { color: var(--orange-hover); }
+@media (min-width: 720px) { .lost { padding-top: 80px; } .lost .shrug { font-size: 72px; } .lost h1 { font-size: 40px; } }
 .prov { margin-top: 10px; font-size: 13px; color: var(--secondary); line-height: 1.5; } .prov a { color: var(--orange-hover); }
 .builtby { border-top: 1px solid var(--separator); padding-top: 22px; } .builtby h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; } .builtby p { margin-top: 8px; font-size: 16px; line-height: 1.55; max-width: 66ch; color: var(--secondary); } .builtby a { color: var(--orange-hover); font-weight: 600; text-decoration: none; }
 .hero .try a { color: var(--text); font-weight: 600; text-decoration: none; } .hero .try a:hover { color: var(--orange-hover); }
@@ -943,8 +949,10 @@ def build():
     write_page('/search/', layout(db, path='/search/', title='Search | FedCatalog', description='Search FedCatalog by software, vendor or need.', noindex=True,
         body='<section class="panel"><h1 class="h2" data-search-title>Search</h1><div class="results">' + rail_html('') + '<div><div class="results-bar"><span class="count" data-count></span><button class="filter-btn" type="button" data-open-sheet>Filters<b data-filter-count></b></button></div><div data-search-results><p class="note">Type a product, vendor or need in the search box. Try “FedRAMP High cybersecurity”, “zero trust on AWS” or “Databricks vs Snowflake”.</p></div></div></div></section>'))
     # 404
-    write('404.html', layout(db, path='/404.html', title='Page not found | FedCatalog', description='That page does not exist.', noindex=True,
-        body='<section class="panel narrow"><article class="doc"><h1>Couldn’t find that page.</h1><p>The link may be old, or the offering may have been delisted.</p><p><a href="/search/">Search FedCatalog</a> · <a href="/software/">Browse software</a> · <a href="/vendors/">Browse vendors</a> · <a href="/agencies/">Browse agencies</a> · <a href="/">Home</a></p></article></section>'))
+    write('404.html', _layout(db, path='/404.html', title='Page not found | FedCatalog', description='That page does not exist.', noindex=True,
+        body='''<section class="panel narrow lost"><p class="shrug" aria-hidden="true">¯\\_(ツ)_/¯</p><h1>Oops. That page doesn’t exist.</h1><p>The link may be old, the offering may have been delisted, or the address has a typo. Nothing here is broken; you just wandered off the map.</p>
+<form class="search" action="/search/" method="get" role="search"><label for="lq" class="sr-only">Search</label><input id="lq" name="q" type="search" autocomplete="off" placeholder="Search software, vendors or requirements…"><button type="submit">Search</button></form>
+<p class="links"><a href="/software/">Browse software</a> · <a href="/vendors/">Vendors</a> · <a href="/agencies/">Agencies</a> · <a href="/buy/">How to buy</a> · <a href="/">Home</a></p></section>'''))
     # sitemap, robots, CNAME
     lastmod = (db['meta'].get('last_change') or TODAY)[:10]
     write('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{ORIGIN}{u}</loc><lastmod>{lastmod}</lastmod></url>\n' for u in urls) + '</urlset>\n')
