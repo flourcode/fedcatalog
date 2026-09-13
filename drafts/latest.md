@@ -1,61 +1,120 @@
-# What changed in federal software · week of Sep 13, 2026
+SUBJECT: Federal software changes worth knowing — Sep 15
+PREVIEW: 6 new FedRAMP authorizations, 9 delistings, and OneGov agreements nearing expiration.
 
-Changes recorded Aug 30–Sep 13. Every item links to its FedCatalog page; sources are the FedRAMP Marketplace changelog, the DoD Cyber Exchange list and GSA’s OneGov page.
+A fair amount moved this week. Six offerings reached FedRAMP Authorized, nine familiar products dropped off the current list, and three OneGov agreements are coming up on their published expiration date. Here are the things I thought were worth knowing.
 
-## Newly authorized (6)
-FedRAMP Authorized this week
+## The short version
+- **Bidscale** from Unison reached FedRAMP Authorized at the Moderate impact level (previously In Process). [View →](https://fedcatalog.com/software/bidscale/)
+- **Bizzdesign GovCloud** from Bizzdesign US reached FedRAMP Authorized at the Moderate impact level (previously In Process). [View →](https://fedcatalog.com/software/bizzdesign-govcloud/)
+- **9 offerings** previously shown as Authorized now appear as No Status Found in the current FedRAMP data, including Trimble Unity Construct Government Edition, iMatch and Knightscope Autonomous Security Robot (Knightscope ASR). That happens for several reasons; treat it as a prompt to check the record, not an explanation. [View →](https://fedcatalog.com/new/)
+- **3 OneGov agreements** (Anthropic, Google and OpenAI) currently show an expiration date within 60 days. That is the date GSA publishes, not necessarily the end of the offer; anyone relying on one should check the agreement. [View →](https://fedcatalog.com/onegov/)
+- **Claude** from Anthropic entered Initial Implementation. Not authorized yet, but on the path.
 
-**Moderate**
-- **[Bidscale](https://fedcatalog.com/software/bidscale/)** — Unison · Moderate · now FedRAMP Certified (from FedRAMP In Process) · 2026-09-10
-- **[Anomali Security Operations Platform (ASOP)](https://fedcatalog.com/software/anomali-security-operations-platform-asop/)** — Anomali · Moderate · now FedRAMP Certified (from FedRAMP In Process) · 2026-09-04
-- **[Data Enclave Gov](https://fedcatalog.com/software/data-enclave-gov/)** — NORC · Moderate · now FedRAMP Certified (from FedRAMP In Process) · 2026-09-03
-- **[Bizzdesign GovCloud](https://fedcatalog.com/software/bizzdesign-govcloud/)** — Bizzdesign US · Moderate · now FedRAMP Certified (from FedRAMP In Process) · 2026-09-01
-**Low**
-- **[Digital Enterprise Suite FedRAMP Edition](https://fedcatalog.com/software/digital-enterprise-suite-fedramp-edition/)** — Trisotech · Low · now FedRAMP Certified (from Agency Review) · 2026-09-09
-- **[zLinkFM](https://fedcatalog.com/software/zlinkfm/)** — zLink, Inc. · Low · now FedRAMP Certified (from FedRAMP In Process) · 2026-09-04
+## Newly authorized
+**Unison — Bidscale**  
+FedRAMP Moderate · Authorized Sep 10, 2026 · Previously In Process · [View in FedCatalog →](https://fedcatalog.com/software/bidscale/)
 
-## Entered In Process (3)
-The earliest public signal that an offering is on its way
+**Trisotech — Digital Enterprise Suite FedRAMP Edition**  
+FedRAMP Low · Authorized Sep 9, 2026 · Previously Agency Review · [View in FedCatalog →](https://fedcatalog.com/software/digital-enterprise-suite-fedramp-edition/)
 
-- **[Vantage for Government](https://fedcatalog.com/software/vantage-for-government/)** — Nozomi Networks Inc. · Moderate · now FedRAMP In Process (from Agency Authorization In Process) · 2026-09-03
-- **Mycroft GRC Platform** — Mycroft Technologies Inc · now FedRAMP In Process (from Initial Implementation) · 2026-09-03
-- **ElevenLabs Platform** — Eleven Labs Inc. · now FedRAMP In Process · 2026-08-31
+**zLink, Inc. — zLinkFM**  
+FedRAMP Low · Authorized Sep 4, 2026 · Previously In Process · [View in FedCatalog →](https://fedcatalog.com/software/zlinkfm/)
 
-## Other status changes (25)
+**Anomali — Anomali Security Operations Platform (ASOP)**  
+FedRAMP Moderate · Authorized Sep 4, 2026 · Previously In Process · [View in FedCatalog →](https://fedcatalog.com/software/anomali-security-operations-platform-asop/)
 
-- **[iMatch](https://fedcatalog.com/software/imatch/)** — National Resident Matching Program · Moderate · now No Status Found (Delisted) (from FedRAMP Certified) · 2026-09-02
-- **[Knightscope Autonomous Security Robot (Knightscope ASR)](https://fedcatalog.com/software/knightscope-autonomous-security-robot-knightscope-asr/)** — Knightscope, Inc. · Moderate · now No Status Found (Delisted) (from FedRAMP Certified) · 2026-09-02
-- **[Aruba Central](https://fedcatalog.com/software/aruba-central/)** — Aruba Networks · Moderate · now No Status Found (Delisted) (from FedRAMP Certified) · 2026-09-02
-- **[ONE – Security Service Edge (SSE) – CASB/DLP/SWG/ZTNA/RBI](https://fedcatalog.com/software/one-security-service-edge-sse-casb-dlp-swg-ztna-rbi/)** — Forcepoint · Moderate · now No Status Found (Delisted) (from FedRAMP Certified) · 2026-09-02
-- **[Rectitude 369 Government Cloud (Formerly GDT)](https://fedcatalog.com/software/rectitude-369-government-cloud-formerly-gdt/)** — Rectitude 369 · Moderate · now No Status Found (Delisted) (from FedRAMP Certified) · 2026-09-02
-- **[Atom Power, Inc - ATOM EVSE](https://fedcatalog.com/software/atom-power-inc-atom-evse/)** — ATOM EVSE · LI-SaaS · now No Status Found (Delisted) (from FedRAMP Certified) · 2026-09-02
-- **[OpenWater Awards](https://fedcatalog.com/software/openwater-awards/)** — OpenWater Software · LI-SaaS · now No Status Found (Delisted) (from FedRAMP Certified) · 2026-09-02
-- **ConnectAllCare** — 86Borders · now Initial Implementation · 2026-09-11
-- **Vastian (MediaLab by Vastian)** — Vastian · now Initial Implementation · 2026-09-10
-- **Dayforce HCM, Public Sector** — Dayforce · now Initial Implementation · 2026-09-10
-- **Trimble Unity Construct Government Edition** — e-Builder, A Trimble Company · now No Status Found (Delisted) (from Authorized) · 2026-09-10
-- **Silkline** — Silkline.ai · now Initial Implementation · 2026-09-09
-- **Alira** — Skyward IT Solutions · now Initial Implementation · 2026-09-08
-- **Meterbox** — Meterbox Inc. · now Initial Implementation · 2026-09-08
-- **ElvoAI** — ElvoAI · now Initial Implementation · 2026-09-08
-- **ConnectSecure Vulnerability and Compliance Manager** — ConnectSecure · now Initial Implementation · 2026-09-08
-- **Benchmark Construction Estimator** — Microsoft Azure Goverment Cloud · now Initial Implementation · 2026-09-08
-- **Simuhealth** — Simuhealth Technologies Inc. · now Initial Implementation · 2026-09-08
-- **Anyreach App Software Application** — Anyreach, Inc. · now Initial Implementation · 2026-09-02
-- **Connected Operations Cloud** — Samsara · now Initial Implementation · 2026-09-02
-- **Claude** — Anthropic · now Initial Implementation · 2026-09-01
-- **TrustGuard AI Compliance Platform** — TGuardAI Inc. · now Initial Implementation · 2026-09-01
-- **Ultra Security Hub and Agentic Security Platform** — Ultra Security, Inc. · now Initial Implementation · 2026-08-31
-- **Emburse Enterprise** — Emburse, Inc. · now Initial Implementation · 2026-08-31
-- **Trello Enterprise Cloud** — Trello · now No Status Found (Delisted) (from FedRAMP Certified) · 2026-08-31
+**NORC — Data Enclave Gov**  
+FedRAMP Moderate · Authorized Sep 3, 2026 · Previously In Process · [View in FedCatalog →](https://fedcatalog.com/software/data-enclave-gov/)
 
-## OneGov
+**Bizzdesign US — Bizzdesign GovCloud**  
+FedRAMP Moderate · Authorized Sep 1, 2026 · Previously In Process · [View in FedCatalog →](https://fedcatalog.com/software/bizzdesign-govcloud/)
 
-- **Expires Sep 30, 2026:** Anthropic — Claude AI for Government - Enterprise AI Solution · [agreement](https://itvmo.gsa.gov/onegov/?tabName=agreements-tab#anthropic)
-- **Expires Sep 30, 2026:** Google — Gemini for Government and Google Cloud Platform (GCP) · [agreement](https://itvmo.gsa.gov/onegov/?tabName=agreements-tab#google)
-- **Expires Sep 30, 2026:** OpenAI — ChatGPT Enterprise for Federal Agencies · [agreement](https://itvmo.gsa.gov/onegov/?tabName=agreements-tab#openai)
+## Worth watching
+A few names entered or moved further into the FedRAMP process this week. None of these is authorized yet.
+
+**Claude — Anthropic**  
+Initial Implementation · Sep 1, 2026
+
+**TrustGuard AI Compliance Platform — TGuardAI Inc.**  
+Initial Implementation · Sep 1, 2026
+
+**Ultra Security Hub and Agentic Security Platform — Ultra Security, Inc.**  
+Initial Implementation · Aug 31, 2026
+
+**ConnectAllCare — 86Borders**  
+Initial Implementation · Sep 11, 2026
+
+**Vastian (MediaLab by Vastian) — Vastian**  
+Initial Implementation · Sep 10, 2026
+
+**Dayforce HCM, Public Sector — Dayforce**  
+Initial Implementation · Sep 10, 2026
+
+**Silkline — Silkline.ai**  
+Initial Implementation · Sep 9, 2026
+
+**Alira — Skyward IT Solutions**  
+Initial Implementation · Sep 8, 2026
+
+[See all new and changed records →](https://fedcatalog.com/new/)
+
+## No longer on the current Authorized list
+Nine offerings that were previously shown as Authorized now appear as No Status Found in the current FedRAMP data. That can happen for several reasons, so treat this as a signal to check the current record rather than an explanation of why it changed.
+
+**Aruba Central — Aruba Networks**  
+Previously FedRAMP Authorized · now No Status Found · [View →](https://fedcatalog.com/software/aruba-central/)
+
+**OpenWater Awards — OpenWater Software**  
+Previously FedRAMP Authorized · now No Status Found · [View →](https://fedcatalog.com/software/openwater-awards/)
+
+**iMatch — National Resident Matching Program**  
+Previously FedRAMP Authorized · now No Status Found · [View →](https://fedcatalog.com/software/imatch/)
+
+**Knightscope Autonomous Security Robot (Knightscope ASR) — Knightscope, Inc.**  
+Previously FedRAMP Authorized · now No Status Found · [View →](https://fedcatalog.com/software/knightscope-autonomous-security-robot-knightscope-asr/)
+
+**Atom Power, Inc - ATOM EVSE — ATOM EVSE**  
+Previously FedRAMP Authorized · now No Status Found · [View →](https://fedcatalog.com/software/atom-power-inc-atom-evse/)
+
+**ONE – Security Service Edge (SSE) – CASB/DLP/SWG/ZTNA/RBI — Forcepoint**  
+Previously FedRAMP Authorized · now No Status Found · [View →](https://fedcatalog.com/software/one-security-service-edge-sse-casb-dlp-swg-ztna-rbi/)
+
+[See all status changes →](https://fedcatalog.com/new/)
+
+## On the buying side
+Three OneGov agreements currently show an expiration date within the next 60 days:
+
+**Anthropic — Claude AI for Government - Enterprise AI Solution** · Sep 30, 2026  
+**Google — Gemini for Government and Google Cloud Platform (GCP)** · Sep 30, 2026  
+**OpenAI — ChatGPT Enterprise for Federal Agencies** · Sep 30, 2026  
+
+That doesn’t necessarily mean the offers disappear the next day. It means that is the expiration date currently published by GSA, so anyone relying on one of these paths should check the agreement.
+
+[View the OneGov agreements →](https://fedcatalog.com/onegov/)
+
+## One thing I noticed
+*Draft note from the data. Keep, edit or delete before sending.*
+
+AI is showing up at more than one point in the federal software lifecycle at once. Bidscale, Claude and TrustGuard AI Compliance Platform moved in the FedRAMP process this week, while the OneGov agreements for Anthropic, Google and OpenAI are approaching their currently published expiration dates. Those are separate things: authorization status and procurement path aren’t the same. Seeing them side by side is why FedCatalog exists.
+
+## Also this week
+Everything else that moved in the FedRAMP data, so nobody is left out:
+
+Also entered In Process: Mycroft GRC Platform (Mycroft Technologies Inc), ElevenLabs Platform (Eleven Labs Inc.).  
+Also entered Initial Implementation: Meterbox (Meterbox Inc.), ElvoAI (ElvoAI), ConnectSecure Vulnerability and Compliance Manager (ConnectSecure), Benchmark Construction Estimator (Microsoft Azure Goverment Cloud), Simuhealth (Simuhealth Technologies Inc.), Anyreach App Software Application (Anyreach, Inc.), Connected Operations Cloud (Samsara), Emburse Enterprise (Emburse, Inc.).  
+Also now No Status Found: Trimble Unity Construct Government Edition (e-Builder, A Trimble Company), Rectitude 369 Government Cloud (Formerly GDT) (Rectitude 369), Trello Enterprise Cloud (Trello).  
+Other status changes: Vantage for Government (Agency Authorization In Process → FedRAMP In Process).  
+
+*FedRAMP’s public data can trail a vendor’s announcement by a few days; anything that lands after this issue will be in the next one.*
+
+**Want everything?**  
+FedCatalog tracks the full changelog, including Initial Implementation records, status changes and newly authorized offerings. [See everything that changed →](https://fedcatalog.com/new/)
 
 ---
-Browse everything at [https://fedcatalog.com](https://fedcatalog.com) · [New and changed](https://fedcatalog.com/new/) · [How the data works](https://fedcatalog.com/methodology/)
+**FedCatalog**  
+Federal Software in One Place  
+[Search FedCatalog](https://fedcatalog.com/) · [New & changed](https://fedcatalog.com/new/) · [How the data works](https://fedcatalog.com/methodology/)
 
-FedCatalog is built by Mark Flournoy from public government data. No pay-to-rank. Reply to this email with corrections.
+Questions or corrections? Just reply to this email.
+
+— Mark
