@@ -6,7 +6,7 @@
       the New page and every category page. Leave the URL empty to hide it. */
 var FEDCATALOG_SIGNUP = {
   formUrl: "https://fedcatalog.kit.com/e0bfccee98",
-  heading: "What changed in federal software this week",
-  blurb: "New FedRAMP authorizations, Ready and In-Process entries, delistings, DoD Impact Level changes and OneGov deals. One email on Tuesday, source-linked. Unsubscribe anytime.",
-  button: "Subscribe"
+  heading: "Keep up with FedRAMP authorizations.",
+  blurb: "New authorizations, status changes, DoD Impact Level moves, OneGov deals and buying-path updates. Short, source-linked, every Tuesday.",
+  button: "Get the Brief"
 };
