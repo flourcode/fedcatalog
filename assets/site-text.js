@@ -4,5 +4,5 @@
    visitors without JavaScript see the last built version until the next rebuild.) */
 var FEDCATALOG_TEXT = {
   heroTitle: "Federal Software in One Place",                                  // home page headline
-  heroSub: "FedRAMP, DoD, OneGov, GSA, SEWP and Marketplaces. Connected."      // the one line under it
+  heroSub: "FedRAMP, DoD, OneGov, GSA, SEWP and marketplaces. Connected."      // the one line under it
 };
