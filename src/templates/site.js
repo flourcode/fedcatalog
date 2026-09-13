@@ -134,6 +134,21 @@
   const BASE = (document.querySelector('meta[name="fc-base"]') || {}).content || '/';
   async function loadIndex() { if (!INDEX) { const r = await fetch(BASE + 'assets/search-index.json'); INDEX = await r.json(); } return INDEX; }
   function vendorKey(name) { return String(name || '').replace(/\s*\(.*?\)\s*/g, ' ').replace(/[.,]+$/, '').replace(/,?\s*\b(inc|llc|corp|corporation|incorporated|company|co|ltd|lp|plc|pbc)\b\.?$/i, '').trim(); }
+  const AGENCY_ALIASES = { va: 'Department of Veterans Affairs', dhs: 'Department of Homeland Security', dod: 'Department of Defense', disa: 'Defense Information Systems Agency', hhs: 'Department of Health and Human Services', doe: 'Department of Energy', usda: 'Department of Agriculture', doj: 'Department of Justice', dol: 'Department of Labor', dot: 'Department of Transportation', doi: 'Department of the Interior', ed: 'Department of Education', hud: 'Department of Housing and Urban Development', gsa: 'General Services Administration', nasa: 'National Aeronautics and Space Administration', epa: 'Environmental Protection Agency', ssa: 'Social Security Administration', cisa: 'Cybersecurity and Infrastructure Security Agency', cbp: 'Customs and Border Protection', fema: 'Federal Emergency Management Agency', irs: 'Internal Revenue Service', navy: 'Department of the Navy', army: 'Department of the Army', usaf: 'United States Air Force', 'air force': 'United States Air Force', marines: 'United States Marine Corps', usmc: 'United States Marine Corps', treasury: 'Department of the Treasury', state: 'Department of State', commerce: 'Department of Commerce', nih: 'National Institutes of Health', cdc: 'Centers for Disease Control and Prevention', fda: 'Food and Drug Administration', cms: 'Centers for Medicare & Medicaid Services', nrc: 'Nuclear Regulatory Commission', usps: 'United States Postal Service' };
+  function findAgencies(q) {
+    const words = q.toLowerCase().replace(/[^a-z0-9 &]/g, ' ').split(/\s+/).filter(Boolean);
+    const alias = AGENCY_ALIASES[q.toLowerCase().trim()] || words.map(w => AGENCY_ALIASES[w]).find(Boolean);
+    const norm = s => String(s || '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+    const target = alias ? norm(alias) : null;
+    if (!alias && interpret(q).functions.length) return [];   // a capability search, not an agency lookup
+    const generic = new Set(['department', 'office', 'agency', 'administration', 'bureau', 'national', 'united', 'states', 'federal', 'commission', 'service', 'services', 'and', 'of', 'the']);
+    const hits = (INDEX.agencies || []).filter(a => {
+      const name = norm(a.n + ' ' + (a.p || ''));
+      if (target && norm(a.n) === target) return true;
+      return words.some(w => w.length >= 4 && !generic.has(w) && new RegExp('\\b' + w + '\\b').test(name));
+    });
+    return hits.sort((a, b) => ((target && norm(a.n) === target) ? -1 : 0) - ((target && norm(b.n) === target) ? -1 : 0) || b.c - a.c).slice(0, 5);
+  }
   function findVendor(text) { const key = vendorKey(text).toLowerCase(); if (!key) return null; const hits = INDEX.vendors.filter(v => v.n.toLowerCase() === key); if (hits.length) return hits[0]; const part = INDEX.vendors.filter(v => v.n.toLowerCase().includes(key) || key.includes(v.n.toLowerCase())); return part.sort((a, b) => a.n.length - b.n.length)[0] || null; }
   function search(q, extra) {
     const it = interpret(q), f = Object.assign({}, it.filters, extra), out = [];
@@ -177,6 +192,8 @@
     const read = []; if (it.functions.length) read.push(it.functions.join(', ')); if (it.filters.impact) read.push('impact ' + it.filters.impact); if (it.filters.status) read.push(it.filters.status.replace('-', ' ')); if (it.filters.family) read.push('runs on ' + FAMILY_LABEL[it.filters.family]); if (it.filters.dod) read.push('vendor with DoD ' + it.filters.dod + ' provisional authorization'); if (it.filters.onegov) read.push('OneGov vendor');
     if (read.length) title.append(el('small', { text: 'Read as ' + read.join(' · ') }));
     if (vs) { const a = findVendor(vs[1]), b = findVendor(vs[2]); if (a && b) out.append(el('p', { class: 'note', style: 'margin-bottom:12px' }, ['Compare: ', el('a', { href: BASE + a.u.replace(/^\//, ''), text: a.n }), ' and ', el('a', { href: BASE + b.u.replace(/^\//, ''), text: b.n }), ' — open each vendor page for offerings, impact levels, agency records and purchasing options side by side.'])); }
+    const agencies = findAgencies(q);
+    if (agencies.length) out.append(el('div', { class: 'agency-hits' }, [el('span', { class: 'h3', style: 'margin:0 0 6px;display:block', text: agencies.length === 1 ? 'Agency' : 'Agencies' }), ...agencies.map(a => el('a', { class: 'cat', href: BASE + a.u.replace(/^\//, '') }, [el('b', { text: a.n }), el('span', { text: (a.p ? 'Part of ' + a.p + ' · ' : '') + a.c + ' authorized offering' + (a.c === 1 ? '' : 's') }), el('span', { class: 'chev', 'aria-hidden': 'true', text: '›' })]))]));
     const vendor = !/\s(on|for|with)\s/.test(q) ? findVendor(q) : null;
     if (vendor) out.append(el('p', { class: 'note', style: 'margin-bottom:12px' }, [vendor.n.toLowerCase() === q.trim().toLowerCase() ? 'Vendor page: ' : 'Did you mean the vendor ', el('a', { href: BASE + vendor.u.replace(/^\//, ''), text: vendor.n }), vendor.n.toLowerCase() === q.trim().toLowerCase() ? ' →' : '?']));
     if (vendor && it.filters.dod) {

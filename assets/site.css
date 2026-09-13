@@ -302,6 +302,7 @@ a { color: inherit; }
 .signup small { display: block; margin-top: 8px; font-size: 12px; color: var(--secondary); }
 .caution { grid-column: 1 / -1; margin-top: 4px; padding: 12px 14px; border: 1px solid #E8C9A0; background: #FFF7EA; border-radius: 12px; font-size: 14px; line-height: 1.5; color: var(--text); }
 .caution a { color: var(--orange-hover); }
+.agency-hits { margin: 0 0 18px; } .agency-hits .cat { border-top: 1px solid var(--separator); }
 .prov { margin-top: 10px; font-size: 13px; color: var(--secondary); line-height: 1.5; } .prov a { color: var(--orange-hover); }
 .builtby { border-top: 1px solid var(--separator); padding-top: 22px; } .builtby h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; } .builtby p { margin-top: 8px; font-size: 16px; line-height: 1.55; max-width: 66ch; color: var(--secondary); } .builtby a { color: var(--orange-hover); font-weight: 600; text-decoration: none; }
 .hero .try a { color: var(--text); font-weight: 600; text-decoration: none; } .hero .try a:hover { color: var(--orange-hover); }

@@ -758,6 +758,7 @@ def build_assets(db):
 .signup small { display: block; margin-top: 8px; font-size: 12px; color: var(--secondary); }
 .caution { grid-column: 1 / -1; margin-top: 4px; padding: 12px 14px; border: 1px solid #E8C9A0; background: #FFF7EA; border-radius: 12px; font-size: 14px; line-height: 1.5; color: var(--text); }
 .caution a { color: var(--orange-hover); }
+.agency-hits { margin: 0 0 18px; } .agency-hits .cat { border-top: 1px solid var(--separator); }
 .prov { margin-top: 10px; font-size: 13px; color: var(--secondary); line-height: 1.5; } .prov a { color: var(--orange-hover); }
 .builtby { border-top: 1px solid var(--separator); padding-top: 22px; } .builtby h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; } .builtby p { margin-top: 8px; font-size: 16px; line-height: 1.55; max-width: 66ch; color: var(--secondary); } .builtby a { color: var(--orange-hover); font-weight: 600; text-decoration: none; }
 .hero .try a { color: var(--text); font-weight: 600; text-decoration: none; } .hero .try a:hover { color: var(--orange-hover); }
@@ -772,7 +773,8 @@ def build_assets(db):
     # search index (compact)
     idx = [dict(id=p['id'], u=url_product(p), n=p['name'], v=p['vendor_key'], vs=p['vendor_slug'], f=p['functions'], s=p['status_code'], sl=p['status_label'], i=p['impact'], fam=p['families'], r=p['runs'], rn=p['runs_named'], a=len(p['agencies']), d=trunc(p['desc'], 140), dod=p.get('_dod', []), og=1 if p.get('_onegov') else 0) for p in db['products']]
     vend = [dict(n=v['name'], u=url_vendor(v), c=len(v['products']), dod=[dict(il=r['il'], st=r['status'], cso=r['cso']) for r in dod_rows_for(db, v['slug'])], og=1 if onegov_for(db, v['slug']) else 0) for v in db['vendors'].values()]
-    write('assets/search-index.json', json.dumps({'products': idx, 'vendors': vend, 'functions': [f['name'] for f in db['functions']], 'catUrls': {f['name']: url_category(f) for f in db['functions']}}, ensure_ascii=False, separators=(',', ':')))
+    ags = [dict(n=a['name'], p=a['parent'] if a['sub'] else '', u=url_agency(a), c=len(a['products'])) for a in db['agencies']]
+    write('assets/search-index.json', json.dumps({'products': idx, 'vendors': vend, 'agencies': ags, 'functions': [f['name'] for f in db['functions']], 'catUrls': {f['name']: url_category(f) for f in db['functions']}}, ensure_ascii=False, separators=(',', ':')))
     # favicon + touch icon + OG image
     write('assets/favicon.svg', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1D1D1F"/><text x="32" y="41" text-anchor="middle" font-family="-apple-system,Inter,Segoe UI,sans-serif" font-size="28" font-weight="700" fill="#FFFFFF">FC</text><rect x="14" y="48" width="36" height="4" rx="2" fill="#F25F3A"/></svg>')
     try:
