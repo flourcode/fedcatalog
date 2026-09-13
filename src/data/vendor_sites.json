@@ -1,0 +1,9 @@
+{
+  "note": "Curated vendor-level public-sector pages, keyed by vendor slug. Used for the vendor page's 'Visit government page' button instead of a URL inherited from one offering. Add entries as you confirm them.",
+  "sites": {
+    "amazon": "https://aws.amazon.com/federal/",
+    "google": "https://cloud.google.com/public-sector",
+    "oracle": "https://www.oracle.com/government/",
+    "salesforce": "https://www.salesforce.com/government/"
+  }
+}

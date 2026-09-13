@@ -1,0 +1,596 @@
+{
+ "note": "Exact marketplace listings and seller pages, found by opening the marketplace and confirming the publisher. 'fedramp_ids' ties a listing to specific FedRAMP offerings when the listing clearly serves that boundary (e.g., a GovCloud listing); leave it empty for vendor-level pages and commercial listings. Markets: aws, azure, google, oracle, carahsoft. Kinds: listing, seller, note (informational row for vendors where marketplaces don't apply).",
+ "listings": [
+  {
+   "vendor_slug": "databricks",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Databricks Data Intelligence Platform on AWS GovCloud - Community",
+   "publisher": "Databricks",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-in6gcqeezsths",
+   "note": "AWS GovCloud (US) listing; pay-as-you-go, private offers via sales@databricks.com",
+   "fedramp_ids": [
+    "FR2324740262"
+   ],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "snowflake",
+   "market": "aws",
+   "kind": "seller",
+   "title": "Snowflake seller profile on AWS Marketplace",
+   "publisher": "Snowflake",
+   "url": "https://aws.amazon.com/marketplace/seller-profile?id=18d60ae8-2c99-4881-a31a-e74770d70347",
+   "note": "All listings published by Snowflake",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "snowflake",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Snowflake AI Data Cloud",
+   "publisher": "Snowflake",
+   "url": "https://aws.amazon.com/marketplace/pp/B08L732FMG",
+   "note": "SaaS listing, commercial AWS regions",
+   "fedramp_ids": [
+    "FR1809360201"
+   ],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "snowflake",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Snowflake Data Cloud [Private Offer Only]",
+   "publisher": "Snowflake",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-djzeirw2rjfdq",
+   "note": "Private offers only",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "snowflake",
+   "market": "azure",
+   "kind": "listing",
+   "title": "Snowflake Data Cloud",
+   "publisher": "Snowflake",
+   "url": "https://marketplace.microsoft.com/en-us/product/saas/snowflake.data_cloud",
+   "note": "Commercial Azure; Snowflake documents that Azure Government is not served through Marketplace",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "servicenow",
+   "market": "aws",
+   "kind": "seller",
+   "title": "ServiceNow seller profile on AWS Marketplace",
+   "publisher": "ServiceNow",
+   "url": "https://aws.amazon.com/marketplace/seller-profile?id=seller-cifwrou5clbzw",
+   "note": "All listings published by ServiceNow; products sold through private offers",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "servicenow",
+   "market": "aws",
+   "kind": "listing",
+   "title": "ServiceNow (Now Platform) — Private Offers",
+   "publisher": "ServiceNow",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-ruxchcof6gjpg",
+   "note": "ITSM, ITOM, HRSD, CSM and other products via private offer; commercial listing, GCC boundary not named",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "servicenow",
+   "market": "azure",
+   "kind": "listing",
+   "title": "ServiceNow on Azure",
+   "publisher": "ServiceNow",
+   "url": "https://marketplace.microsoft.com/en-us/product/saas/servicenow1594831756316.servicenow_on_azure",
+   "note": "Commercial Azure listing",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "box",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Box - Intelligent Content Management",
+   "publisher": "Box Inc",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-kpk6ewj3gxpoo",
+   "note": "Commercial listing; the FedRAMP High boundary runs on AWS GovCloud",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "salesforce",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Salesforce [Private Offer Only]",
+   "publisher": "Carahsoft Technology Corp.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-k6r5tax6j5axi",
+   "note": "Carahsoft reseller listing; the listing names FedRAMP High GovCloud (Government Cloud Plus); private offer only",
+   "fedramp_ids": [
+    "FR2003061248"
+   ],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "salesforce",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Agentforce",
+   "publisher": "Salesforce, Inc.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-rl2gibzr42vb4",
+   "note": "Salesforce direct listing; commercial",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "zoom-video-communications",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Zoom for Government (GovCloud, FedRAMP) [Private Offer Only]",
+   "publisher": "per listing",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-qwuelgem7mrhi",
+   "note": "Government edition; private offer only",
+   "fedramp_ids": [
+    "FR1825941347A"
+   ],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "zoom-video-communications",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Zoom Government (F,S,L,E) (Higher Ed, K-12) [Private Offer Only]",
+   "publisher": "per listing",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-5e2uvkeu3mqge",
+   "note": "State, local, education and federal; private offer only",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "cisco-systems",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Webex Suite",
+   "publisher": "Cisco Systems, Inc.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-74pwpi6urzop4",
+   "note": "Commercial; Webex for Government is a separate FedRAMP boundary",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "cisco-systems",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Webex Meetings",
+   "publisher": "Cisco Systems, Inc.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-x76siakdtzza2",
+   "note": "Commercial",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "cisco-systems",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Webex Calling",
+   "publisher": "Cisco Systems, Inc.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-zrmrhwo7gxmiw",
+   "note": "Commercial",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "cisco-systems",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Webex Contact Center",
+   "publisher": "Cisco Systems, Inc.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-kzenjxcte6bjw",
+   "note": "Commercial",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "cisco-systems",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Cisco Duo - Premier Edition",
+   "publisher": "Cisco Systems, Inc.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-4zpn2qxfjx2i4",
+   "note": "Commercial; Duo Federal editions are sold separately",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "cisco-systems",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Cisco Duo - Essentials Edition",
+   "publisher": "Cisco Systems, Inc.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-jvqrwrqgmy3ig",
+   "note": "Commercial",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "granicus",
+   "market": "aws",
+   "kind": "seller",
+   "title": "Granicus seller profile on AWS Marketplace",
+   "publisher": "Granicus",
+   "url": "https://aws.amazon.com/marketplace/seller-profile?id=seller-usb2j7uwe4lyo",
+   "note": "All listings published by Granicus",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "granicus",
+   "market": "aws",
+   "kind": "listing",
+   "title": "govDelivery Digital Engagement Platform",
+   "publisher": "Granicus",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-m3djvxvnzuaui",
+   "note": "Priced on govDelivery Communications Cloud users; private offer via sales@granicus.com",
+   "fedramp_ids": [
+    "F1311252652"
+   ],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "granicus",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Granicus [Private Offer Only]",
+   "publisher": "Carahsoft Technology Corp.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-huzscl7pz7if6",
+   "note": "Carahsoft reseller listing for govDelivery with Carahsoft contract vehicles",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "ibm",
+   "market": "aws",
+   "kind": "seller",
+   "title": "IBM Software seller profile on AWS Marketplace",
+   "publisher": "IBM",
+   "url": "https://aws.amazon.com/marketplace/seller-profile?id=345ea612-6e57-4b07-b5a9-f5747652c4ee",
+   "note": "IBM publishes under several seller profiles (Software, Security, Data and AI, Automation, Storage, Consulting); government offerings are not listed as separate products",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "ains",
+   "market": "carahsoft",
+   "kind": "listing",
+   "title": "OPEXUS (formerly AINS) at Carahsoft",
+   "publisher": "Carahsoft",
+   "url": "https://www.carahsoft.com/opexus",
+   "note": "Carahsoft is a named reseller; no AWS, Azure or Google listing found",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "microsoft",
+   "market": "azure",
+   "kind": "note",
+   "title": "Microsoft 365 GCC and Azure Government are Microsoft’s own services",
+   "publisher": "Microsoft",
+   "url": "https://www.microsoft.com/en-us/microsoft-365/government",
+   "note": "Licensed through Microsoft enterprise agreements, CSP partners and GSA MAS resellers (Carahsoft and others), not through a marketplace listing. Azure Marketplace is Microsoft’s marketplace for third-party software.",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "amazon",
+   "market": "aws",
+   "kind": "note",
+   "title": "AWS services are bought from AWS or through resellers",
+   "publisher": "Amazon Web Services",
+   "url": "https://aws.amazon.com/federal/",
+   "note": "AWS US East/West and GovCloud are AWS’s own services; AWS Marketplace sells third-party software. Federal agencies buy AWS directly or via resellers and vehicles such as GSA MAS and SEWP.",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "okta",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Okta Identity Platform [Private Offer Only]",
+   "publisher": "Carahsoft Technology Corp.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-m6pcz3p3unut4",
+   "note": "Carahsoft reseller listing for U.S. public sector; private offer only",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "okta",
+   "market": "carahsoft",
+   "kind": "listing",
+   "title": "Okta at Carahsoft (AWS Marketplace program)",
+   "publisher": "Carahsoft",
+   "url": "https://www.carahsoft.com/okta/aws-marketplace",
+   "note": "Carahsoft is Okta’s public-sector distributor",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "zscaler",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Zscaler U.S. Government Solutions — Zscaler for Users, FedRAMP Authorized",
+   "publisher": "Zscaler U.S. Government Solutions",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-a3jwm4l4lzgaw",
+   "note": "Government listing covering ZIA Gov, ZPA Gov and ZDX Gov; per-user editions",
+   "fedramp_ids": [
+    "FR1719759604",
+    "FR2227062482",
+    "FR1720454205",
+    "FR2219763604"
+   ],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "zscaler",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Zscaler Zero Trust Platform",
+   "publisher": "Zscaler, Inc.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-fvp3rhgc5nvi6",
+   "note": "Commercial",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "zscaler",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Zscaler Software [Private Offer Only]",
+   "publisher": "Carahsoft Technology Corp.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-4ch7edlg35chw",
+   "note": "Carahsoft reseller listing for ZIA and ZPA",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "crowdstrike",
+   "market": "aws",
+   "kind": "listing",
+   "title": "CrowdStrike, Inc. [Private Offer Only]",
+   "publisher": "Carahsoft Technology Corp.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-43n4i7ogkrwem",
+   "note": "Carahsoft reseller listing; the former “CrowdStrike Falcon on GovCloud” listing is marked deprecated on AWS",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "palo-alto-networks",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Palo Alto Networks [Private Offer Only]",
+   "publisher": "Carahsoft Technology Corp.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-ilcxwgunnx5oo",
+   "note": "Carahsoft reseller listing; states commercial and government SKUs including FedRAMP offerings",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "splunk",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Splunk Cloud",
+   "publisher": "Splunk Inc.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-jlaunompo5wbw",
+   "note": "Commercial Splunk Cloud, private offer pricing",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "splunk",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Splunk Cloud [Private Offer Only]",
+   "publisher": "Carahsoft Technology Corp.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-jsac3t2ybd6rc",
+   "note": "Carahsoft reseller listing",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "appian",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Appian Corporation [Private Offer Only]",
+   "publisher": "Carahsoft Technology Corp.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-mfsdge5k2m3zc",
+   "note": "Carahsoft reseller listing; private offer only",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "smartsheet",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Smartsheet",
+   "publisher": "Smartsheet",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-lmxunqckv74qy",
+   "note": "Commercial plans; Smartsheet Gov is also listed on AWS Marketplace for AWS GovCloud (US) — search the marketplace for it",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "google",
+   "market": "google",
+   "kind": "note",
+   "title": "Google Workspace and Google Cloud are Google’s own services",
+   "publisher": "Google Public Sector",
+   "url": "https://cloud.google.com/public-sector",
+   "note": "Bought from Google Public Sector or through resellers such as Carahsoft; Google Cloud Marketplace is Google’s marketplace for third-party software. Gemini for Government is sold through the GSA OneGov agreement.",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "oracle",
+   "market": "oracle",
+   "kind": "note",
+   "title": "Oracle Cloud Infrastructure and Oracle SaaS are Oracle’s own services",
+   "publisher": "Oracle",
+   "url": "https://www.oracle.com/government/",
+   "note": "Bought from Oracle or through resellers and GSA MAS; the GSA OneGov agreement covers database and OCI. Oracle Cloud Marketplace sells third-party software for OCI.",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "adobe",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Adobe Experience Manager - Managed Services (FedRAMP)",
+   "publisher": "Carahsoft Technology Corp.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-f2v3qboxpayn2",
+   "note": "Carahsoft manages Adobe’s AWS Marketplace distribution; listing is the FedRAMP AEM Managed Services offering",
+   "fedramp_ids": [
+    "F1509037239"
+   ],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "adobe",
+   "market": "carahsoft",
+   "kind": "listing",
+   "title": "Adobe at Carahsoft",
+   "publisher": "Carahsoft",
+   "url": "https://www.carahsoft.com/vendors/adobe",
+   "note": "Carahsoft is Adobe’s public-sector distributor; contract vehicles listed on the page",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "qualtrics",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Qualtrics XM for Government (GovCloud, FedRAMP) [Private Offer Only]",
+   "publisher": "Carahsoft Technology Corp.",
+   "url": "https://aws.amazon.com/marketplace/pp/B09RMN8JH2",
+   "note": "Government edition on GovCloud; private offer only",
+   "fedramp_ids": [
+    "F1606097904A"
+   ],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "qualtrics",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Qualtrics",
+   "publisher": "Qualtrics LLC",
+   "url": "https://aws.amazon.com/marketplace/pp/B09RBCD4F3",
+   "note": "Commercial XM platform",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "tenable",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Tenable One [Private Offer Only]",
+   "publisher": "Tenable, Inc.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-vx7p6z2bzxnoe",
+   "note": "Private offer with Tenable partner contract vehicles; FedRAMP editions are separate deployments",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "tenable",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Tenable Cloud Security [Private Offer Only]",
+   "publisher": "Tenable, Inc.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-vpqhy4y3w77zg",
+   "note": "Commercial; Tenable Cloud Security is also the product under the GSA OneGov agreement",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "elastic",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Elastic Cloud (Elasticsearch Service)",
+   "publisher": "Elastic",
+   "url": "https://aws.amazon.com/marketplace/pp/B01N6YCISK",
+   "note": "Commercial pay-as-you-go; FedRAMP Moderate and High deployments run on AWS GovCloud (US) and are set up through Elastic’s FedRAMP page",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "elastic",
+   "market": "carahsoft",
+   "kind": "listing",
+   "title": "Elastic at Carahsoft",
+   "publisher": "Carahsoft",
+   "url": "https://www.carahsoft.com/elastic",
+   "note": "Carahsoft reseller page for Elastic’s FedRAMP offerings",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "akamai",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Akamai Segmentation [Private Offer Only]",
+   "publisher": "Carahsoft Technology Corp.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-gvbxcyqxarh2s",
+   "note": "Carahsoft reseller listing for Akamai Segmentation (Guardicore); Akamai’s FedRAMP content delivery and Akamai Cloud offerings are not this listing",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "everbridge",
+   "market": "carahsoft",
+   "kind": "listing",
+   "title": "Everbridge at Carahsoft",
+   "publisher": "Carahsoft",
+   "url": "https://www.carahsoft.com/everbridge",
+   "note": "Carahsoft reseller page; no AWS, Azure or Google listing found",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "pegasystems",
+   "market": "aws",
+   "kind": "seller",
+   "title": "Pegasystems seller profile on AWS Marketplace",
+   "publisher": "Pegasystems",
+   "url": "https://aws.amazon.com/marketplace/seller-profile?id=afc4b095-a1b3-4f67-a47b-91ac6a136742",
+   "note": "All listings published by Pegasystems; Pega Cloud for Government is sold through private offers and resellers",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "cohesity",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Cohesity Cloud Services",
+   "publisher": "Cohesity, Inc.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-yzbhcgyt76zis",
+   "note": "Commercial backup-as-a-service listing; FedRAMP editions (FedShield/FedCloud) are separate",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  },
+  {
+   "vendor_slug": "cohesity",
+   "market": "aws",
+   "kind": "listing",
+   "title": "Cohesity [Private Offer Only]",
+   "publisher": "Carahsoft Technology Corp.",
+   "url": "https://aws.amazon.com/marketplace/pp/prodview-6bqghklljpzdc",
+   "note": "Carahsoft reseller listing for Cohesity DataProtect as a Service",
+   "fedramp_ids": [],
+   "checked": "2026-09-12"
+  }
+ ]
+}

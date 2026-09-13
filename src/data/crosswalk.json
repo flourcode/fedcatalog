@@ -1,0 +1,43 @@
+{
+ "note": "Maps provider names used by DoD Cyber Exchange and GSA OneGov to FedRAMP vendor names in the catalog. Keys are lower-case source names; values are FedRAMP csp names (any offering by that vendor).",
+ "dod": {
+  "amazon web services (aws)": "Amazon",
+  "axon federal": "Axon",
+  "armis": "Armis Federal LLC",
+  "bmc software": "BMC Helix, Inc.",
+  "bmc software, inc.": "BMC Helix, Inc.",
+  "coras cloud incorporated": "CORAS",
+  "cornerstone": "Cornerstone OnDemand",
+  "exiger": "Covergent Solutions Inc dba Exiger Government Solutions (EGS)",
+  "google public sector (gps)": "Google",
+  "onestream": "OneStream Software",
+  "oracle america inc.": "Oracle",
+  "oracle america, inc": "Oracle",
+  "palantir usg": "Palantir Technologies",
+  "qlik": "Qlik Technologies Inc.",
+  "sap ns2": "SAP National Security Services Inc. (SAP NS2)",
+  "slack": "Slack Technologies",
+  "ttec": "TeleTech (TTEC) Services Corporation",
+  "zoom": "Zoom Video Communications, LLC"
+ },
+ "onegov": {
+  "adobe": "Adobe",
+  "amazon": "Amazon",
+  "box": "Box Inc.",
+  "google": "Google",
+  "microsoft": "Microsoft",
+  "oracle": "Oracle",
+  "servicenow": "ServiceNow",
+  "snowflake": "Snowflake Inc.",
+  "palo alto networks": "Palo Alto Networks, Inc.",
+  "elastic": "Elastic",
+  "docusign": "DocuSign",
+  "tenable": "Tenable",
+  "sap": "SAP National Security Services Inc. (SAP NS2)",
+  "coras": "CORAS",
+  "cohesity": "Cohesity",
+  "perplexity": "Perplexity AI",
+  "id.me": "ID.me",
+  "everfox": "Everfox"
+ }
+}

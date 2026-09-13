@@ -1,0 +1,7 @@
+{
+  "note": "Overrides for the 'Visit government offering' link on a product page, keyed by FedRAMP ID (shown under the product name on its page). The default comes from the FedRAMP record; add a line here when that URL is wrong or unhelpful. One line per product.",
+  "sites": {
+    "AGENCYAMAZONEW": "https://aws.amazon.com/government-education/government/",
+    "F1603047866": "https://aws.amazon.com/govcloud-us/"
+  }
+}

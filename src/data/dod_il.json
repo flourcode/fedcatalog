@@ -1,0 +1,1114 @@
+{
+ "source": "https://public.cyber.mil/dccs/cso/",
+ "fetched": "2026-09-12",
+ "rows": [
+  {
+   "provider": "Amazon Web Services (AWS)",
+   "cso": "Amazon Web Services GovCloud IL4",
+   "il": "IL4",
+   "baseline": "high",
+   "models": [
+    "Infrastructure as a Service (IaaS)",
+    "Platform as a Service (PaaS)",
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-07-17",
+   "expires_text": "7/17/2025"
+  },
+  {
+   "provider": "Amazon Web Services (AWS)",
+   "cso": "Amazon Web Services GovCloud IL5",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Infrastructure as a Service (IaaS)",
+    "Platform as a Service (PaaS)",
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-07-17",
+   "expires_text": "7/17/2025"
+  },
+  {
+   "provider": "Amazon Web Services (AWS)",
+   "cso": "Amazon Web Services Secret Region IL6",
+   "il": "IL6",
+   "baseline": "moderate",
+   "models": [
+    "Infrastructure as a Service (IaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-08-30",
+   "expires_text": "8/30/2025"
+  },
+  {
+   "provider": "Appian",
+   "cso": "Appian Government Cloud",
+   "il": "IL5",
+   "baseline": "moderate",
+   "models": [
+    "Platform as a Service (PaaS)",
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-02-26",
+   "expires_text": "2/26/2025"
+  },
+  {
+   "provider": "Govini",
+   "cso": "Ark.ai IL5",
+   "il": "IL5",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2026-07-08",
+   "expires_text": "7/8/2026"
+  },
+  {
+   "provider": "Conquest Cyber",
+   "cso": "ARMED ATK (Not Authorized for Operational Use)",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2024-10-23",
+   "expires_text": "10/23/2024"
+  },
+  {
+   "provider": "Armis",
+   "cso": "Armis Government Cloud IL4 (AGC) SaaS",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2026-02-21",
+   "expires_text": "2/21/2026"
+  },
+  {
+   "provider": "Ask Sage, Inc",
+   "cso": "Ask Sage (Not Authorized for Operational Use)",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2025-01-21",
+   "expires_text": "1/21/2025"
+  },
+  {
+   "provider": "AXON Federal",
+   "cso": "AXON Digital Evidence Management System",
+   "il": "IL4",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization to Connect (PA-C)",
+   "expires": "2025-02-28",
+   "expires_text": "2/28/2025"
+  },
+  {
+   "provider": "Blackboard",
+   "cso": "Blackboard Learn Ultra IL4 (BLU IL4) (Not Authorized for Operational Use)",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2024-12-08",
+   "expires_text": "12/8/2024"
+  },
+  {
+   "provider": "Bluescape",
+   "cso": "Bluescape",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-09-30",
+   "expires_text": "9/30/2024"
+  },
+  {
+   "provider": "BMC Software, Inc.",
+   "cso": "BMC Helix ITSM (IL5)",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-01-27",
+   "expires_text": "1/27/2025"
+  },
+  {
+   "provider": "BMC Software",
+   "cso": "BMC-HELIX-CLOUD-BASED-IT SERVICE MANAGEMENT (IL4)",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-08-15",
+   "expires_text": "8/15/2025"
+  },
+  {
+   "provider": "BOX",
+   "cso": "Box Enterprise Content Collaboration Platform IL4",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-12-15",
+   "expires_text": "12/15/2024"
+  },
+  {
+   "provider": "Casepoint",
+   "cso": "Casepoint IL5",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-10-31",
+   "expires_text": "10/31/2024"
+  },
+  {
+   "provider": "Casepoint",
+   "cso": "Casepoint IL6",
+   "il": "IL6",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-12-08",
+   "expires_text": "12/8/2024"
+  },
+  {
+   "provider": "Chronus",
+   "cso": "Chronus",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-03-21",
+   "expires_text": "3/21/2025"
+  },
+  {
+   "provider": "Standard Technology, Inc",
+   "cso": "Contract Management Planning and Surveillance System (COMPASS)",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization to Connect (PA-C)",
+   "expires": "2025-08-08",
+   "expires_text": "8/8/2025"
+  },
+  {
+   "provider": "CORAS CLOUD INCORPORATED",
+   "cso": "CORAS Federal (Not authorized for operational use)",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2024-12-30",
+   "expires_text": "12/30/2024"
+  },
+  {
+   "provider": "Cornerstone",
+   "cso": "Cornerstone On Demand (Not Authorized for Operational Use)",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2025-03-11",
+   "expires_text": "3/11/2025"
+  },
+  {
+   "provider": "CoSo Cloud",
+   "cso": "CoSo Cloud IL-4 Managed Service Platform (4MSP)",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-11-02",
+   "expires_text": "11/2/2024"
+  },
+  {
+   "provider": "CrowdStrike Inc.",
+   "cso": "CrowdStrike Falcon Platform IL5",
+   "il": "IL5",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-08-01",
+   "expires_text": "8/1/2025"
+  },
+  {
+   "provider": "Databricks",
+   "cso": "Databricks IL5 (Not Authorized for Operational Use)",
+   "il": "IL5",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2024-11-11",
+   "expires_text": "11/11/2024"
+  },
+  {
+   "provider": "Deloitte",
+   "cso": "Deloitte Evidence Management System",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization to Connect (PA-C)",
+   "expires": "2024-11-01",
+   "expires_text": "11/1/2024"
+  },
+  {
+   "provider": "DocuSign",
+   "cso": "DocuSign",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-03-26",
+   "expires_text": "3/26/2025"
+  },
+  {
+   "provider": "Exiger",
+   "cso": "Exiger Federal Cloud (Not Authorized for Operational Use)",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2024-12-12",
+   "expires_text": "12/12/2024"
+  },
+  {
+   "provider": "FedRAMP Marketplace CSP-CSO",
+   "cso": "FedRAMP Authorization MBL IL2 Reciprocity",
+   "il": "IL2",
+   "baseline": "moderate",
+   "models": [
+    "Infrastructure as a Service (IaaS)",
+    "Platform as a Service (PaaS)",
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": null,
+   "expires_text": "Ongoing"
+  },
+  {
+   "provider": "Diligent",
+   "cso": "Galvanize HighBond",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-09-16",
+   "expires_text": "9/16/2024"
+  },
+  {
+   "provider": "Google Public Sector (GPS)",
+   "cso": "Google Distributed Cloud Hosted (GDCH) IL6 (Not Authorized for Operational Use)",
+   "il": "IL6",
+   "baseline": "high",
+   "models": [
+    "Infrastructure as a Service (IaaS)",
+    "Platform as a Service (PaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2025-04-06",
+   "expires_text": "4/6/2025"
+  },
+  {
+   "provider": "Google",
+   "cso": "Google Services IL4",
+   "il": "IL4",
+   "baseline": "high",
+   "models": [
+    "Infrastructure as a Service (IaaS)",
+    "Platform as a Service (PaaS)",
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-11-30",
+   "expires_text": "11/30/2024"
+  },
+  {
+   "provider": "Google",
+   "cso": "Google Services IL5",
+   "il": "IL5",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-12-08",
+   "expires_text": "12/8/2024"
+  },
+  {
+   "provider": "Google",
+   "cso": "Google Workspace IL4",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-09-30",
+   "expires_text": "9/30/2024"
+  },
+  {
+   "provider": "SLACK",
+   "cso": "GovSLACK (Not Authorized for Operational Use)",
+   "il": "IL4",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2025-02-28",
+   "expires_text": "2/28/2025"
+  },
+  {
+   "provider": "FedHIVE",
+   "cso": "HRTEC",
+   "il": "IL4",
+   "baseline": "high",
+   "models": [
+    "Infrastructure as a Service (IaaS)",
+    "Platform as a Service (PaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-02-01",
+   "expires_text": "2/1/2025"
+  },
+  {
+   "provider": "Hypori",
+   "cso": "Hypori IL5 SaaS",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-07-03",
+   "expires_text": "7/3/2025"
+  },
+  {
+   "provider": "UberEther",
+   "cso": "IAM Advantage",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-08-08",
+   "expires_text": "8/8/2025"
+  },
+  {
+   "provider": "IBM",
+   "cso": "IBM SmartCloud for Government IL5 (Not Authorized for Operational Use)",
+   "il": "IL5",
+   "baseline": "moderate",
+   "models": [
+    "Infrastructure as a Service (IaaS)"
+   ],
+   "status": "Suspended",
+   "expires": "2024-11-30",
+   "expires_text": "11/30/2024"
+  },
+  {
+   "provider": "Juvare, LLC",
+   "cso": "Juvare IL5 Cloud (Not authorized for operational use)",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2025-03-05",
+   "expires_text": "3/5/2025"
+  },
+  {
+   "provider": "Meridian Knowledge Solutions, LLC.",
+   "cso": "Meridian LMS SAAS (Not Authorized for Operational Use)",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2024-10-12",
+   "expires_text": "10/12/2024"
+  },
+  {
+   "provider": "Microsoft",
+   "cso": "Microsoft Azure DoD IL5",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Infrastructure as a Service (IaaS)",
+    "Platform as a Service (PaaS)",
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-11-21",
+   "expires_text": "11/21/2024"
+  },
+  {
+   "provider": "Microsoft",
+   "cso": "Microsoft Azure Gov IL4/IL5 Workload Isolation",
+   "il": "IL4",
+   "baseline": "high",
+   "models": [
+    "Infrastructure as a Service (IaaS)",
+    "Platform as a Service (PaaS)",
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-11-27",
+   "expires_text": "11/27/2024"
+  },
+  {
+   "provider": "Microsoft",
+   "cso": "Microsoft Azure IL6",
+   "il": "IL6",
+   "baseline": "high",
+   "models": [
+    "Infrastructure as a Service (IaaS)",
+    "Platform as a Service (PaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-05-09",
+   "expires_text": "5/9/2025"
+  },
+  {
+   "provider": "Microsoft",
+   "cso": "Microsoft Isolated Secret Region",
+   "il": "IL6",
+   "baseline": "moderate",
+   "models": [
+    "Infrastructure as a Service (IaaS)",
+    "Platform as a Service (PaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2026-04-01",
+   "expires_text": "4/1/2026"
+  },
+  {
+   "provider": "Microsoft",
+   "cso": "Microsoft O365 Secret",
+   "il": "IL6",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-05-25",
+   "expires_text": "5/25/2025"
+  },
+  {
+   "provider": "dMetrics",
+   "cso": "Minsky (Not Authorized for Operational Use)",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2025-02-27",
+   "expires_text": "2/27/2025"
+  },
+  {
+   "provider": "mLINQS, LLC",
+   "cso": "mLINQS Hosting Service",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-12-15",
+   "expires_text": "12/15/2024"
+  },
+  {
+   "provider": "Microsoft",
+   "cso": "MS-SWIFTECLIPSE (Not Authorized for Operational Use)",
+   "il": "IL6",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2024-06-12",
+   "expires_text": "6/12/2024"
+  },
+  {
+   "provider": "Microsoft",
+   "cso": "O365 DoD",
+   "il": "IL5",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-04-30",
+   "expires_text": "4/30/2025"
+  },
+  {
+   "provider": "Okta",
+   "cso": "Okta (IL4/IL5)",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-02-02",
+   "expires_text": "2/2/2025"
+  },
+  {
+   "provider": "OneStream",
+   "cso": "OneStream",
+   "il": "IL4",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization to Connect (PA-C)",
+   "expires": "2025-03-01",
+   "expires_text": "3/1/2025"
+  },
+  {
+   "provider": "Synergetics Inc.",
+   "cso": "OpenFLIS",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-06-01",
+   "expires_text": "6/1/2025"
+  },
+  {
+   "provider": "Oracle",
+   "cso": "Oracle - Aconex",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-11-01",
+   "expires_text": "11/1/2025"
+  },
+  {
+   "provider": "Oracle",
+   "cso": "Oracle Cloud Infrastructure Government Cloud (OCI-GovCloud) IL4 / IL5 (IaaS & PaaS)",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Infrastructure as a Service (IaaS)",
+    "Platform as a Service (PaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2026-03-21",
+   "expires_text": "3/21/2026"
+  },
+  {
+   "provider": "Oracle America, Inc",
+   "cso": "Oracle EPM Cloud",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-11-01",
+   "expires_text": "11/1/2024"
+  },
+  {
+   "provider": "Oracle",
+   "cso": "Oracle Fusion - Gen 2 (IL4) (Not Authorized for Operational Use)",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2024-09-30",
+   "expires_text": "9/30/2024"
+  },
+  {
+   "provider": "Oracle",
+   "cso": "Oracle Fusion IL4",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-11-01",
+   "expires_text": "11/1/2024"
+  },
+  {
+   "provider": "Oracle",
+   "cso": "Oracle Government Cloud - Common Controls (OGC-CC)",
+   "il": "IL4",
+   "baseline": "high",
+   "models": [
+    "Infrastructure as a Service (IaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-10-30",
+   "expires_text": "10/30/2024"
+  },
+  {
+   "provider": "Oracle America Inc.",
+   "cso": "Oracle National Security Regions (ONSR) IL6 Cloud",
+   "il": "IL6",
+   "baseline": "high",
+   "models": [
+    "Infrastructure as a Service (IaaS)",
+    "Platform as a Service (PaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-05-01",
+   "expires_text": "5/1/2025"
+  },
+  {
+   "provider": "Oracle",
+   "cso": "Oracle Service Cloud IL4 (SaaS)",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-05-30",
+   "expires_text": "5/30/2025"
+  },
+  {
+   "provider": "Palantir Technologies Inc.",
+   "cso": "Palantir Federal Cloud Service",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Platform as a Service (PaaS)",
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-03-01",
+   "expires_text": "3/1/2025"
+  },
+  {
+   "provider": "Palantir USG",
+   "cso": "Palantir Federal Cloud Services (PFCS) - IL6",
+   "il": "IL6",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-09-05",
+   "expires_text": "9/5/2025"
+  },
+  {
+   "provider": "Palo Alto Networks",
+   "cso": "Palo Alto Networks Government Cloud Services",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-05-30",
+   "expires_text": "5/30/2025"
+  },
+  {
+   "provider": "Parallel Works, Inc",
+   "cso": "Parallel Works High Security Platform (HSP) (Not Authorized for Operational Use)",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Platform as a Service (PaaS)",
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2025-01-21",
+   "expires_text": "1/21/2025"
+  },
+  {
+   "provider": "Pegasystems",
+   "cso": "Pegasystems",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Platform as a Service (PaaS)",
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-11-21",
+   "expires_text": "11/21/2025"
+  },
+  {
+   "provider": "Project Hosts",
+   "cso": "Project Hosts Federal Private Cloud",
+   "il": "IL5",
+   "baseline": "moderate",
+   "models": [
+    "Platform as a Service (PaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-03-01",
+   "expires_text": "3/1/2025"
+  },
+  {
+   "provider": "PTC",
+   "cso": "PTC Cloud Services IL5",
+   "il": "IL5",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-07-31",
+   "expires_text": "7/31/2025"
+  },
+  {
+   "provider": "Qlik",
+   "cso": "Qlik Cloud Government (Not Authorized for Operational Use)",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2024-10-30",
+   "expires_text": "10/30/2024"
+  },
+  {
+   "provider": "R&K Solutions, Inc",
+   "cso": "R&K Solutions Inc, GoRPM IL4",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-07-14",
+   "expires_text": "7/14/2025"
+  },
+  {
+   "provider": "Rackspace Government Solutions",
+   "cso": "Rackspace Government Cloud IL4",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Platform as a Service (PaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2027-04-11",
+   "expires_text": "4/11/2027"
+  },
+  {
+   "provider": "Rebellion Defense, Inc.",
+   "cso": "Rebellion Defense NOVA IL-5",
+   "il": "IL5",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-12-08",
+   "expires_text": "12/8/2025"
+  },
+  {
+   "provider": "Salesforce",
+   "cso": "Salesforce Government Cloud Plus IL4",
+   "il": "IL4",
+   "baseline": "high",
+   "models": [
+    "Platform as a Service (PaaS)",
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-11-30",
+   "expires_text": "11/30/2024"
+  },
+  {
+   "provider": "Salesforce",
+   "cso": "Salesforce Government Cloud Plus IL5",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Platform as a Service (PaaS)",
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2026-03-20",
+   "expires_text": "3/20/2026"
+  },
+  {
+   "provider": "SAP NS2",
+   "cso": "SAPN2S Secure Node Success Factors Suite DOD IL4",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-09-30",
+   "expires_text": "9/30/2024"
+  },
+  {
+   "provider": "Scale AI",
+   "cso": "ScaleGov",
+   "il": "IL4",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization to Connect (PA-C)",
+   "expires": "2024-12-15",
+   "expires_text": "12/15/2024"
+  },
+  {
+   "provider": "Powertrain, Inc.",
+   "cso": "Security Education and Training Environment (SETE) (Not Authorized for Operational Use)",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2024-12-18",
+   "expires_text": "12/18/2024"
+  },
+  {
+   "provider": "ServiceNow",
+   "cso": "ServiceNow Government Community Cloud",
+   "il": "IL4",
+   "baseline": "high",
+   "models": [
+    "Platform as a Service (PaaS)",
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-10-15",
+   "expires_text": "10/15/2024"
+  },
+  {
+   "provider": "ServiceNow",
+   "cso": "ServiceNow National Security Cloud",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Platform as a Service (PaaS)",
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2026-06-30",
+   "expires_text": "6/30/2026"
+  },
+  {
+   "provider": "Smartsheet",
+   "cso": "Smartsheet Gov",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-11-15",
+   "expires_text": "11/15/2024"
+  },
+  {
+   "provider": "Snowflake Inc.",
+   "cso": "Snowflake IL4",
+   "il": "IL4",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2026-04-01",
+   "expires_text": "4/1/2026"
+  },
+  {
+   "provider": "Spider Strategies, Inc.",
+   "cso": "Spider Impact for Government",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2026-09-01",
+   "expires_text": "9/1/2026"
+  },
+  {
+   "provider": "Splunk, Inc.",
+   "cso": "Splunk Cloud",
+   "il": "IL5",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-12-01",
+   "expires_text": "12/1/2024"
+  },
+  {
+   "provider": "Trellix",
+   "cso": "Trellix XDR Gov Cloud (Not Authorized for Operational Use)",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2025-01-21",
+   "expires_text": "1/21/2025"
+  },
+  {
+   "provider": "TTEC",
+   "cso": "TTEC Humanify Enterprise - G",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization to Connect (PA-C)",
+   "expires": "2026-05-28",
+   "expires_text": "5/28/2026"
+  },
+  {
+   "provider": "Uptake",
+   "cso": "Uptake Federal IL5 (Not authorized for operational use)",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2024-04-03",
+   "expires_text": "4/3/2024"
+  },
+  {
+   "provider": "US Department of Agriculture (USDA)",
+   "cso": "USDA Data Center Hosting Services IL4",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Infrastructure as a Service (IaaS)",
+    "Platform as a Service (PaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-09-30",
+   "expires_text": "9/30/2025"
+  },
+  {
+   "provider": "VMWARE",
+   "cso": "VMWare Cloud on AWS GovCloud IL5",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Infrastructure as a Service (IaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2024-10-30",
+   "expires_text": "10/30/2024"
+  },
+  {
+   "provider": "CoachMePlus",
+   "cso": "Warrior Performance Platform (WP2)",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization",
+   "expires": "2025-04-15",
+   "expires_text": "4/15/2025"
+  },
+  {
+   "provider": "Zoom",
+   "cso": "Zoom for Government",
+   "il": "IL4",
+   "baseline": "moderate",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization to Connect (PA-C)",
+   "expires": "2024-11-01",
+   "expires_text": "11/1/2024"
+  },
+  {
+   "provider": "zscaler",
+   "cso": "ZSCALER Internet Access (Not Authorized for Operational Use)",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)",
+    "Other"
+   ],
+   "status": "IATT - Not Authorized for Operational Use",
+   "expires": "2024-11-30",
+   "expires_text": "11/30/2024"
+  },
+  {
+   "provider": "Zscaler",
+   "cso": "Zscaler Private Access",
+   "il": "IL5",
+   "baseline": "high",
+   "models": [
+    "Software as a Service (SaaS)"
+   ],
+   "status": "Provisional Authorization to Connect (PA-C)",
+   "expires": "2025-09-15",
+   "expires_text": "9/15/2025"
+  }
+ ]
+}
