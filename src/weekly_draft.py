@@ -85,8 +85,12 @@ def main():
 
     authorized = [x for x in raw if status_words(x['to_status']) == 'FedRAMP Authorized' and status_words(x.get('from_status')) != 'FedRAMP Authorized']
     inproc = [x for x in raw if status_words(x['to_status']) in ('FedRAMP In Process', 'Initial Implementation', 'FedRAMP Ready') and status_words(x.get('from_status')) != status_words(x['to_status'])]
-    delisted = [x for x in raw if status_words(x['to_status']) == 'No Status Found' and status_words(x.get('from_status')) == 'FedRAMP Authorized']
-    other = [x for x in raw if x not in authorized and x not in inproc and x not in delisted]
+    def current_status(x): p = prod(x); return p['status_code'] if p else None
+    delisted_all = [x for x in raw if status_words(x['to_status']) == 'No Status Found' and status_words(x.get('from_status')) == 'FedRAMP Authorized']
+    delisted = [x for x in delisted_all if current_status(x) != 'authorized']            # gone from, or not Authorized in, the current record
+    disputed = [x for x in delisted_all if current_status(x) == 'authorized']            # changelog says delisted; current record still says Authorized
+    lagging = [x for x in authorized if current_status(x) not in (None, 'authorized')]   # changelog says Authorized; daily record hasn't caught up yet
+    other = [x for x in raw if x not in authorized and x not in inproc and x not in delisted and x not in disputed]
     soon = today + datetime.timedelta(days=60)
     og_expiring = sorted([a for a in db['onegov']['agreements'] if a.get('expires') and today.isoformat() <= a['expires'] <= soon.isoformat()], key=lambda a: a['expires'])
     og_new = []; prev = os.path.join(DATA, 'onegov.prev.json')
@@ -147,6 +151,7 @@ def main():
         L.append('')
     if authorized:
         L.append('## Newly authorized')
+        L += ['Per FedRAMP’s status changelog. FedRAMP’s daily data record can trail the changelog by a week or two; each FedCatalog page shows both when they differ.', '']
         for x in (authorized if len(authorized) <= 10 else sorted(authorized, key=lambda x: -vendor_weight(x))[:10]):
             prev_s = status_words(x.get('from_status'))
             L.append(f'**{x["csp"]} — {x["cso"]}**  ')
@@ -165,6 +170,8 @@ def main():
         for x in sorted(delisted, key=lambda x: -vendor_weight(x))[:6]:
             L.append(f'**{x["cso"]} — {x["csp"]}**  '); L.append('Previously FedRAMP Authorized · now No Status Found' + (f' · [View →]({url(x)})' if url(x) else '')); L.append('')
         if len(delisted) > 6: L += [f'[See all status changes →]({ORIGIN}/new/)', '']
+    if disputed:
+        L += ['## Where FedRAMP’s own files disagree', f'FedRAMP publishes two files: a daily data record and a status changelog. This week the changelog recorded {plural(len(disputed), "offering")} moving to No Status Found, but the daily record still shows {"them" if len(disputed) != 1 else "it"} as Authorized: ' + ', '.join(f'**{x["cso"]}** ({x["csp"]})' for x in disputed) + '. FedCatalog shows the current record and flags the difference on each page. If one of these matters to you, check the FedRAMP Marketplace directly.', '']
     if og_new or og_expiring or dod_new or dod_expiring:
         L.append('## On the buying side')
         for a in og_new: L += [f'GSA added a OneGov agreement: **{a["vendor"]} — {a["title"]}**. {a["discount"]}. [Agreement →](https://itvmo.gsa.gov/onegov/?tabName=agreements-tab#{a["anchor"]})', '']
@@ -176,7 +183,7 @@ def main():
         if dod_expiring: L += ['DoD provisional authorizations with a published expiration inside 60 days: ' + '; '.join(f'**{r["cso"]}** ({B.fmt_date(r["expires"])})' for r in dod_expiring[:5]) + f'. [DoD listings →]({ORIGIN}/dod/)', '']
     if note: L += ['## One thing I noticed', '*Draft note from the data. Keep, edit or delete before sending.*', '', note, '']
     # ---- the roll: everyone who moved but wasn't featured above, so nobody is left out
-    featured = {x['product_id'] for x in (authorized if len(authorized) <= 10 else sorted(authorized, key=lambda x: -vendor_weight(x))[:10])} | {x['product_id'] for x in watching} | {x['product_id'] for x in sorted(delisted, key=lambda x: -vendor_weight(x))[:6]}
+    featured = {x['product_id'] for x in (authorized if len(authorized) <= 10 else sorted(authorized, key=lambda x: -vendor_weight(x))[:10])} | {x['product_id'] for x in watching} | {x['product_id'] for x in sorted(delisted, key=lambda x: -vendor_weight(x))[:6]} | {x['product_id'] for x in disputed}
     roll = []
     def names(lst): return ', '.join(f'{x["cso"]} ({x["csp"]})' for x in lst)
     rest_auth = [x for x in authorized if x['product_id'] not in featured]

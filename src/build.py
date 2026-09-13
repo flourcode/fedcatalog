@@ -40,6 +40,16 @@ def first_sentence(text):
     return m.group(1) if m else trunc(text, 160)
 def nfmt(n): return f'{n:,}'
 STATUS = {'FedRAMP Authorized': ('authorized', 'Authorized'), 'FedRAMP In Process': ('in-process', 'In process'), 'Agency In Process': ('in-process', 'In process'), 'FedRAMP Ready': ('ready', 'Ready')}
+def changelog_family(s):
+    """Map a changelog status string to (status_code, status_label, display status)."""
+    s = s or ''
+    if 'No Status Found' in s: return ('delisted', 'Delisted', 'No longer on the FedRAMP Marketplace')
+    if 'In Remediation' in s: return ('authorized', 'Authorized · in remediation', 'FedRAMP Authorized (in remediation)')
+    if re.search(r'certified|^authorized$', s, re.I): return ('authorized', 'Authorized', 'FedRAMP Authorized')
+    if 'Ready' in s: return ('ready', 'Ready', 'FedRAMP Ready')
+    if 'Initial Implementation' in s: return ('initial', 'Initial Implementation', 'Initial Implementation')
+    if 'In Process' in s or 'Review' in s: return ('in-process', 'In process', 'FedRAMP In Process')
+    return (None, None, None)
 RUNS = {'aws': 'AWS', 'aws-gov': 'AWS GovCloud', 'azure': 'Azure', 'azure-gov': 'Azure Government', 'google': 'Google Cloud', 'oci': 'Oracle Cloud'}
 RUNS_FAMILY = {'aws': 'aws', 'aws-gov': 'aws', 'azure': 'azure', 'azure-gov': 'azure', 'google': 'google', 'oci': 'oci'}
 FAMILY_LABEL = {'aws': 'AWS', 'azure': 'Microsoft Azure', 'google': 'Google Cloud', 'oci': 'Oracle Cloud'}
@@ -76,6 +86,27 @@ def load():
             deployment=p['d'], models=p['m'], functions=[snap['functions'][i] for i in p['f']], agencies=[snap['agencyNames'][i] for i in p['a']], runs=runs, runs_named=named,
             families=sorted({RUNS_FAMILY[r] for r in runs + named}), auth_type=p['t'], auth_date=p['ad'], ready_date=p.get('rd', ''), assessor=p.get('as', ''), sales_email=p.get('se', ''),
             website=(p['w'] if re.match(r'^https?://', p['w'] or '') else ('https://' + p['w'] if p['w'] else '')), desc=p['de'], small=p['sb'], leveraged_by=p['lv']))
+    # ---- Status overlay from FedRAMP's status changelog (authoritative timeline; the daily record lags it)
+    latest = {}
+    for x in sorted(load_changes_all(), key=lambda x: x.get('transition_date') or ''):
+        if x.get('product_id') and (x.get('from_status') or '') != (x.get('to_status') or ''): latest[x['product_id']] = x
+    by_id_tmp = {p['id']: p for p in products}
+    for pid, x in latest.items():
+        code, label, display = changelog_family(x['to_status'])
+        if not code: continue
+        p = by_id_tmp.get(pid)
+        if p:
+            p['status_event'] = x['transition_date'][:10]
+            if code != p['status_code']:
+                p['record_status'] = p['status']; p['record_status_event'] = x['to_status']
+                p['status_code'], p['status_label'], p['status'] = code, label, display
+            if code == 'authorized' and not p.get('auth_date'): p['auth_date'] = x['transition_date'][:10]
+        elif code != 'delisted' and x['transition_date'][:10] >= (datetime.date.today() - datetime.timedelta(days=365)).isoformat():
+            # Offering known only from the changelog (e.g. Initial Implementation listings): a light record.
+            vk = vendor_key(x['csp'])
+            products.append(dict(id=pid, vendor=x['csp'], vendor_key=vk, vendor_slug=slugify(vk), name=x['cso'], status=display, status_code=code, status_label=label, impact='',
+                deployment='', models=[], functions=[], agencies=[], runs=[], runs_named=[], families=[], auth_type=(x.get('cert_path') or ''), auth_date=(x['transition_date'][:10] if code == 'authorized' else ''),
+                ready_date=(x['transition_date'][:10] if code == 'ready' else ''), assessor='', sales_email='', website='', desc='', small='', leveraged_by=0, stub=True, status_event=x['transition_date'][:10]))
     # per-product website overrides (src/data/product_sites.json), keyed by FedRAMP ID
     try: site_overrides = json.load(open(os.path.join(DATA, 'product_sites.json'))).get('sites', {})
     except Exception: site_overrides = {}
@@ -114,13 +145,13 @@ def load():
         v['website'] = (gov or cands)[0]
     functions = []
     for name in snap['functions']:
-        count = sum(1 for p in products if name in p['functions'])
+        count = sum(1 for p in products if name in p['functions'] and p['status_code'] != 'delisted')
         if count: functions.append(dict(name=name, slug=CAT_SLUG_OVERRIDE.get(name, slugify(name)), count=count))
     functions.sort(key=lambda f: -f['count'])
     fn_by_name = {f['name']: f for f in functions}
     agencies = []
     for a in snap['agencies']:
-        prods = [by_id[i] for i in a['n'] if i in by_id]
+        prods = [by_id[i] for i in a['n'] if i in by_id and by_id[i]['status_code'] != 'delisted']
         if not prods: continue
         name = a['s'] or a['p']
         agencies.append(dict(id=a['id'], parent=a['p'], sub=a['s'], name=name, slug=slugify(name), products=prods))
@@ -150,11 +181,12 @@ def similar(db, p, n=6):
     cands.sort(key=lambda t: -t[0])
     return [x for _, x in cands[:n]]
 def vendor_summary(v):
-    ps = v['products']
+    ps = [p for p in v['products'] if p['status_code'] != 'delisted'] or v['products']
     fns = defaultdict(int)
     for p in ps:
         for f in p['functions']: fns[f] += 1
     best = max(ps, key=lambda p: IMPACT_ORDER.get(p['impact'], 0))
+    if not best['impact']: best = dict(best, impact='—')
     return dict(authorized=sum(1 for p in ps if p['status_code'] == 'authorized'), best=best, runs=sorted({r for p in ps for r in p['runs']}),
                 agencies={a for p in ps for a in p['agencies']}, fns=[f for f, _ in sorted(fns.items(), key=lambda t: -t[1])])
 def dod_rows_for(db, slug): return [r for r in db['dod']['rows'] if r.get('vendor_slug') == slug]
@@ -367,12 +399,12 @@ def _layout(db, *, path, title, description, body, noindex=False, jsonld=None, o
 # ------------------------------------------------------------------ pages
 def page_home(db):
     P = db['products']; V = db['vendors']
+    P = [p for p in P if p['status_code'] != 'delisted']
     authorized = sum(1 for p in P if p['status_code'] == 'authorized')
     popular = [db['fn_by_name'][n] for n in POPULAR if n in db['fn_by_name']]
     home_agencies = [a for a in db['agencies'] if not a['sub'] and a['name'].startswith('Department of')][:8]
-    latest = [db['by_id'][l['id']] for l in db['latest'] if l['id'] in db['by_id']]
-    recent = latest or sorted([p for p in P if p['auth_date']], key=lambda p: p['auth_date'], reverse=True)[:5]
-    adopted = sorted(P, key=lambda p: -len(p['agencies']))[:5]
+    recent = sorted([p for p in P if p['status_code'] == 'authorized' and p.get('auth_date')], key=lambda p: (p.get('status_event') or p['auth_date']), reverse=True)[:5]
+    adopted = sorted([p for p in P if p['status_code'] != 'delisted'], key=lambda p: -len(p['agencies']))[:5]
     changes = load_changes()[:5]
     body = f'''
 <section class="hero">
@@ -394,6 +426,13 @@ def page_home(db):
            "description": "An independent reference connecting federal software authorization, government records and buying paths.", "founder": {"@id": ORIGIN + "/about/mark-flournoy/#mark"}}]
     return layout(db, path='/', title='FedCatalog | Federal Software in One Place', description='Search federal software across FedRAMP, DoD, OneGov, GSA, SEWP and cloud marketplaces. Find authorization details, vendors and government buying paths in one place.', body=body, jsonld=ld)
 
+_all_changes = None
+def load_changes_all():
+    global _all_changes
+    if _all_changes is None:
+        try: _all_changes = json.load(open(os.path.join(DATA, 'changelog.json')))['data']['certprocessstatuschangelog']
+        except Exception: _all_changes = []
+    return _all_changes
 _changes = None
 def load_changes():
     global _changes
@@ -409,8 +448,20 @@ def change_row(db, x):
     name = f'<a href="{url_product(p)}">{esc(x["cso"])}</a>' if p else esc(x['cso'])
     return f'<li><span class="date">{esc(fmt_date(x["transition_date"]))}</span><div><b>{name} <span class="{tone}">{esc(x["to_status"])}</span></b><small>{esc(x["csp"])}{(" · from " + esc(x["from_status"])) if x.get("from_status") else ""}{(" · " + esc(x["cert_path"]) + " path") if x.get("cert_path") else ""}</small></div></li>'
 
+def recent_events(p, days=120):
+    """Changelog entries for this offering in the last `days`, newest first."""
+    cutoff = (datetime.date.today() - datetime.timedelta(days=days)).isoformat()
+    ev = [x for x in load_changes() if x.get('product_id') == p['id'] and x['transition_date'][:10] >= cutoff and (x.get('from_status') or '') != (x.get('to_status') or '')]
+    return ev
+def status_family(s):
+    s = s or ''
+    if re.search(r'certified|^authorized$|fedramp authorized', s, re.I) and 'Remediation' not in s: return 'authorized'
+    if 'No Status Found' in s: return 'none'
+    return 'other'
 def page_product(db, p):
     v = db['vendors'][p['vendor_slug']]
+    events = recent_events(p)
+    conflict = bool(p.get('record_status'))
     others = [x for x in v['products'] if x['id'] != p['id']]
     sim = similar(db, p)
     runs = ' · '.join(RUNS[r] for r in p['runs']) if p['runs'] else (' · '.join(RUNS[r] for r in p['runs_named']) if p['runs_named'] else 'Not recorded')
@@ -436,13 +487,16 @@ def page_product(db, p):
   <div class="phead" style="margin-top:16px">
     {monogram(p['vendor_key'])}
     <div><h1>{esc(p['name'])}</h1><p class="vend"><a href="{url_vendor(v)}">{esc(p['vendor_key'])}</a></p></div>
-    <p class="one">{esc(first_sentence(p['desc']))}</p>
-    <div class="stat">{status_label(p)}<span>{esc(p['impact'])}</span><span>{esc(stat_ag)}</span></div>
+    <p class="one">{esc(first_sentence(p['desc']) if p['desc'] else 'FedRAMP lists this offering at the ' + p['status_label'] + ' stage; no description has been published yet.')}</p>
+    <div class="stat">{status_label(p)}{('<span>' + esc(p['impact']) + '</span>') if p['impact'] else ''}<span>{esc(stat_ag)}</span></div>
+    {(f'<p class="caution"><b>FedRAMP’s two files disagree about this offering.</b> FedRAMP’s status changelog recorded <b>{esc(p.get("record_status_event", ""))}</b> on {esc(fmt_date(p.get("status_event")))}, which FedCatalog shows as the current status. FedRAMP’s daily data record (refreshed {esc(fmt_date(db["meta"].get("last_change")))}) still shows <b>{esc(p["record_status"])}</b>; it usually trails the changelog by a week or two. Verify on the <a href="https://www.fedramp.gov/marketplace/products/{esc(p["id"])}/" target="_blank" rel="noopener noreferrer">FedRAMP Marketplace</a> before relying on either.</p>') if conflict else ''}
+    {(f'<p class="caution"><b>Listed from FedRAMP’s status changelog.</b> FedRAMP recorded this offering as <b>{esc(p["status"])}</b> on {esc(fmt_date(p.get("status_event")))}{(" (" + esc(p["auth_type"]) + " path)") if p.get("auth_type") else ""}. FedRAMP’s daily data record has no entry for it yet, so category, impact level, hosting and agency details are not available. They will appear here when FedRAMP publishes them.</p>') if p.get('stub') else ''}
+    {(f'<p class="caution"><b>No longer on the FedRAMP Marketplace.</b> FedRAMP’s status changelog recorded this offering as No Status Found on {esc(fmt_date(p.get("status_event")))}. FedRAMP does not publish a reason. This page is kept for reference; the offering is excluded from FedCatalog’s lists and counts.</p>') if p['status_code'] == 'delisted' and not conflict else ''}
     <div class="cta">{(f'<a class="primary" href="{esc(p["website"])}" target="_blank" rel="noopener noreferrer">Visit government offering</a>') if p['website'] else ''}<a href="#buy">How to buy</a><button class="copy" type="button" data-copy="{esc(copy_summary(p, runs))}">Copy summary</button></div>
   </div>
   <div class="facts">
     <div class="fact"><small>FedRAMP</small><b>{status_label(p)}</b><span>{esc(fact_status_sub)}</span></div>
-    <div class="fact"><small>Impact</small><b>{esc(p['impact'])}</b><span>{esc(p['deployment'] or '')}</span></div>
+    <div class="fact"><small>Impact</small><b>{esc(p['impact'] or '—')}</b><span>{esc(p['deployment'] or ('Not yet published' if p.get('stub') else ''))}</span></div>
     <div class="fact"><small>Runs on</small><b>{runs_text(p)}</b><span>{'FedRAMP record' if p['runs'] else ('From the offering title' if p['runs_named'] else 'Not recorded by FedRAMP')}</span></div>
     <div class="fact"><small>Agency authorizations</small><b>{ag}</b><span>{('Leveraged by ' + nfmt(p['leveraged_by']) + ' offerings') if p['leveraged_by'] else 'ATO or reuse on record'}</span></div>
   </div>
@@ -450,7 +504,7 @@ def page_product(db, p):
   <div class="section" id="buy"><h2>How to buy</h2><p class="sec-sub">Confirmed paths come from GSA and the FedRAMP record; searches are places to look.</p>{procurement_block(db, p, v)}<p class="note"><a href="https://www.fedramp.gov/marketplace/products/{esc(p['id'])}/" target="_blank" rel="noopener noreferrer">FedRAMP Marketplace listing ↗</a> · <a href="https://acrrepo.section508.gov/" target="_blank" rel="noopener noreferrer">Section 508 ACR Repository ↗</a> · <a href="https://sam.gov/search/?keywords={esc(p['vendor_key']).replace(' ', '%20')}" target="_blank" rel="noopener noreferrer">SAM.gov ↗</a></p></div>
 
   {(f'<div class="section"><h2>Government footprint</h2><p class="prose">{ag} {"agency has" if ag == 1 else "agencies have"} an authorization or reuse on record for this offering.</p><div class="chips">{agency_chips}</div></div>') if ag else ''}
-  <div class="section"><h2>What it does</h2><p class="prose">{esc(trunc(p['desc'], 700))}</p><div class="chips">{''.join(f'<a class="chip" href="{url_category(db["fn_by_name"][f])}">{esc(f)}</a>' for f in p['functions'] if f in db['fn_by_name'])}</div></div>
+  <div class="section"><h2>What it does</h2><p class="prose">{esc(trunc(p['desc'], 700)) if p['desc'] else 'FedRAMP has not published a description for this offering yet.'}</p><div class="chips">{''.join(f'<a class="chip" href="{url_category(db["fn_by_name"][f])}">{esc(f)}</a>' for f in p['functions'] if f in db['fn_by_name'])}</div></div>
   <div class="section"><h2>Authorization details</h2><dl class="matrix"><ul>{matrix}</ul></dl><p class="note">An authorization belongs to this specific offering and boundary; the vendor’s other offerings are listed separately. Source: FedRAMP Marketplace · refreshed {esc(fmt_date(db['meta'].get('last_change')))}.</p>
   {(f'<h3 class="h3">DoD Impact Level listings for {esc(v["name"])}</h3><ul class="awards">{"".join(dod_row_html(r, False, db) for r in dod)}</ul><p class="note">DoD listings name their own offering; they are not automatically the same boundary as this FedRAMP offering. <a href="/dod/">All DoD listings</a>.</p>') if dod else ''}</div>
   {(f'<div class="section"><h2>Other offerings from {esc(v["name"])}</h2><div class="rows">{"".join(product_row(x) for x in others[:8])}</div></div>') if others else ''}
@@ -458,7 +512,7 @@ def page_product(db, p):
 </section>'''
     dupname = sum(1 for x in db['products'] if x['name'] == p['name']) > 1
     title = f'{p["name"]}{(" (" + p["impact"] + ", " + p["id"] + ")") if dupname else ""}: FedRAMP, Agencies & Procurement | FedCatalog'
-    desc = f'{p["name"]} by {p["vendor_key"]}: {p["status"]} at the {p["impact"]} impact level, {ag} agency authorization record{"" if ag == 1 else "s"}, runs on {runs.lower() if runs != "Not recorded" else "unrecorded platforms"}, and where to buy it.'
+    desc = f'{p["name"]} by {p["vendor_key"]}: {p["status"]}' + (f' at the {p["impact"]} impact level' if p['impact'] else '') + f', {ag} agency authorization record{"" if ag == 1 else "s"}, runs on {runs.lower() if runs != "Not recorded" else "unrecorded platforms"}, and where to buy it.'
     return layout(db, path=url_product(p), title=title, description=desc[:300], body=body, jsonld=[crumbs_ld(crumbs)])
 def copy_summary(p, runs):
     return '\n'.join(x for x in [f'{p["vendor_key"]} — {p["name"]}', f'{p["status"]} · {p["impact"]} · {p["deployment"]}', f'Runs on: {runs}', f'Agency authorizations: {len(p["agencies"])}', 'Categories: ' + ', '.join(p['functions']), f'Gov offering: {p["website"]}' if p['website'] else '', f'FedCatalog: {ORIGIN}{url_product(p)}'] if x)
@@ -522,7 +576,7 @@ def page_agency(db, a):
                      meta_title=f'{a["name"]} Authorized Software | FedCatalog', meta_desc=f'{n} cloud service offerings with a FedRAMP authorization or reuse record at {a["name"]}, with impact levels, hosting platforms and procurement links.', head_extra=head)
 def page_category(db, f):
     crumbs = [('FedCatalog', '/'), ('Browse', '/categories/'), (f['name'], None)]
-    products = sorted([p for p in db['products'] if f['name'] in p['functions']], key=lambda p: -len(p['agencies']))
+    products = sorted([p for p in db['products'] if f['name'] in p['functions'] and p['status_code'] != 'delisted'], key=lambda p: -len(p['agencies']))
     short = f['name'].replace(' (AI)', '').replace(' (CMS)', '').replace(' (CRM)', '').replace(' (GRC)', '').replace(' (VPN)', '').replace(' (MDM)', '')
     return page_list(db, path=url_category(f), crumbs=crumbs, title=f['name'], sub=CAT_DESC.get(f['name'], ''), products=products,
                      meta_title=f'Federal {short} Software | FedCatalog', meta_desc=f'{len(products)} FedRAMP cloud offerings in {f["name"]}: {CAT_DESC.get(f["name"], "").lower()}. Status, impact level, agency adoption, hosting platform and procurement links for each.')
@@ -565,6 +619,7 @@ METHODOLOGY = '''
 <p><strong>Source:</strong> the FedRAMP Marketplace public data published by GSA (<a href="https://www.fedramp.gov/marketplace/" target="_blank" rel="noopener noreferrer">fedramp.gov/marketplace</a>), which FedRAMP republishes as machine-readable files updated daily.</p>
 <p><strong>Imported:</strong> vendor, offering name, status (Authorized, Ready, In Process), impact level, authorization path and dates, deployment and service model, business categories, agency authorization and reuse records, description, website, assessor, published sales contact, and which offerings leverage which authorized platforms.</p>
 <p><strong>Refresh:</strong> daily. Each page shows the date of the data it was built from.</p>
+<p><strong>Two files, one lag:</strong> FedRAMP publishes a daily data record and a separate status changelog. The changelog usually runs ahead of the record by a week or two, in both directions: a new authorization can appear in the changelog while the record still says In Process, and a delisting can appear in the changelog while the record still says Authorized. FedCatalog treats the changelog as the current status (the FedRAMP Marketplace itself follows it: delisted offerings return a 404 there), lists the offering’s recent changelog events under Authorization details, and puts a visible notice on the page whenever the two files disagree. Offerings that FedRAMP has recorded in the changelog within the last year but not yet in the daily record — including Initial Implementation listings, which FedRAMP began publishing in July 2026 — appear as light records with what is known. Delisted offerings keep a reference page but are excluded from lists and counts.</p>
 <p><strong>Meaning:</strong> an authorization belongs to the specific offering and security boundary listed, not to the vendor or to the vendor’s other products. Agency authorization records show that an agency issued or reused an authorization; they do not by themselves show that the agency purchased or deployed the product.</p>
 <p><strong>Runs on:</strong> FedRAMP records which authorized infrastructure platform an offering leverages. FedCatalog shows that relationship as “runs on.” Where a platform is only named in the offering’s title and no relationship is on record, it is shown with a dashed underline and labeled as such. Running on a cloud is not the same as being sold in that cloud’s marketplace.</p>
 <h2>DoD Cyber Exchange</h2>
@@ -701,6 +756,8 @@ def build_assets(db):
 .signup button { min-height: 44px; padding: 0 16px; border: 0; border-radius: 10px; background: var(--orange); color: #fff; font-weight: 600; cursor: pointer; }
 .signup button:hover { background: var(--orange-hover); }
 .signup small { display: block; margin-top: 8px; font-size: 12px; color: var(--secondary); }
+.caution { grid-column: 1 / -1; margin-top: 4px; padding: 12px 14px; border: 1px solid #E8C9A0; background: #FFF7EA; border-radius: 12px; font-size: 14px; line-height: 1.5; color: var(--text); }
+.caution a { color: var(--orange-hover); }
 .prov { margin-top: 10px; font-size: 13px; color: var(--secondary); line-height: 1.5; } .prov a { color: var(--orange-hover); }
 .builtby { border-top: 1px solid var(--separator); padding-top: 22px; } .builtby h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; } .builtby p { margin-top: 8px; font-size: 16px; line-height: 1.55; max-width: 66ch; color: var(--secondary); } .builtby a { color: var(--orange-hover); font-weight: 600; text-decoration: none; }
 .hero .try a { color: var(--text); font-weight: 600; text-decoration: none; } .hero .try a:hover { color: var(--orange-hover); }
@@ -785,7 +842,7 @@ def build():
     for a in db['agencies']: add(url_agency(a), page_agency(db, a))
     for f in db['functions']: add(url_category(f), page_category(db, f))
     # indexes
-    P = sorted(db['products'], key=lambda p: p['name'].lower())
+    P = sorted([p for p in db['products'] if p['status_code'] != 'delisted'], key=lambda p: p['name'].lower())
     add('/software/', page_list(db, path='/software/', crumbs=[('FedCatalog', '/'), ('Software', None)], title='All software', sub=f'{nfmt(len(P))} FedRAMP cloud service offerings, A–Z. Filter by status, impact, platform and more.', products=P,
         meta_title='All Federal Software Offerings, A–Z | FedCatalog', meta_desc=f'Every FedRAMP cloud service offering ({nfmt(len(P))}) with status, impact level, hosting platform, agency adoption and procurement links.'))
     vs = sorted(db['vendors'].values(), key=lambda v: v['name'].lower())
@@ -798,23 +855,24 @@ def build():
         body=f'<section class="panel narrow">{crumbs_html([("FedCatalog", "/"), ("Agencies", None)])}<h1 class="h2" style="margin-top:10px">Agencies<small>Software each agency has authorized, from the FedRAMP Marketplace</small></h1><ul class="list">' + ''.join(f'<li><a href="{url_agency(a)}">{esc(a["name"])}{(" · " + esc(a["parent"])) if a["sub"] else ""}</a><span>{nfmt(len(a["products"]))} authorizations</span></li>' for a in ags) + '</ul></section>', jsonld=[crumbs_ld([("FedCatalog", "/"), ("Agencies", None)])]))
     add('/categories/', layout(db, path='/categories/', title='Browse Federal Software by Category | FedCatalog', description=f'{len(db["functions"])} categories of FedRAMP cloud services, plus browsing by cloud platform, FedRAMP status and impact level, DoD Impact Level, OneGov and agency.',
         body=f'<section class="panel">{crumbs_html([("FedCatalog", "/"), ("Browse", None)])}<h1 class="h2" style="margin-top:10px">Browse</h1><div class="cats" style="margin-bottom:8px">'
-        + f'<a class="cat" href="/software/"><b>All software</b><span>Every FedRAMP offering, A–Z, with filters</span><small>{nfmt(len(db["products"]))} offerings</small><span class="chev" aria-hidden="true">›</span></a>'
+        + f'<a class="cat" href="/software/"><b>All software</b><span>Every FedRAMP offering, A–Z, with filters</span><small>{nfmt(sum(1 for p in db["products"] if p["status_code"] != "delisted"))} offerings</small><span class="chev" aria-hidden="true">›</span></a>'
         + f'<a class="cat" href="/vendors/"><b>Vendors</b><span>Every vendor with a FedRAMP offering, A–Z</span><small>{nfmt(len(db["vendors"]))} vendors</small><span class="chev" aria-hidden="true">›</span></a>'
         + f'<a class="cat" href="/agencies/"><b>Agencies</b><span>What each agency has authorized</span><small>{nfmt(len(db["agencies"]))} agencies</small><span class="chev" aria-hidden="true">›</span></a>'
         + f'<a class="cat" href="/buy/"><b>How to buy</b><span>OneGov, marketplaces, GSA, SEWP and vendor direct</span><small>Buying paths</small><span class="chev" aria-hidden="true">›</span></a>'
         + '</div><h2 class="h3">By category</h2><div class="cats">' + ''.join(cat_link(f) for f in db['functions']) + '</div><h2 class="h3">Other ways to browse</h2><div class="quick" style="justify-content:flex-start">'
-        + ''.join(f'<a href="{url_cloud(c)}">Runs on {esc(RUNS[c])}</a>' for c in RUNS) + '<a href="/fedramp/authorized/">Authorized</a><a href="/fedramp/in-process/">In process</a><a href="/fedramp/ready/">Ready</a><a href="/fedramp/high/">High</a><a href="/fedramp/moderate/">Moderate</a><a href="/fedramp/low/">Low</a><a href="/fedramp/li-saas/">LI-SaaS</a><a href="/agencies/">By agency</a><a href="/onegov/">OneGov agreements</a><a href="/dod/">DoD Impact Level</a></div></section>', jsonld=[crumbs_ld([("FedCatalog", "/"), ("Browse", None)])]))
+        + ''.join(f'<a href="{url_cloud(c)}">Runs on {esc(RUNS[c])}</a>' for c in RUNS) + '<a href="/fedramp/authorized/">Authorized</a><a href="/fedramp/in-process/">In process</a><a href="/fedramp/ready/">Ready</a><a href="/fedramp/initial-implementation/">Initial Implementation</a><a href="/fedramp/high/">High</a><a href="/fedramp/moderate/">Moderate</a><a href="/fedramp/low/">Low</a><a href="/fedramp/li-saas/">LI-SaaS</a><a href="/agencies/">By agency</a><a href="/onegov/">OneGov agreements</a><a href="/dod/">DoD Impact Level</a></div></section>', jsonld=[crumbs_ld([("FedCatalog", "/"), ("Browse", None)])]))
     # status / impact
-    for code, label in [('authorized', 'FedRAMP Authorized'), ('in-process', 'In process'), ('ready', 'FedRAMP Ready')]:
+    for code, label in [('authorized', 'FedRAMP Authorized'), ('in-process', 'In process'), ('ready', 'FedRAMP Ready'), ('initial', 'Initial Implementation')]:
         prods = sorted([p for p in db['products'] if p['status_code'] == code], key=lambda p: -len(p['agencies']))
-        add(f'/fedramp/{code}/', page_list(db, path=f'/fedramp/{code}/', crumbs=[('FedCatalog', '/'), ('FedRAMP', '/categories/'), (label, None)], title=label, sub=f'{nfmt(len(prods))} offerings', products=prods,
+        slug = 'initial-implementation' if code == 'initial' else code
+        add(f'/fedramp/{slug}/', page_list(db, path=f'/fedramp/{slug}/', crumbs=[('FedCatalog', '/'), ('FedRAMP', '/categories/'), (label, None)], title=label, sub=f'{nfmt(len(prods))} offerings' + (' · Listed by FedRAMP since July 2026 for providers early in implementation; not authorized' if code == 'initial' else ''), products=prods,
             meta_title=f'{label} Cloud Software | FedCatalog', meta_desc=f'{nfmt(len(prods))} cloud service offerings with FedRAMP status “{label}”, with impact level, hosting platform, agency adoption and procurement links.'))
     for level in ['High', 'Moderate', 'Low', 'LI-SaaS']:
-        prods = sorted([p for p in db['products'] if p['impact'] == level or p['impact'] == '20x ' + level], key=lambda p: -len(p['agencies']))
+        prods = sorted([p for p in db['products'] if (p['impact'] == level or p['impact'] == '20x ' + level) and p['status_code'] != 'delisted'], key=lambda p: -len(p['agencies']))
         add(f'/fedramp/{level.lower()}/', page_list(db, path=f'/fedramp/{level.lower()}/', crumbs=[('FedCatalog', '/'), ('FedRAMP', '/categories/'), (f'{level} impact', None)], title=f'FedRAMP {level}', sub=IMPACT_HELP.get(level, ''), products=prods,
             meta_title=f'FedRAMP {level} Software and Cloud Services | FedCatalog', meta_desc=f'{nfmt(len(prods))} FedRAMP offerings at the {level} impact level: status, hosting platform, agency authorization records and how to buy each.'))
     for code, label in RUNS.items():
-        prods = sorted([p for p in db['products'] if code in p['runs'] or code in p['runs_named']], key=lambda p: -len(p['agencies']))
+        prods = sorted([p for p in db['products'] if (code in p['runs'] or code in p['runs_named']) and p['status_code'] != 'delisted'], key=lambda p: -len(p['agencies']))
         add(url_cloud(code), page_list(db, path=url_cloud(code), crumbs=[('FedCatalog', '/'), ('Browse', '/categories/'), (label, None)], title=f'Runs on {label}', sub='FedRAMP records the offering as built on this platform’s authorization boundary. Being sold on that cloud’s marketplace is separate.', products=prods,
             meta_title=f'FedRAMP Software Running on {label} | FedCatalog', meta_desc=f'{nfmt(len(prods))} FedRAMP cloud service offerings that leverage {label}’s authorization boundary, with status, impact level, agency adoption and procurement links.'))
     # DoD

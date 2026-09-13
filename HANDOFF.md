@@ -34,6 +34,17 @@ kept distinct from "sold on a marketplace" (a search link unless an exact
 listing is on file). USAspending figures are labeled a floor and split into
 vendor-direct vs reseller. Every figure names its source and date. Keep these.
 
+## The two FedRAMP files
+`data.json` (daily) carries core information: descriptions, agencies, hosting,
+contacts. `fedramp-status-changelog.json` (daily) is the authoritative status
+timeline and runs a week or two ahead of `data.json` in both directions. The
+build overlays the changelog's latest status onto each record (delistings and
+new authorizations show up on time), adds light records for offerings the
+changelog knows about but `data.json` doesn't yet (only with an event in the
+last 365 days, so Initial Implementation listings appear without reviving
+2018-era leftovers), flags pages where the two files disagree, and excludes
+delisted offerings from lists and counts while keeping their pages.
+
 ## If FedRAMP changes its data format
 `data.json` is FedRAMP's "legacy" file. If it stops updating or changes shape,
 `build_snapshot.py` is the only file that reads it (the `compact()` function).

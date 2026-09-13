@@ -53,6 +53,7 @@ jobs:
           python3 src/weekly_draft.py --days 14
           cp "drafts/$(date -u +%Y-%m-%d).html" drafts/latest.html
           cp "drafts/$(date -u +%Y-%m-%d).md" drafts/latest.md
+          ls drafts | grep -E '^(changelog-)?[0-9]{4}-' | sort | head -n -90 | sed 's#^#drafts/#' | xargs -r rm -f   # keep about a month
 
       - name: Publish generated pages to the repo root (what Amplify serves)
         run: |

@@ -22,8 +22,9 @@ One-time setup, done from GitHub's website:
 3. Repo → Actions tab → "Nightly rebuild from public sources" → **Run workflow**
    once, and watch it go green. From then on it runs at 09:30 UTC daily.
 
-The only thing the site depends on is FedRAMP's public data, which the job
-refreshes nightly along with the FedRAMP changelog. It also re-reads the DoD
+The only thing the site depends on is FedRAMP's public data — the daily record
+plus the status changelog, which decides current status (see HANDOFF.md, "The
+two FedRAMP files") — refreshed nightly. It also re-reads the DoD
 Cyber Exchange table (keyless; keeps the previous copy if the page changes) and
 checks GSA's OneGov feed for new titles — both secondary, neither can break the
 site. USAspending is live in the browser and optional. Marketplace listings,
@@ -106,7 +107,15 @@ and agency pages) is generated from data and never hand-edited.
 1. Create a newsletter at Beehiiv or Kit and copy its subscribe-page URL.
 2. Open `src/templates/signup.js` (with the nightly job) or `assets/signup.js` (without it), paste the URL between the quotes on `formUrl`, save, commit. The signup box appears on the home page, the
    New page and every category page. Empty URL, no box.
-3. Each week, open `drafts/latest.html` in the repo on GitHub (the nightly job writes it; it covers the last 14 days) — newly authorized offerings grouped by
+3. Each week, open `drafts/latest.html` in the repo on GitHub. The nightly job
+   writes it as an edited briefing, not a dump: subject and preview lines,
+   a two-sentence opening, "The short version" (up to five items chosen by
+   priority), newly authorized, worth watching (up to eight, ranked by how much
+   the vendor already shows up in the catalog), delistings with the careful
+   wording, buying-side changes (OneGov, DoD), and — only when the data shows a
+   real pattern — a draft "One thing I noticed" marked for you to keep, edit or
+   delete. Everything else stays on the site's New page. The exhaustive record
+   is written alongside it as `drafts/changelog-<date>.md` — newly authorized offerings grouped by
    impact level, Ready and In-Process entries, other status changes, DoD
    provisional authorizations expiring within 60 days, and new or expiring
    OneGov agreements, every line linked to its FedCatalog page. Paste the HTML
