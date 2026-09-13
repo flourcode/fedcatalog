@@ -8,9 +8,11 @@ A fair amount moved this week. Six offerings reached FedRAMP Authorized, nine fa
 - **Bizzdesign GovCloud** from Bizzdesign US reached FedRAMP Authorized at the Moderate impact level (previously In Process). [View →](https://fedcatalog.com/software/bizzdesign-govcloud/)
 - **9 offerings** previously shown as Authorized now appear as No Status Found in the current FedRAMP data, including Trimble Unity Construct Government Edition, iMatch and Knightscope Autonomous Security Robot (Knightscope ASR). That happens for several reasons; treat it as a prompt to check the record, not an explanation. [View →](https://fedcatalog.com/new/)
 - **3 OneGov agreements** (Anthropic, Google and OpenAI) currently show an expiration date within 60 days. That is the date GSA publishes, not necessarily the end of the offer; anyone relying on one should check the agreement. [View →](https://fedcatalog.com/onegov/)
-- **Claude** from Anthropic entered Initial Implementation. Not authorized yet, but on the path.
+- **Claude** from Anthropic entered Initial Implementation. Not authorized yet, but on the path. [View →](https://fedcatalog.com/software/claude/)
 
 ## Newly authorized
+Per FedRAMP’s status changelog. FedRAMP’s daily data record can trail the changelog by a week or two; each FedCatalog page shows both when they differ.
+
 **Unison — Bidscale**  
 FedRAMP Moderate · Authorized Sep 10, 2026 · Previously In Process · [View in FedCatalog →](https://fedcatalog.com/software/bidscale/)
 
@@ -33,28 +35,28 @@ FedRAMP Moderate · Authorized Sep 1, 2026 · Previously In Process · [View in 
 A few names entered or moved further into the FedRAMP process this week. None of these is authorized yet.
 
 **Claude — Anthropic**  
-Initial Implementation · Sep 1, 2026
+Initial Implementation · Sep 1, 2026 · [View →](https://fedcatalog.com/software/claude/)
 
 **TrustGuard AI Compliance Platform — TGuardAI Inc.**  
-Initial Implementation · Sep 1, 2026
+Initial Implementation · Sep 1, 2026 · [View →](https://fedcatalog.com/software/trustguard-ai-compliance-platform/)
 
 **Ultra Security Hub and Agentic Security Platform — Ultra Security, Inc.**  
-Initial Implementation · Aug 31, 2026
+Initial Implementation · Aug 31, 2026 · [View →](https://fedcatalog.com/software/ultra-security-hub-and-agentic-security-platform/)
 
 **ConnectAllCare — 86Borders**  
-Initial Implementation · Sep 11, 2026
+Initial Implementation · Sep 11, 2026 · [View →](https://fedcatalog.com/software/connectallcare/)
 
 **Vastian (MediaLab by Vastian) — Vastian**  
-Initial Implementation · Sep 10, 2026
+Initial Implementation · Sep 10, 2026 · [View →](https://fedcatalog.com/software/vastian-medialab-by-vastian/)
 
 **Dayforce HCM, Public Sector — Dayforce**  
-Initial Implementation · Sep 10, 2026
+Initial Implementation · Sep 10, 2026 · [View →](https://fedcatalog.com/software/dayforce-hcm-public-sector/)
 
 **Silkline — Silkline.ai**  
-Initial Implementation · Sep 9, 2026
+Initial Implementation · Sep 9, 2026 · [View →](https://fedcatalog.com/software/silkline/)
 
 **Alira — Skyward IT Solutions**  
-Initial Implementation · Sep 8, 2026
+Initial Implementation · Sep 8, 2026 · [View →](https://fedcatalog.com/software/alira/)
 
 [See all new and changed records →](https://fedcatalog.com/new/)
 
