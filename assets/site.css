@@ -250,6 +250,11 @@ a { color: inherit; }
 .doc p.lede { font-size: 18px; color: var(--secondary); }
 .doc ul { margin: 0 0 12px 20px; list-style: disc; } .doc li { margin: 4px 0; line-height: 1.55; }
 .doc a { color: var(--orange-hover); }
+.about { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: start; }
+.about .photo { margin: 0; max-width: 300px; }
+.about .photo img { display: block; width: 100%; height: auto; border-radius: 18px; box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 10px 30px rgba(0,0,0,.10); }
+.about .photo figcaption { margin-top: 10px; font-size: 13px; color: var(--secondary); line-height: 1.45; }
+@media (min-width: 720px) { .about { grid-template-columns: minmax(0, 1fr) 280px; gap: 40px; } .about .photo { max-width: none; } }
 .btn-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 11px; background: var(--orange); color: #fff !important; text-decoration: none; font-weight: 600; }
 .foot-grid { display: grid; gap: 16px; grid-template-columns: 1fr; font-size: 14px; line-height: 1.6; }
 .foot-grid a { text-decoration: none; color: var(--text); } .foot-grid a:hover { color: var(--orange-hover); }
