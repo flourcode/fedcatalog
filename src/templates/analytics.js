@@ -24,4 +24,11 @@ var FEDCATALOG_GA_ID = "G-50100L2W8X";
   document.addEventListener('submit', function (e) {
     var f = e.target; if (f && f.getAttribute('role') === 'search') { var q = (f.querySelector('input[name=q]') || {}).value || ''; if (q) gtag('event', 'search', { search_term: q.slice(0, 100) }); }
   });
+  /* Searches that found nothing: the clearest signal of what the catalog is missing. */
+  var tries = 0, t = setInterval(function () {
+    var title = document.querySelector('[data-search-title]'); if (!title) { clearInterval(t); return; }
+    var count = document.querySelector('[data-count]'); tries++;
+    if (count && count.textContent) { clearInterval(t); if (/^0 results/.test(count.textContent.trim())) gtag('event', 'search_no_results', { search_term: (new URLSearchParams(location.search).get('q') || '').slice(0, 100) }); }
+    else if (tries > 40) clearInterval(t);
+  }, 250);
 })();

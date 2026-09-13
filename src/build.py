@@ -316,6 +316,11 @@ def evidence_links(vendor_name):
             '<a href="https://acrrepo.section508.gov/" target="_blank" rel="noopener noreferrer">Section 508 ACR Repository<small>Search for an ACR →</small></a>'
             f'<a href="https://sam.gov/search/?keywords={v}" target="_blank" rel="noopener noreferrer">SAM.gov entity<small>Search →</small></a></div>')
 
+def correction_link(kind, name, ident, path):
+    subject = f'FedCatalog correction: {name}'
+    body = (f'Page: {ORIGIN}{path}\n{kind}: {name}' + (f'\nFedRAMP ID: {ident}' if ident else '') + '\n\nWhat needs fixing (delete what does not apply):\n- Federal landing page URL:\n- Exact marketplace listing (AWS / Azure / Google / Oracle):\n- GSA / SEWP / reseller path:\n- Description or category:\n- Something else:\n')
+    href = 'mailto:' + EMAIL + '?subject=' + esc(subject).replace(' ', '%20') + '&body=' + esc(body).replace('\n', '%0A').replace(' ', '%20')
+    return f'<p class="correct">Something wrong or missing on this page? <a href="{href}">Email me</a> and I’ll fix it by checking the source.</p>'
 def signup_slot(context=''):
     return f'<div class="signup" data-signup data-context="{esc(context)}" hidden></div>'
 
@@ -508,6 +513,7 @@ def page_product(db, p):
   {(f'<h3 class="h3">DoD Impact Level listings for {esc(v["name"])}</h3><ul class="awards">{"".join(dod_row_html(r, False, db) for r in dod)}</ul><p class="note">DoD listings name their own offering; they are not automatically the same boundary as this FedRAMP offering. <a href="/dod/">All DoD listings</a>.</p>') if dod else ''}</div>
   {(f'<div class="section"><h2>Other offerings from {esc(v["name"])}</h2><div class="rows">{"".join(product_row(x) for x in others[:8])}</div></div>') if others else ''}
   {(f'<div class="section"><h2>Similar software</h2><div class="rows">{"".join(product_row(x) for x in sim)}</div></div>') if sim else ''}
+  {correction_link('Offering', p['name'] + ' (' + p['vendor_key'] + ')', p['id'], url_product(p))}
 </section>'''
     dupname = sum(1 for x in db['products'] if x['name'] == p['name']) > 1
     title = f'{p["name"]}{(" (" + p["impact"] + ", " + p["id"] + ")") if dupname else ""}: FedRAMP, Agencies & Procurement | FedCatalog'
@@ -543,6 +549,7 @@ def page_vendor(db, v):
   <div class="section" id="buy"><h2>How to buy</h2><p class="sec-sub">Confirmed paths come from GSA and the FedRAMP record; searches are places to look.</p>{procurement_block(db, {'website': v['website']}, v)}</div>
   <div class="section"><h2>Categories</h2><div class="chips">{''.join(f'<a class="chip" href="{url_category(db["fn_by_name"][f])}">{esc(f)}</a>' for f in s['fns'] if f in db['fn_by_name'])}</div></div>
   {(f'<div class="section"><h2>Compare</h2><div class="chips">{"".join(f"<a class=" + chr(34) + "chip" + chr(34) + f" href=" + chr(34) + f"/search/?q={esc(v['name'])}%20vs%20{esc(c['name'])}" + chr(34) + f">{esc(v['name'])} vs {esc(c['name'])}</a>" for c in comp_vendors)}</div></div>') if comp_vendors else ''}
+  {correction_link('Vendor', v['name'], '', url_vendor(v))}
 </section>'''
     n = len(v['products'])
     title = f'{v["name"]} Federal Software, FedRAMP & Procurement | FedCatalog'
@@ -765,6 +772,7 @@ def build_assets(db):
 .lost .search { max-width: 560px; margin: 22px auto 0; }
 .lost .links { margin-top: 18px; font-size: 14px; } .lost .links a { color: var(--text); text-decoration: none; font-weight: 500; } .lost .links a:hover { color: var(--orange-hover); }
 @media (min-width: 720px) { .lost { padding-top: 80px; } .lost .shrug { font-size: 72px; } .lost h1 { font-size: 40px; } }
+.correct { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--separator); font-size: 13px; color: var(--secondary); } .correct a { color: var(--orange-hover); }
 .prov { margin-top: 10px; font-size: 13px; color: var(--secondary); line-height: 1.5; } .prov a { color: var(--orange-hover); }
 .builtby { border-top: 1px solid var(--separator); padding-top: 22px; } .builtby h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; } .builtby p { margin-top: 8px; font-size: 16px; line-height: 1.55; max-width: 66ch; color: var(--secondary); } .builtby a { color: var(--orange-hover); font-weight: 600; text-decoration: none; }
 .hero .try a { color: var(--text); font-weight: 600; text-decoration: none; } .hero .try a:hover { color: var(--orange-hover); }

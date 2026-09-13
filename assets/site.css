@@ -310,6 +310,7 @@ a { color: inherit; }
 .lost .search { max-width: 560px; margin: 22px auto 0; }
 .lost .links { margin-top: 18px; font-size: 14px; } .lost .links a { color: var(--text); text-decoration: none; font-weight: 500; } .lost .links a:hover { color: var(--orange-hover); }
 @media (min-width: 720px) { .lost { padding-top: 80px; } .lost .shrug { font-size: 72px; } .lost h1 { font-size: 40px; } }
+.correct { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--separator); font-size: 13px; color: var(--secondary); } .correct a { color: var(--orange-hover); }
 .prov { margin-top: 10px; font-size: 13px; color: var(--secondary); line-height: 1.5; } .prov a { color: var(--orange-hover); }
 .builtby { border-top: 1px solid var(--separator); padding-top: 22px; } .builtby h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; } .builtby p { margin-top: 8px; font-size: 16px; line-height: 1.55; max-width: 66ch; color: var(--secondary); } .builtby a { color: var(--orange-hover); font-weight: 600; text-decoration: none; }
 .hero .try a { color: var(--text); font-weight: 600; text-decoration: none; } .hero .try a:hover { color: var(--orange-hover); }
