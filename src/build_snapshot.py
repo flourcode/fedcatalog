@@ -1,6 +1,6 @@
 """Build a compact snapshot of the FedRAMP Marketplace data for embedding.
 Run:  python3 build_snapshot.py  (fetches data.json from the public repo)"""
-import json, re, sys, urllib.request, datetime
+import json, re, sys, os, urllib.request, datetime
 
 SRC = 'https://raw.githubusercontent.com/FedRAMP/marketplace-fedramp-gov-data/main/data.json'
 
@@ -112,5 +112,6 @@ if __name__ == '__main__':
     if '--refresh' in sys.argv: refresh_sources()
     snap = enrich(compact(load()))
     js = 'window.FSC_SNAPSHOT = ' + json.dumps(snap, separators=(',', ':'), ensure_ascii=False) + ';'
-    open('snapshot.js', 'w').write(js)
+    out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'snapshot.js')
+    open(out, 'w').write(js)
     print('products', len(snap['products']), 'agencies', len(snap['agencies']), 'bytes', len(js.encode()))
