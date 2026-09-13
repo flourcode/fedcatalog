@@ -2,7 +2,7 @@
    Paste your Google Analytics 4 measurement ID (looks like G-XXXXXXXXXX) between the
    quotes below. Leave it empty to disable analytics site-wide. This file is loaded by
    every page, so you only ever change it here. */
-var FEDCATALOG_GA_ID = "";
+var FEDCATALOG_GA_ID = "G-50100L2W8X";
 
 (function () {
   if (!FEDCATALOG_GA_ID || !/^G-[A-Z0-9]+$/.test(FEDCATALOG_GA_ID)) return;
