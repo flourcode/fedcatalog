@@ -188,7 +188,7 @@
     const vs = q.match(/^(.+?)\s+(?:vs\.?|versus)\s+(.+)$/i);
     const { it, results } = search(q, {});
     clear(out);
-    title.textContent = results.length ? '“' + q + '”' : 'Nothing matches “' + q + '”';
+    title.textContent = '“' + q + '”';   // finalised below once agency matches are known
     const read = []; if (it.functions.length) read.push(it.functions.join(', ')); if (it.filters.impact) read.push('impact ' + it.filters.impact); if (it.filters.status) read.push(it.filters.status.replace('-', ' ')); if (it.filters.family) read.push('runs on ' + FAMILY_LABEL[it.filters.family]); if (it.filters.dod) read.push('vendor with DoD ' + it.filters.dod + ' provisional authorization'); if (it.filters.onegov) read.push('OneGov vendor');
     if (read.length) title.append(el('small', { text: 'Read as ' + read.join(' · ') }));
     if (vs) { const a = findVendor(vs[1]), b = findVendor(vs[2]); if (a && b) out.append(el('p', { class: 'note', style: 'margin-bottom:12px' }, ['Compare: ', el('a', { href: BASE + a.u.replace(/^\//, ''), text: a.n }), ' and ', el('a', { href: BASE + b.u.replace(/^\//, ''), text: b.n }), ' — open each vendor page for offerings, impact levels, agency records and purchasing options side by side.'])); }
@@ -201,7 +201,12 @@
       out.append(el('p', { class: 'note', style: 'margin-bottom:12px' }, rows.length ? ['On the DoD Cyber Exchange list, ' + vendor.n + ' at ' + it.filters.dod + ': ' + rows.map(r => r.cso + ' — ' + r.st).join('; ') + '. ', el('a', { href: BASE + vendor.u.replace(/^\//, '') + '#dod', text: 'Details on the vendor page →' })] : ['The DoD Cyber Exchange list has no ' + it.filters.dod + ' entry for ' + vendor.n + '. ', el('a', { href: BASE + 'dod/' + it.filters.dod.toLowerCase() + '/', text: 'See all ' + it.filters.dod + ' listings →' })]));
     }
     if (vendor && it.filters.onegov && !vendor.og) out.append(el('p', { class: 'note', style: 'margin-bottom:12px' }, ['GSA lists no current OneGov agreement for ' + vendor.n + '. ', el('a', { href: BASE + 'onegov/', text: 'See all OneGov agreements →' })]));
-    if (!results.length) { out.append(el('p', { class: 'note', text: 'No offerings match the filters read from your search. Try fewer words, a category, or describe the need differently.' })); return; }
+    const countEl = $('[data-count]', section);
+    if (!results.length) {
+      if (agencies.length) { if (countEl) countEl.textContent = agencies.length + (agencies.length === 1 ? ' agency' : ' agencies') + ' · no software by that name'; out.append(el('p', { class: 'note', text: 'No software is named “' + q + '”. Open the agency above to see everything it has authorized.' })); }
+      else { title.textContent = 'Nothing matches “' + q + '”'; if (countEl) countEl.textContent = '0 results'; out.append(el('p', { class: 'note', text: 'Try fewer words, a category, or describe the need differently — for example “document management” or “zero trust”.' })); }
+      return;
+    }
     const list = el('div', { class: 'rows is-table', 'data-rows': '' });
     list.append(el('div', { class: 'thead', 'aria-hidden': 'true' }, ['', 'Product', 'FedRAMP', 'Impact', 'Runs on', 'Agencies', ''].map(t => el('span', { text: t }))));
     let shown = 0; const PAGE = 40;
