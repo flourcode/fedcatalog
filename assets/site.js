@@ -25,7 +25,8 @@
   function writeParams(state) {
     const q = new URLSearchParams(location.search);
     for (const k of FILTER_KEYS.concat(['sort'])) q.delete(k);
-    for (const [k, v] of Object.entries(state)) if (v && !(k === 'sort' && v === 'agencies')) q.set(k, v);
+    const dflt = document.querySelector('[data-search-page]') ? 'relevance' : 'agencies';
+    for (const [k, v] of Object.entries(state)) if (v && !(k === 'sort' && v === dflt)) q.set(k, v);
     const s = q.toString();
     history.replaceState(null, '', location.pathname + (s ? '?' + s : '') + location.hash);
   }
@@ -42,7 +43,7 @@
   function applyFilters(section, state) {
     const rail = $('[data-rail]', section); if (!rail) return;
     for (const b of $$('button[data-filter]', rail)) b.setAttribute('aria-pressed', String(state[b.dataset.filter] === b.dataset.value));
-    const sort = $('[data-sort]', rail); if (sort) sort.value = state.sort || 'agencies';
+    const sort = $('[data-sort]', rail); if (sort) sort.value = state.sort || (section.dataset.searchPage ? 'relevance' : 'agencies');
     const active = FILTER_KEYS.filter(k => state[k]).length;
     const clearBtn = $('[data-clear]', rail); if (clearBtn) clearBtn.hidden = !active;
     const countBadge = $('[data-filter-count]', section); if (countBadge) countBadge.textContent = active ? ' (' + active + ')' : '';
@@ -50,8 +51,8 @@
     const rows = $$('.row', list);
     let shown = 0;
     for (const r of rows) { const ok = rowMatches(r, state); r.hidden = !ok; if (ok) shown++; }
-    const key = state.sort || 'agencies';
-    const sorted = rows.slice().sort((a, b) => {
+    const key = state.sort || (section.dataset.searchPage ? 'relevance' : 'agencies');
+    const sorted = key === 'relevance' ? rows.slice().sort((a, b) => Number(a.dataset.rank || 0) - Number(b.dataset.rank || 0)) : rows.slice().sort((a, b) => {
       if (key === 'newest') return (b.dataset.auth || '').localeCompare(a.dataset.auth || '');
       if (key === 'name') return (a.dataset.name || '').localeCompare(b.dataset.name || '');
       if (key === 'vendor') return (a.dataset.vendor || '').localeCompare(b.dataset.vendor || '') || (a.dataset.name || '').localeCompare(b.dataset.name || '');
@@ -68,7 +69,7 @@
   }
   function bindRail(section, rail, getState, setState) {
     for (const b of $$('button[data-filter]', rail)) b.addEventListener('click', () => { const s = Object.assign({}, getState()); if (s[b.dataset.filter] === b.dataset.value) delete s[b.dataset.filter]; else s[b.dataset.filter] = b.dataset.value; setState(s); });
-    const sort = $('[data-sort]', rail); if (sort) sort.addEventListener('change', () => { const s = Object.assign({}, getState()); s.sort = sort.value; setState(s); });
+    const sort = $('[data-sort]', rail); if (sort) sort.addEventListener('change', () => { const s = Object.assign({}, getState()); const dflt = section.dataset.searchPage ? 'relevance' : 'agencies'; if (sort.value === dflt) delete s.sort; else s.sort = sort.value; setState(s); });
     const clearBtn = $('[data-clear]', rail); if (clearBtn) clearBtn.addEventListener('click', () => { const s = getState(); setState(s.sort ? { sort: s.sort } : {}); });
   }
   function setupList(section) {
@@ -141,11 +142,13 @@
     const norm = s => String(s || '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
     const target = alias ? norm(alias) : null;
     if (!alias && interpret(q).functions.length) return [];   // a capability search, not an agency lookup
-    const generic = new Set(['department', 'office', 'agency', 'administration', 'bureau', 'national', 'united', 'states', 'federal', 'commission', 'service', 'services', 'and', 'of', 'the']);
+    const generic = new Set(['department', 'office', 'agency', 'administration', 'bureau', 'national', 'united', 'states', 'federal', 'commission', 'service', 'services', 'and', 'of', 'the', 'general', 'inspector', 'council', 'board', 'center', 'program', 'system', 'division']);
+    let sig = words.filter(w => w.length >= 4 && !generic.has(w));
+    if (!sig.length) { const fb = words.filter(w => w.length >= 4 && !['and', 'the', 'of'].includes(w)); sig = fb.length >= 2 ? fb : []; }   // e.g. "inspector general": all words must appear; a lone generic word matches nothing
     const hits = (INDEX.agencies || []).filter(a => {
       const name = norm(a.n + ' ' + (a.p || ''));
       if (target && norm(a.n) === target) return true;
-      return words.some(w => w.length >= 4 && !generic.has(w) && new RegExp('\\b' + w + '\\b').test(name));
+      return sig.length > 0 && sig.every(w => new RegExp('\\b' + w + '\\b').test(name));
     });
     return hits.sort((a, b) => ((target && norm(a.n) === target) ? -1 : 0) - ((target && norm(b.n) === target) ? -1 : 0) || b.c - a.c).slice(0, 5);
   }
@@ -160,16 +163,20 @@
       if (f.dod && !(p.dod || []).includes(f.dod)) continue;
       if (f.onegov && !p.og) continue;
       let score = 0; const vend = p.v.toLowerCase(), name = p.n.toLowerCase(), text = (p.v + ' ' + p.n + ' ' + p.d).toLowerCase();
-      for (const t of it.terms) { if (vend.includes(t)) score += vend === t ? 30 : 12; else if (name.includes(t)) score += 8; else if (text.includes(t)) score += 2; else score -= 6; }
-      for (const t of it.soft) { if (name.includes(t)) score += 6; else if (text.includes(t)) score += 3; }
+      const phrase = it.terms.join(' '), squashed = it.terms.join('');
+      if (phrase.length > 3 && vend.includes(phrase)) score += 40; else if (phrase.length > 3 && name.includes(phrase)) score += 30;
+      else if (squashed.length > 5 && it.terms.length > 1 && (vend.replace(/\s+/g, '').includes(squashed) || name.replace(/\s+/g, '').includes(squashed))) score += 40;
+      const squashedHit = squashed.length > 5 && it.terms.length > 1 && (vend.replace(/\s+/g, '').includes(squashed) || name.replace(/\s+/g, '').includes(squashed));
+      for (const t of it.terms) { if (vend.includes(t)) score += vend === t ? 30 : 12; else if (name.includes(t)) score += 8; else if (text.includes(t)) score += 2; else if (!squashedHit) score -= 6; }
+      for (const t of it.soft) { if (name.includes(t)) score += 10; else if (text.includes(t)) score += 3; }
       score += it.functions.filter(x => p.f.includes(x)).length * 5;
       if (!it.terms.length && !it.functions.length) score = 1;
       if (score <= 0) continue;
       score += p.s === 'authorized' ? 1 : 0; score += p.a > 5 ? 1 : 0;
-      out.push({ p, score });
+      out.push({ p, score, byName: score >= 20 });
     }
     out.sort((a, b) => b.score - a.score || b.p.a - a.p.a);
-    return { it, results: out.map(x => x.p) };
+    return { it, results: out.map(x => x.p), strong: out.filter(x => x.byName).length };
   }
   function mono(name) { const m = String(name || '').match(/[A-Za-z0-9]/); return el('div', { class: 'mono', 'aria-hidden': 'true', text: m ? m[0].toUpperCase() : '·' }); }
   function rowFromIndex(p) {
@@ -186,7 +193,7 @@
     if (!q.trim()) return;
     await loadIndex();
     const vs = q.match(/^(.+?)\s+(?:vs\.?|versus)\s+(.+)$/i);
-    const { it, results } = search(q, {});
+    const { it, results, strong } = search(q, {});
     clear(out);
     title.textContent = '“' + q + '”';   // finalised below once agency matches are known
     const read = []; if (it.functions.length) read.push(it.functions.join(', ')); if (it.filters.impact) read.push('impact ' + it.filters.impact); if (it.filters.status) read.push(it.filters.status.replace('-', ' ')); if (it.filters.family) read.push('runs on ' + FAMILY_LABEL[it.filters.family]); if (it.filters.dod) read.push('vendor with DoD ' + it.filters.dod + ' provisional authorization'); if (it.filters.onegov) read.push('OneGov vendor');
@@ -207,11 +214,12 @@
       else { title.textContent = 'Nothing matches “' + q + '”'; if (countEl) countEl.textContent = '0 results'; out.append(el('p', { class: 'note', text: 'Try fewer words, a category, or describe the need differently — for example “document management” or “zero trust”.' })); }
       return;
     }
+    if (!strong && !it.functions.length && it.terms.length) out.append(el('p', { class: 'note', style: 'margin-bottom:12px' }, agencies.length ? [el('b', { text: 'Looking for the agency? It’s above. ' }), 'No software is named “' + q + '”; the closest matches are below.'] : [el('b', { text: 'No vendor or offering is named “' + q + '” in FedRAMP’s data. ' }), 'The closest matches are below; the vendor may not have a FedRAMP offering, or FedRAMP may list it under a different name.']));
     const list = el('div', { class: 'rows is-table', 'data-rows': '' });
     list.append(el('div', { class: 'thead', 'aria-hidden': 'true' }, ['', 'Product', 'FedRAMP', 'Impact', 'Runs on', 'Agencies', ''].map(t => el('span', { text: t }))));
     let shown = 0; const PAGE = 40;
     const more = el('div', { class: 'more' }); const btn = el('button', { class: 'btn alt', type: 'button', onclick: () => draw() });
-    function draw() { for (const p of results.slice(shown, shown + PAGE)) list.append(rowFromIndex(p)); shown = Math.min(results.length, shown + PAGE); clear(more); if (shown < results.length) { btn.textContent = 'Show ' + Math.min(PAGE, results.length - shown) + ' more'; more.append(btn); } applyFilters(section, state || readParams()); }
+    function draw() { for (const p of results.slice(shown, shown + PAGE)) { const r = rowFromIndex(p); r.dataset.rank = String(results.indexOf(p)); list.append(r); } shown = Math.min(results.length, shown + PAGE); clear(more); if (shown < results.length) { btn.textContent = 'Show ' + Math.min(PAGE, results.length - shown) + ' more'; more.append(btn); } applyFilters(section, state || readParams()); }
     out.append(list, more); draw();
     document.title = '“' + q + '” — Search | FedCatalog';
   }
@@ -281,7 +289,8 @@
       form.addEventListener('submit', (e) => { e.preventDefault(); const d = Object.fromEntries(new FormData(form).entries()); const body = ['Vendor: ' + (d.vendor || ''), 'Product: ' + (d.product || ''), 'FedRAMP ID: ' + (d.id || ''), 'Government offering URL: ' + (d.gov || ''), 'AWS Marketplace listing: ' + (d.aws || ''), 'Azure Marketplace listing: ' + (d.azure || ''), 'Google Cloud Marketplace listing: ' + (d.google || ''), 'Other URL: ' + (d.other || ''), 'Notes: ' + (d.notes || ''), 'Contact: ' + (d.email || '')].join('\n'); location.href = 'mailto:mark@fedcatalog.com?subject=' + encodeURIComponent('FedCatalog update: ' + (d.vendor || '') + ' — ' + (d.product || '')) + '&body=' + encodeURIComponent(body); });
     }
     for (const s of $$('section')) { if ($('[data-rail]', s)) { if ($('[data-search-results]', s)) { s.dataset.searchPage = '1'; } setupList(s); } }
-    const sp = $('[data-search-page]'); if (sp) renderSearch(readParams());
+    const sp = $('[data-search-page]');
+    if (sp) { const sel = $('[data-sort]', sp); if (sel && !sel.querySelector('option[value=relevance]')) { const o = el('option', { value: 'relevance', text: 'Sort: relevance' }); sel.insertBefore(o, sel.firstChild); sel.value = readParams().sort || 'relevance'; } renderSearch(readParams()); }
     const purch = $('[data-purchasing]'); if (purch) purchasing(purch);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup); else setup();
