@@ -6,5 +6,5 @@ var FEDCATALOG_TEXT = {
   tagline: "A practical guide to federal software",          // header, next to the wordmark
   footerTagline: "A practical guide to federal software.",   // footer
   heroTitle: "Making federal software easier to buy.",      // home page headline
-  heroSub: "Federal software buying is scattered across too many places. FedCatalog brings together what’s authorized, where it runs, and how to buy it — from public government data with labeled sources."
+  heroSub: "Find the exact government offering, see what’s authorized, and figure out how to buy it across FedRAMP, DoD, OneGov, cloud marketplaces, GSA and SEWP."
 };
