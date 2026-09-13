@@ -2,15 +2,13 @@
 
 Changes recorded Aug 30–Sep 13. Every item links to its FedCatalog page; sources are the FedRAMP Marketplace changelog, the DoD Cyber Exchange list and GSA’s OneGov page.
 
-## Newly authorized (8)
+## Newly authorized (6)
 FedRAMP Authorized this week
 
 **Moderate**
 - **[Bidscale](https://fedcatalog.com/software/bidscale/)** — Unison · Moderate · now FedRAMP Certified (from FedRAMP In Process) · 2026-09-10
 - **[Anomali Security Operations Platform (ASOP)](https://fedcatalog.com/software/anomali-security-operations-platform-asop/)** — Anomali · Moderate · now FedRAMP Certified (from FedRAMP In Process) · 2026-09-04
 - **[Data Enclave Gov](https://fedcatalog.com/software/data-enclave-gov/)** — NORC · Moderate · now FedRAMP Certified (from FedRAMP In Process) · 2026-09-03
-- **[Momentum Enterprise Suite](https://fedcatalog.com/software/momentum-enterprise-suite/)** — CGI Federal · Moderate · now FedRAMP Certified (from FedRAMP Certified) · 2026-09-02
-- **[Accenture Federal Cloud ERP](https://fedcatalog.com/software/accenture-federal-cloud-erp/)** — Accenture Federal Services · Moderate · now FedRAMP Certified (from FedRAMP Certified) · 2026-09-02
 - **[Bizzdesign GovCloud](https://fedcatalog.com/software/bizzdesign-govcloud/)** — Bizzdesign US · Moderate · now FedRAMP Certified (from FedRAMP In Process) · 2026-09-01
 **Low**
 - **[Digital Enterprise Suite FedRAMP Edition](https://fedcatalog.com/software/digital-enterprise-suite-fedramp-edition/)** — Trisotech · Low · now FedRAMP Certified (from Agency Review) · 2026-09-09
