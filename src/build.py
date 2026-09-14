@@ -321,6 +321,59 @@ def correction_link(kind, name, ident, path):
     body = (f'Page: {ORIGIN}{path}\n{kind}: {name}' + (f'\nFedRAMP ID: {ident}' if ident else '') + '\n\nWhat needs fixing (delete what does not apply):\n- Federal landing page URL:\n- Exact marketplace listing (AWS / Azure / Google / Oracle):\n- GSA / SEWP / reseller path:\n- Description or category:\n- Something else:\n')
     href = 'mailto:' + EMAIL + '?subject=' + esc(subject).replace(' ', '%20') + '&body=' + esc(body).replace('\n', '%0A').replace(' ', '%20')
     return f'<p class="correct">Something wrong or missing on this page? <a href="{href}">Email me</a> and I’ll fix it by checking the source.</p>'
+CHART_COLORS = ['#F25F3A', '#F58A5C', '#F7A987', '#C9CBD1', '#A9ACB4', '#8A8D95', '#6E7178']
+def donut_chart(items, total_label, title):
+    """items: [(label, count)] descending. A 120px donut with legend. Orange family for segments, grays for the tail."""
+    total = sum(c for _, c in items)
+    if not total: return ''
+    r, cx, cy, sw = 44, 60, 60, 16
+    circ = 2 * 3.141592653589793 * r
+    segs, offset = [], 0.0
+    for i, (label, count) in enumerate(items):
+        frac = count / total
+        segs.append(f'<circle r="{r}" cx="{cx}" cy="{cy}" fill="none" stroke="{CHART_COLORS[min(i, len(CHART_COLORS) - 1)]}" stroke-width="{sw}" stroke-dasharray="{circ * frac:.2f} {circ:.2f}" stroke-dashoffset="{-offset:.2f}" transform="rotate(-90 {cx} {cy})"><title>{esc(label)}: {count} ({frac * 100:.0f}%)</title></circle>')
+        offset += circ * frac
+    legend = ''.join(f'<li><i style="background:{CHART_COLORS[min(i, len(CHART_COLORS) - 1)]}"></i><span>{esc(label)}</span><b>{count}</b><small>{count / total * 100:.0f}%</small></li>' for i, (label, count) in enumerate(items))
+    return (f'<figure class="chart"><svg viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="{esc(title)}: ' + esc('; '.join(f'{l} {c}' for l, c in items)) + f'"><circle r="{r}" cx="{cx}" cy="{cy}" fill="none" stroke="#EDEEF1" stroke-width="{sw}"/>{"".join(segs)}<text x="{cx}" y="{cy + 2}" text-anchor="middle" font-size="22" font-weight="700" fill="#1D1D1F">{total}</text><text x="{cx}" y="{cy + 18}" text-anchor="middle" font-size="9" fill="#6E6E73">{esc(total_label)}</text></svg>'
+            f'<figcaption><b>{esc(title)}</b><ul>{legend}</ul></figcaption></figure>')
+def stacked_bar(items, title, note=''):
+    """items: [(label, count)]. A single horizontal stacked bar with legend."""
+    total = sum(c for _, c in items)
+    if not total: return ''
+    bars = ''.join(f'<i style="width:{count / total * 100:.2f}%;background:{CHART_COLORS[min(i, len(CHART_COLORS) - 1)]}" title="{esc(label)}: {count}"></i>' for i, (label, count) in enumerate(items) if count)
+    legend = ''.join(f'<li><i style="background:{CHART_COLORS[min(i, len(CHART_COLORS) - 1)]}"></i><span>{esc(label)}</span><b>{count}</b><small>{count / total * 100:.0f}%</small></li>' for i, (label, count) in enumerate(items) if count)
+    return f'<figure class="chart bar"><figcaption><b>{esc(title)}</b>' + (f'<span class="chart-note">{esc(note)}</span>' if note else '') + f'</figcaption><div class="stack" role="img" aria-label="{esc(title)}: ' + esc('; '.join(f'{l} {c}' for l, c in items if c)) + f'">{bars}</div><ul>{legend}</ul></figure>'
+def hbar_chart(items, base, title, note='', links=None):
+    """items: [(label, count)]; each bar is count/base. For overlapping sets (categories)."""
+    if not items or not base: return ''
+    rows = ''
+    for i, (label, count) in enumerate(items):
+        lab = f'<a href="{links[label]}">{esc(label)}</a>' if links and label in links else esc(label)
+        rows += f'<li><span class="lbl">{lab}</span><span class="track"><i style="width:{count / base * 100:.1f}%;background:{CHART_COLORS[min(i, 2)] if i < 3 else CHART_COLORS[3]}"></i></span><b>{count}</b><small>{count / base * 100:.0f}%</small></li>'
+    return f'<figure class="chart hbars"><figcaption><b>{esc(title)}</b>' + (f'<span class="chart-note">{esc(note)}</span>' if note else '') + f'</figcaption><ul>{rows}</ul></figure>'
+def category_split(products, n=5):
+    fn = defaultdict(int)
+    for p in products:
+        for f in p['functions']: fn[f] += 1
+    top = sorted(fn.items(), key=lambda t: -t[1])[:n]
+    return [(short_cat(k), v) for k, v in top], {short_cat(k): '/categories/' + (CAT_SLUG_OVERRIDE.get(k, slugify(k))) + '/' for k, _ in top}
+def short_cat(name): return name.replace('Artificial Intelligence (AI)', 'AI').replace('Cybersecurity & Risk Management', 'Cybersecurity').replace('Content Management System (CMS)', 'Content management').replace('Customer Relations Management (CRM)', 'CRM').replace('Governance, Risk, and Compliance (GRC)', 'GRC').replace('Virtual Private Network (VPN)', 'VPN').replace('Mobile Device Management (MDM)', 'MDM')
+def impact_split(products):
+    order = ['High', 'Moderate', 'Low', 'LI-SaaS']
+    c = defaultdict(int)
+    for p in products:
+        k = p['impact'].replace('20x ', '') if p['impact'] else 'Unlisted'
+        c[k] += 1
+    return [(k, c[k]) for k in order if c.get(k)] + ([('Not published', c['Unlisted'])] if c.get('Unlisted') else [])
+def cloud_split(products):
+    c = defaultdict(int)
+    for p in products:
+        fams = set(p['families'])
+        if not fams: c['Not recorded'] += 1
+        for f in fams: c[FAMILY_LABEL[f]] += 1
+    order = ['AWS', 'Microsoft Azure', 'Google Cloud', 'Oracle Cloud', 'Not recorded']
+    return [(k, c[k]) for k in order if c.get(k)]
+
 def signup_slot(context=''):
     return f'<div class="signup" data-signup data-context="{esc(context)}" hidden></div>'
 
@@ -575,7 +628,9 @@ def page_agency(db, a):
     for p in a['products']:
         for f in p['functions']: fn[f] += 1
     top = sorted(fn.items(), key=lambda t: -t[1])[:6]
-    head = ('<p class="sec-sub" style="margin:-2px 0 12px">See the software with authorization records at this agency, then filter by category, impact level and cloud environment.</p><div class="chips" style="margin:-4px 0 12px">' + ''.join(f'<a class="chip" href="{url_category(db["fn_by_name"][f])}">{esc(f)} · {c}</a>' for f, c in top if f in db['fn_by_name']) + '</div>'
+    cats, cat_links = category_split(a['products'], 6)
+    charts = ('<div class="charts">' + hbar_chart(cats, len(a['products']), 'Top categories', 'Share of this agency’s ' + str(len(a['products'])) + ' offerings; an offering can be in several', cat_links) + donut_chart(impact_split(a['products']), 'offerings', 'By impact level') + '</div><p class="note" style="margin:6px 0 16px">Counts are FedRAMP authorization and reuse records at this agency, not purchases.</p>')
+    head = ('<p class="sec-sub" style="margin:-2px 0 12px">See the software with authorization records at this agency, then filter by category, impact level and cloud environment.</p>' + charts + '<div class="chips" hidden style="margin:-4px 0 12px">' + ''.join(f'<a class="chip" href="{url_category(db["fn_by_name"][f])}">{esc(f)} · {c}</a>' for f, c in top if f in db['fn_by_name']) + '</div>'
             + f'<p class="note" style="margin:0 0 12px"><a href="https://www.fedramp.gov/marketplace/agencies/{esc(a["id"])}/" target="_blank" rel="noopener noreferrer">This agency on the FedRAMP Marketplace ↗</a></p>')
     n = len(a['products'])
     return page_list(db, path=url_agency(a), crumbs=crumbs, title=a['name'], sub=f'{nfmt(n)} authorized offerings' + (f' · part of {a["parent"]}' if a['sub'] else ''), products=sorted(a['products'], key=lambda p: -len(p['agencies'])),
@@ -584,7 +639,8 @@ def page_category(db, f):
     crumbs = [('FedCatalog', '/'), ('Browse', '/categories/'), (f['name'], None)]
     products = sorted([p for p in db['products'] if f['name'] in p['functions'] and p['status_code'] != 'delisted'], key=lambda p: -len(p['agencies']))
     short = f['name'].replace(' (AI)', '').replace(' (CMS)', '').replace(' (CRM)', '').replace(' (GRC)', '').replace(' (VPN)', '').replace(' (MDM)', '')
-    return page_list(db, path=url_category(f), crumbs=crumbs, title=f['name'], sub=CAT_DESC.get(f['name'], ''), products=products,
+    head = '<div class="charts">' + hbar_chart([c for c in cloud_split(products) if c[0] != 'Not recorded'], len(products), 'Where it runs', 'Share of ' + str(len(products)) + ' offerings; an offering can run on more than one cloud') + donut_chart(impact_split(products), 'offerings', 'By impact level') + '</div>'
+    return page_list(db, path=url_category(f), crumbs=crumbs, title=f['name'], sub=CAT_DESC.get(f['name'], ''), products=products, head_extra=head,
                      meta_title=f'Federal {short} Software | FedCatalog', meta_desc=f'{len(products)} FedRAMP cloud offerings in {f["name"]}: {CAT_DESC.get(f["name"], "").lower()}. Status, impact level, agency adoption, hosting platform and procurement links for each.')
 
 def page_static(db, path, title, meta_title, meta_desc, body_html, noindex=False, jsonld=None):
@@ -773,6 +829,24 @@ def build_assets(db):
 .lost .links { margin-top: 18px; font-size: 14px; } .lost .links a { color: var(--text); text-decoration: none; font-weight: 500; } .lost .links a:hover { color: var(--orange-hover); }
 @media (min-width: 720px) { .lost { padding-top: 80px; } .lost .shrug { font-size: 72px; } .lost h1 { font-size: 40px; } }
 .correct { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--separator); font-size: 13px; color: var(--secondary); } .correct a { color: var(--orange-hover); }
+.charts { display: grid; grid-template-columns: 1fr; gap: 16px 40px; margin: 6px 0 4px; }
+.chart { margin: 0; display: grid; grid-template-columns: 120px 1fr; gap: 0 18px; align-items: center; }
+.chart figcaption b { display: block; font-size: 13px; font-weight: 600; letter-spacing: .02em; color: var(--text); margin-bottom: 6px; }
+.chart ul { margin: 0; padding: 0; list-style: none; }
+.chart li { display: grid; grid-template-columns: 10px 1fr auto auto; gap: 8px; align-items: center; font-size: 13px; color: var(--text); padding: 2px 0; }
+.chart li i { width: 10px; height: 10px; border-radius: 3px; display: block; }
+.chart li b { font-weight: 600; font-variant-numeric: tabular-nums; } .chart li small { color: var(--secondary); min-width: 32px; text-align: right; font-variant-numeric: tabular-nums; }
+.chart.bar { grid-template-columns: 1fr; gap: 6px; }
+.chart.bar .stack { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: #EDEEF1; }
+.chart.bar .stack i { display: block; height: 100%; }
+.chart.bar ul { display: flex; flex-wrap: wrap; gap: 2px 16px; }
+.chart.bar li { display: inline-grid; grid-template-columns: 10px auto auto auto; }
+.chart.hbars { grid-template-columns: 1fr; gap: 6px; }
+.chart.hbars li { grid-template-columns: minmax(90px, 150px) 1fr auto auto; gap: 10px; padding: 3px 0; }
+.chart.hbars .lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .chart.hbars .lbl a { text-decoration: none; color: var(--text); } .chart.hbars .lbl a:hover { color: var(--orange-hover); }
+.chart.hbars .track { display: block; height: 12px; border-radius: 6px; background: #EDEEF1; overflow: hidden; } .chart.hbars .track i { display: block; height: 100%; border-radius: 6px; }
+.chart-note { display: block; font-size: 12px; color: var(--secondary); font-weight: 400; margin-top: -4px; }
+@media (min-width: 720px) { .charts { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; } }
 .prov { margin-top: 10px; font-size: 13px; color: var(--secondary); line-height: 1.5; } .prov a { color: var(--orange-hover); }
 .builtby { border-top: 1px solid var(--separator); padding-top: 22px; } .builtby h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; } .builtby p { margin-top: 8px; font-size: 16px; line-height: 1.55; max-width: 66ch; color: var(--secondary); } .builtby a { color: var(--orange-hover); font-weight: 600; text-decoration: none; }
 .hero .try a { color: var(--text); font-weight: 600; text-decoration: none; } .hero .try a:hover { color: var(--orange-hover); }
