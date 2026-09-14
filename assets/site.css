@@ -311,6 +311,24 @@ a { color: inherit; }
 .lost .links { margin-top: 18px; font-size: 14px; } .lost .links a { color: var(--text); text-decoration: none; font-weight: 500; } .lost .links a:hover { color: var(--orange-hover); }
 @media (min-width: 720px) { .lost { padding-top: 80px; } .lost .shrug { font-size: 72px; } .lost h1 { font-size: 40px; } }
 .correct { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--separator); font-size: 13px; color: var(--secondary); } .correct a { color: var(--orange-hover); }
+.charts { display: grid; grid-template-columns: 1fr; gap: 16px 40px; margin: 6px 0 4px; }
+.chart { margin: 0; display: grid; grid-template-columns: 120px 1fr; gap: 0 18px; align-items: center; }
+.chart figcaption b { display: block; font-size: 13px; font-weight: 600; letter-spacing: .02em; color: var(--text); margin-bottom: 6px; }
+.chart ul { margin: 0; padding: 0; list-style: none; }
+.chart li { display: grid; grid-template-columns: 10px 1fr auto auto; gap: 8px; align-items: center; font-size: 13px; color: var(--text); padding: 2px 0; }
+.chart li i { width: 10px; height: 10px; border-radius: 3px; display: block; }
+.chart li b { font-weight: 600; font-variant-numeric: tabular-nums; } .chart li small { color: var(--secondary); min-width: 32px; text-align: right; font-variant-numeric: tabular-nums; }
+.chart.bar { grid-template-columns: 1fr; gap: 6px; }
+.chart.bar .stack { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: #EDEEF1; }
+.chart.bar .stack i { display: block; height: 100%; }
+.chart.bar ul { display: flex; flex-wrap: wrap; gap: 2px 16px; }
+.chart.bar li { display: inline-grid; grid-template-columns: 10px auto auto auto; }
+.chart.hbars { grid-template-columns: 1fr; gap: 6px; }
+.chart.hbars li { grid-template-columns: minmax(90px, 150px) 1fr auto auto; gap: 10px; padding: 3px 0; }
+.chart.hbars .lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .chart.hbars .lbl a { text-decoration: none; color: var(--text); } .chart.hbars .lbl a:hover { color: var(--orange-hover); }
+.chart.hbars .track { display: block; height: 12px; border-radius: 6px; background: #EDEEF1; overflow: hidden; } .chart.hbars .track i { display: block; height: 100%; border-radius: 6px; }
+.chart-note { display: block; font-size: 12px; color: var(--secondary); font-weight: 400; margin-top: -4px; }
+@media (min-width: 720px) { .charts { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; } }
 .prov { margin-top: 10px; font-size: 13px; color: var(--secondary); line-height: 1.5; } .prov a { color: var(--orange-hover); }
 .builtby { border-top: 1px solid var(--separator); padding-top: 22px; } .builtby h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; } .builtby p { margin-top: 8px; font-size: 16px; line-height: 1.55; max-width: 66ch; color: var(--secondary); } .builtby a { color: var(--orange-hover); font-weight: 600; text-decoration: none; }
 .hero .try a { color: var(--text); font-weight: 600; text-decoration: none; } .hero .try a:hover { color: var(--orange-hover); }

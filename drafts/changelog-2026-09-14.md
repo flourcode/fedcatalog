@@ -1,0 +1,36 @@
+# Full changelog · 2026-08-31 to 2026-09-14
+
+- 2026-09-11 · 86Borders — ConnectAllCare · — → Initial Implementation · https://fedcatalog.com/software/connectallcare/
+- 2026-09-10 · Vastian — Vastian (MediaLab by Vastian) · — → Initial Implementation · https://fedcatalog.com/software/vastian-medialab-by-vastian/
+- 2026-09-10 · Dayforce — Dayforce HCM, Public Sector · — → Initial Implementation · https://fedcatalog.com/software/dayforce-hcm-public-sector/
+- 2026-09-10 · e-Builder, A Trimble Company — Trimble Unity Construct Government Edition · FedRAMP Authorized → No Status Found
+- 2026-09-10 · Unison — Bidscale · Moderate · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/bidscale/
+- 2026-09-09 · Silkline.ai — Silkline · — → Initial Implementation · https://fedcatalog.com/software/silkline/
+- 2026-09-09 · Trisotech — Digital Enterprise Suite FedRAMP Edition · Low · Agency Review → FedRAMP Authorized · https://fedcatalog.com/software/digital-enterprise-suite-fedramp-edition/
+- 2026-09-08 · Skyward IT Solutions — Alira · — → Initial Implementation · https://fedcatalog.com/software/alira/
+- 2026-09-08 · Meterbox Inc. — Meterbox · — → Initial Implementation · https://fedcatalog.com/software/meterbox/
+- 2026-09-08 · ElvoAI — ElvoAI · — → Initial Implementation · https://fedcatalog.com/software/elvoai/
+- 2026-09-08 · ConnectSecure — ConnectSecure Vulnerability and Compliance Manager · — → Initial Implementation · https://fedcatalog.com/software/connectsecure-vulnerability-and-compliance-manager/
+- 2026-09-08 · Microsoft Azure Goverment Cloud — Benchmark Construction Estimator · — → Initial Implementation · https://fedcatalog.com/software/benchmark-construction-estimator/
+- 2026-09-08 · Simuhealth Technologies Inc. — Simuhealth · — → Initial Implementation · https://fedcatalog.com/software/simuhealth/
+- 2026-09-04 · zLink, Inc. — zLinkFM · Low · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/zlinkfm/
+- 2026-09-04 · Anomali — Anomali Security Operations Platform (ASOP) · Moderate · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/anomali-security-operations-platform-asop/
+- 2026-09-03 · Nozomi Networks Inc. — Vantage for Government · Moderate · FedRAMP In Process → FedRAMP In Process · https://fedcatalog.com/software/vantage-for-government/
+- 2026-09-03 · Mycroft Technologies Inc — Mycroft GRC Platform · Initial Implementation → FedRAMP In Process · https://fedcatalog.com/software/mycroft-grc-platform/
+- 2026-09-03 · NORC — Data Enclave Gov · Moderate · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/data-enclave-gov/
+- 2026-09-02 · Anyreach, Inc. — Anyreach App Software Application · — → Initial Implementation · https://fedcatalog.com/software/anyreach-app-software-application/
+- 2026-09-02 · Samsara — Connected Operations Cloud · — → Initial Implementation · https://fedcatalog.com/software/connected-operations-cloud/
+- 2026-09-02 · National Resident Matching Program — iMatch · Moderate · FedRAMP Authorized → No Status Found · https://fedcatalog.com/software/imatch/
+- 2026-09-02 · Knightscope, Inc. — Knightscope Autonomous Security Robot (Knightscope ASR) · Moderate · FedRAMP Authorized → No Status Found · https://fedcatalog.com/software/knightscope-autonomous-security-robot-knightscope-asr/
+- 2026-09-02 · ATOM EVSE — Atom Power, Inc - ATOM EVSE · LI-SaaS · FedRAMP Authorized → No Status Found · https://fedcatalog.com/software/atom-power-inc-atom-evse/
+- 2026-09-02 · Aruba Networks — Aruba Central · Moderate · FedRAMP Authorized → No Status Found · https://fedcatalog.com/software/aruba-central/
+- 2026-09-02 · OpenWater Software — OpenWater Awards · LI-SaaS · FedRAMP Authorized → No Status Found · https://fedcatalog.com/software/openwater-awards/
+- 2026-09-02 · Forcepoint — ONE – Security Service Edge (SSE) – CASB/DLP/SWG/ZTNA/RBI · Moderate · FedRAMP Authorized → No Status Found · https://fedcatalog.com/software/one-security-service-edge-sse-casb-dlp-swg-ztna-rbi/
+- 2026-09-02 · Rectitude 369 — Rectitude 369 Government Cloud (Formerly GDT) · Moderate · FedRAMP Authorized → No Status Found · https://fedcatalog.com/software/rectitude-369-government-cloud-formerly-gdt/
+- 2026-09-01 · Anthropic — Claude · — → Initial Implementation · https://fedcatalog.com/software/claude/
+- 2026-09-01 · TGuardAI Inc. — TrustGuard AI Compliance Platform · — → Initial Implementation · https://fedcatalog.com/software/trustguard-ai-compliance-platform/
+- 2026-09-01 · Bizzdesign US — Bizzdesign GovCloud · Moderate · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/bizzdesign-govcloud/
+- 2026-08-31 · Ultra Security, Inc. — Ultra Security Hub and Agentic Security Platform · — → Initial Implementation · https://fedcatalog.com/software/ultra-security-hub-and-agentic-security-platform/
+- 2026-08-31 · Emburse, Inc. — Emburse Enterprise · — → Initial Implementation · https://fedcatalog.com/software/emburse-enterprise/
+- 2026-08-31 · Eleven Labs Inc. — ElevenLabs Platform · — → FedRAMP In Process · https://fedcatalog.com/software/elevenlabs-platform/
+- 2026-08-31 · Trello — Trello Enterprise Cloud · FedRAMP Authorized → No Status Found
