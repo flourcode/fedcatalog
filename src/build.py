@@ -477,6 +477,7 @@ def page_home(db):
   <h1 data-text="heroTitle">Federal Software in One Place</h1>
   <p data-text="heroSub">FedRAMP, DoD, OneGov, GSA, SEWP and marketplaces. Connected.</p>
   <form class="search" action="/search/" method="get" role="search"><label for="hq" class="sr-only">Search</label><input id="hq" name="q" type="search" autocomplete="off" placeholder="Search software, vendors or requirements…"><button type="submit">Search</button></form>
+  <p class="counts">{nfmt(len(P))} offerings · {nfmt(len({p['vendor_slug'] for p in P}))} vendors · {nfmt(len(db['agencies']))} agencies · {nfmt(sum(len(a['products']) for a in db['agencies']))} authorization records</p>
   <p class="cred">Public data · Source-linked · No pay-to-rank · Updated {esc(fmt_date(db['meta'].get('last_change')))} · <a href="/methodology/">How the data works →</a></p>
 </section>
 <section class="panel"><div class="sec-head"><h2>Browse by agency</h2><a href="/agencies/">See all agencies</a></div><div class="cats">{''.join(agency_link(a) for a in home_agencies)}</div></section>
@@ -817,7 +818,8 @@ def build_assets(db):
 .pillars a.is-key:hover { border-color: var(--orange); }
 @media (min-width: 720px) { .pillars a { padding: 12px 14px; } .pillars a b { font-size: 15px; } }
 .hero .kicker { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--orange-hover); margin-bottom: 10px; }
-.hero .counts { margin-top: 10px; font-size: 14px; color: var(--secondary); }
+.hero .counts { margin: 14px auto 0; font-size: 13px; color: var(--secondary); max-width: none; }
+.hero .cred { margin-top: 4px; }
 .hero .cred { max-width: 800px; margin: 12px auto 0; font-size: 13px; color: var(--secondary); line-height: 1.5; }
 .hero .cred a { font-weight: 600; color: var(--orange); text-decoration: none; white-space: nowrap; }
 .hero .quick { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 0; margin-top: 12px; font-size: 13px; max-width: none; }
