@@ -55,7 +55,7 @@ RUNS_FAMILY = {'aws': 'aws', 'aws-gov': 'aws', 'azure': 'azure', 'azure-gov': 'a
 FAMILY_LABEL = {'aws': 'AWS', 'azure': 'Microsoft Azure', 'google': 'Google Cloud', 'oci': 'Oracle Cloud'}
 CLOUD_SLUG = {'aws': 'aws', 'aws-gov': 'aws-govcloud', 'azure': 'azure', 'azure-gov': 'azure-government', 'google': 'google-cloud', 'oci': 'oracle-cloud'}
 IMPACT_ORDER = {'High': 4, '20x Moderate': 3, 'Moderate': 3, '20x Low': 2, 'Low': 2, 'LI-SaaS': 1}
-IMPACT_HELP = {'High': 'Loss would have severe or catastrophic effect; typical for law enforcement, emergency, financial and health systems', 'Moderate': 'Loss would have serious effect; the most common baseline', 'Low': 'Loss would have limited effect', 'LI-SaaS': 'Low-impact SaaS: tailored baseline for low-risk SaaS that does not store PII beyond login', '20x Low': 'FedRAMP 20x pilot, Low', '20x Moderate': 'FedRAMP 20x pilot, Moderate'}
+IMPACT_HELP = {'High': 'Authorized against the FedRAMP High baseline, the most extensive control set.', 'Moderate': 'Authorized against the FedRAMP Moderate baseline, the most common one.', 'Low': 'Authorized against the FedRAMP Low baseline.', 'LI-SaaS': 'Low-Impact SaaS: a tailored Low baseline for SaaS that handles little or no PII beyond login.', '20x Low': 'FedRAMP 20x pilot certification at the Low level.', '20x Moderate': 'FedRAMP 20x pilot certification at the Moderate level.'}
 CAT_DESC = {
   'Artificial Intelligence (AI)': 'Machine learning, generative AI, document intelligence and assistants', 'Cybersecurity & Risk Management': 'Identity, endpoint, network, vulnerability, SIEM and risk',
   'Analytics': 'Business intelligence, dashboards, data science and reporting', 'Data Management': 'Data platforms, warehouses, integration, quality and governance',
@@ -322,8 +322,8 @@ def correction_link(kind, name, ident, path):
     href = 'mailto:' + EMAIL + '?subject=' + esc(subject).replace(' ', '%20') + '&body=' + esc(body).replace('\n', '%0A').replace(' ', '%20')
     return f'<p class="correct">Something wrong or missing on this page? <a href="{href}">Email me</a> and I’ll fix it by checking the source.</p>'
 CHART_COLORS = ['#F25F3A', '#F58A5C', '#F7A987', '#C9CBD1', '#A9ACB4', '#8A8D95', '#6E7178']
-def donut_chart(items, total_label, title):
-    """items: [(label, count)] descending. A 120px donut with legend. Orange family for segments, grays for the tail."""
+def donut_chart(items, total_label, title, links=None, active=None):
+    """items: [(label, count)]. A 120px donut with legend; legend rows link to a filtered view when links are given."""
     total = sum(c for _, c in items)
     if not total: return ''
     r, cx, cy, sw = 44, 60, 60, 16
@@ -333,7 +333,12 @@ def donut_chart(items, total_label, title):
         frac = count / total
         segs.append(f'<circle r="{r}" cx="{cx}" cy="{cy}" fill="none" stroke="{CHART_COLORS[min(i, len(CHART_COLORS) - 1)]}" stroke-width="{sw}" stroke-dasharray="{circ * frac:.2f} {circ:.2f}" stroke-dashoffset="{-offset:.2f}" transform="rotate(-90 {cx} {cy})"><title>{esc(label)}: {count} ({frac * 100:.0f}%)</title></circle>')
         offset += circ * frac
-    legend = ''.join(f'<li><i style="background:{CHART_COLORS[min(i, len(CHART_COLORS) - 1)]}"></i><span>{esc(label)}</span><b>{count}</b><small>{count / total * 100:.0f}%</small></li>' for i, (label, count) in enumerate(items))
+    def row(i, label, count):
+        inner = f'<i style="background:{CHART_COLORS[min(i, len(CHART_COLORS) - 1)]}"></i><span>{esc(label)}</span><b>{count}</b><small>{count / total * 100:.0f}%</small>'
+        href = links.get(label) if links else None
+        cls = ' class="is-active"' if active and label == active else ''
+        return f'<li{cls}><a class="chart-link" href="{href}" title="Filter to {esc(label)}">{inner}</a></li>' if href else f'<li>{inner}</li>'
+    legend = ''.join(row(i, label, count) for i, (label, count) in enumerate(items))
     return (f'<figure class="chart"><svg viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="{esc(title)}: ' + esc('; '.join(f'{l} {c}' for l, c in items)) + f'"><circle r="{r}" cx="{cx}" cy="{cy}" fill="none" stroke="#EDEEF1" stroke-width="{sw}"/>{"".join(segs)}<text x="{cx}" y="{cy + 2}" text-anchor="middle" font-size="22" font-weight="700" fill="#1D1D1F">{total}</text><text x="{cx}" y="{cy + 18}" text-anchor="middle" font-size="9" fill="#6E6E73">{esc(total_label)}</text></svg>'
             f'<figcaption><b>{esc(title)}</b><ul>{legend}</ul></figcaption></figure>')
 def stacked_bar(items, title, note=''):
@@ -343,14 +348,18 @@ def stacked_bar(items, title, note=''):
     bars = ''.join(f'<i style="width:{count / total * 100:.2f}%;background:{CHART_COLORS[min(i, len(CHART_COLORS) - 1)]}" title="{esc(label)}: {count}"></i>' for i, (label, count) in enumerate(items) if count)
     legend = ''.join(f'<li><i style="background:{CHART_COLORS[min(i, len(CHART_COLORS) - 1)]}"></i><span>{esc(label)}</span><b>{count}</b><small>{count / total * 100:.0f}%</small></li>' for i, (label, count) in enumerate(items) if count)
     return f'<figure class="chart bar"><figcaption><b>{esc(title)}</b>' + (f'<span class="chart-note">{esc(note)}</span>' if note else '') + f'</figcaption><div class="stack" role="img" aria-label="{esc(title)}: ' + esc('; '.join(f'{l} {c}' for l, c in items if c)) + f'">{bars}</div><ul>{legend}</ul></figure>'
-def hbar_chart(items, base, title, note='', links=None):
-    """items: [(label, count)]; each bar is count/base. For overlapping sets (categories)."""
+def hbar_chart(items, base, title, note='', links=None, active=None):
+    """items: [(label, count)]; each bar is count/base. For overlapping sets (categories, clouds). links: label -> href."""
     if not items or not base: return ''
     rows = ''
     for i, (label, count) in enumerate(items):
-        lab = f'<a href="{links[label]}">{esc(label)}</a>' if links and label in links else esc(label)
-        rows += f'<li><span class="lbl">{lab}</span><span class="track"><i style="width:{count / base * 100:.1f}%;background:{CHART_COLORS[min(i, 2)] if i < 3 else CHART_COLORS[3]}"></i></span><b>{count}</b><small>{count / base * 100:.0f}%</small></li>'
+        href = links.get(label) if links else None
+        cls = ' is-active' if active and label == active else ''
+        inner = f'<span class="lbl">{esc(label)}</span><span class="track"><i style="width:{count / base * 100:.1f}%;background:{CHART_COLORS[min(i, 2)] if i < 3 else CHART_COLORS[3]}"></i></span><b>{count}</b><small>{count / base * 100:.0f}%</small>'
+        rows += (f'<li class="{cls.strip()}"><a class="chart-link" href="{href}" title="Filter to {esc(label)}">{inner}</a></li>' if href else f'<li>{inner}</li>')
     return f'<figure class="chart hbars"><figcaption><b>{esc(title)}</b>' + (f'<span class="chart-note">{esc(note)}</span>' if note else '') + f'</figcaption><ul>{rows}</ul></figure>'
+IMPACT_LINKS = lambda base: {'High': base + '?impact=High', 'Moderate': base + '?impact=Moderate', 'Low': base + '?impact=Low', 'LI-SaaS': base + '?impact=LI-SaaS'}
+CLOUD_LINKS = lambda base: {'AWS': base + '?family=aws', 'Microsoft Azure': base + '?family=azure', 'Google Cloud': base + '?family=google', 'Oracle Cloud': base + '?family=oci'}
 def category_split(products, n=5):
     fn = defaultdict(int)
     for p in products:
@@ -530,7 +539,7 @@ def page_product(db, p):
     stat_ag = f'{ag} federal agency authorization{"" if ag == 1 else "s"}' if ag else 'No agency authorizations on record'
     details = [('Offering', esc(p['name']), 'FedRAMP ID ' + esc(p['id'])),
                ('Status', esc(p['status']), ' · '.join(x for x in [(p['auth_type'] + ' authorization path') if p['auth_type'] else '', ('authorized ' + fmt_date(p['auth_date'])) if p['auth_date'] else '', ('FedRAMP Ready ' + fmt_date(p['ready_date'])) if p['ready_date'] else ''] if x)),
-               ('Impact level', esc(p['impact']), IMPACT_HELP.get(p['impact'], '')),
+               ('FedRAMP impact level', esc(p['impact']), IMPACT_HELP.get(p['impact'], '')),
                ('Deployment', esc(p['deployment'] or '—'), ' · '.join(p['models'])),
                ('Runs on', esc(runs), ('From FedRAMP leveraged-system relationships.' + ((' Also named in the title: ' + ', '.join(RUNS[r] for r in p['runs_named'])) if p['runs_named'] else '')) if p['runs'] else ('Named in the offering title; no leveraged-system record' if p['runs_named'] else '')),
                ('Assessor (3PAO)', esc(p['assessor']), '') if p['assessor'] else None,
@@ -553,7 +562,7 @@ def page_product(db, p):
   </div>
   <div class="facts">
     <div class="fact"><small>FedRAMP</small><b>{status_label(p)}</b><span>{esc(fact_status_sub)}</span></div>
-    <div class="fact"><small>Impact</small><b>{esc(p['impact'] or '—')}</b><span>{esc(p['deployment'] or ('Not yet published' if p.get('stub') else ''))}</span></div>
+    <div class="fact"><small>FedRAMP impact level</small><b>{esc(p['impact'] or '—')}</b><span>{esc(p['deployment'] or ('Not yet published' if p.get('stub') else ''))}</span></div>
     <div class="fact"><small>Runs on</small><b>{runs_text(p)}</b><span>{'FedRAMP record' if p['runs'] else ('From the offering title' if p['runs_named'] else 'Not recorded by FedRAMP')}</span></div>
     <div class="fact"><small>Agency authorizations</small><b>{ag}</b><span>{('Leveraged by ' + nfmt(p['leveraged_by']) + ' offerings') if p['leveraged_by'] else 'ATO or reuse on record'}</span></div>
   </div>
@@ -629,7 +638,10 @@ def page_agency(db, a):
         for f in p['functions']: fn[f] += 1
     top = sorted(fn.items(), key=lambda t: -t[1])[:6]
     cats, cat_links = category_split(a['products'], 6)
-    charts = ('<div class="charts">' + hbar_chart(cats, len(a['products']), 'Top categories', 'Share of this agency’s ' + str(len(a['products'])) + ' offerings; an offering can be in several', cat_links) + donut_chart(impact_split(a['products']), 'offerings', 'By impact level') + '</div><p class="note" style="margin:6px 0 16px">Counts are FedRAMP authorization and reuse records at this agency, not purchases.</p>')
+    n = len(a['products']); base = url_agency(a)
+    charts = ('<div class="charts three">' + hbar_chart(cats, n, 'Top categories', f'Share of the {n} offerings with records here; an offering can be in several', cat_links)
+              + hbar_chart([c for c in cloud_split(a['products']) if c[0] != 'Not recorded'], n, 'Where it runs', 'Where offerings with authorization records at this agency run; an offering can run on more than one cloud', CLOUD_LINKS(base))
+              + donut_chart(impact_split(a['products']), 'offerings', 'FedRAMP impact level', IMPACT_LINKS(base)) + '</div><p class="note" style="margin:6px 0 16px">Counts are FedRAMP authorization and reuse records at this agency, not purchases or deployments. Click a bar or a legend row to filter the list below.</p>')
     head = ('<p class="sec-sub" style="margin:-2px 0 12px">See the software with authorization records at this agency, then filter by category, impact level and cloud environment.</p>' + charts + '<div class="chips" hidden style="margin:-4px 0 12px">' + ''.join(f'<a class="chip" href="{url_category(db["fn_by_name"][f])}">{esc(f)} · {c}</a>' for f, c in top if f in db['fn_by_name']) + '</div>'
             + f'<p class="note" style="margin:0 0 12px"><a href="https://www.fedramp.gov/marketplace/agencies/{esc(a["id"])}/" target="_blank" rel="noopener noreferrer">This agency on the FedRAMP Marketplace ↗</a></p>')
     n = len(a['products'])
@@ -639,7 +651,9 @@ def page_category(db, f):
     crumbs = [('FedCatalog', '/'), ('Browse', '/categories/'), (f['name'], None)]
     products = sorted([p for p in db['products'] if f['name'] in p['functions'] and p['status_code'] != 'delisted'], key=lambda p: -len(p['agencies']))
     short = f['name'].replace(' (AI)', '').replace(' (CMS)', '').replace(' (CRM)', '').replace(' (GRC)', '').replace(' (VPN)', '').replace(' (MDM)', '')
-    head = '<div class="charts">' + hbar_chart([c for c in cloud_split(products) if c[0] != 'Not recorded'], len(products), 'Where it runs', 'Share of ' + str(len(products)) + ' offerings; an offering can run on more than one cloud') + donut_chart(impact_split(products), 'offerings', 'By impact level') + '</div>'
+    base = url_category(f)
+    head = ('<div class="charts">' + hbar_chart([c for c in cloud_split(products) if c[0] != 'Not recorded'], len(products), 'Where it runs', 'Share of ' + str(len(products)) + ' offerings; an offering can run on more than one cloud', CLOUD_LINKS(base))
+            + donut_chart(impact_split(products), 'offerings', 'FedRAMP impact level', IMPACT_LINKS(base)) + '</div><p class="note" style="margin:6px 0 14px">Click a bar or a legend row to filter the list below.</p>')
     return page_list(db, path=url_category(f), crumbs=crumbs, title=f['name'], sub=CAT_DESC.get(f['name'], ''), products=products, head_extra=head,
                      meta_title=f'Federal {short} Software | FedCatalog', meta_desc=f'{len(products)} FedRAMP cloud offerings in {f["name"]}: {CAT_DESC.get(f["name"], "").lower()}. Status, impact level, agency adoption, hosting platform and procurement links for each.')
 
@@ -683,6 +697,7 @@ METHODOLOGY = '''
 <p><strong>Refresh:</strong> daily. Each page shows the date of the data it was built from.</p>
 <p><strong>Two files, one lag:</strong> FedRAMP publishes a daily data record and a separate status changelog. The changelog usually runs ahead of the record by a week or two, in both directions: a new authorization can appear in the changelog while the record still says In Process, and a delisting can appear in the changelog while the record still says Authorized. FedCatalog treats the changelog as the current status (the FedRAMP Marketplace itself follows it: delisted offerings return a 404 there), lists the offering’s recent changelog events under Authorization details, and puts a visible notice on the page whenever the two files disagree. Offerings that FedRAMP has recorded in the changelog within the last year but not yet in the daily record — including Initial Implementation listings, which FedRAMP began publishing in July 2026 — appear as light records with what is known. Delisted offerings keep a reference page but are excluded from lists and counts.</p>
 <p><strong>Meaning:</strong> an authorization belongs to the specific offering and security boundary listed, not to the vendor or to the vendor’s other products. Agency authorization records show that an agency issued or reused an authorization; they do not by themselves show that the agency purchased or deployed the product.</p>
+<p><strong>Impact level:</strong> the FedRAMP baseline an offering was authorized against (High, Moderate, Low, or the tailored LI-SaaS), plus FedRAMP 20x pilot certifications where FedRAMP records them. This describes the cloud service and its authorization package. It is not the FIPS-199 impact categorization of any agency system: an agency categorizes its own system first, then reviews the offering’s package to decide whether it is appropriate for that system, data, configuration and risk tolerance. FedRAMP’s 2026 rules introduce Certification Classes, which describe how much assurance information a provider commits to supplying; these are a different concept from impact levels, and FedCatalog will show them as FedRAMP publishes them in the data rather than mapping one onto the other.</p>
 <p><strong>Runs on:</strong> FedRAMP records which authorized infrastructure platform an offering leverages. FedCatalog shows that relationship as “runs on.” Where a platform is only named in the offering’s title and no relationship is on record, it is shown with a dashed underline and labeled as such. Running on a cloud is not the same as being sold in that cloud’s marketplace.</p>
 <h2>DoD Cyber Exchange</h2>
 <p><strong>Source:</strong> the “Current Authorized CSOs” table on the DoD Cyber Exchange (<a href="https://public.cyber.mil/dccs/cso/" target="_blank" rel="noopener noreferrer">public.cyber.mil</a>).</p>
@@ -843,8 +858,16 @@ def build_assets(db):
 .chart.bar li { display: inline-grid; grid-template-columns: 10px auto auto auto; }
 .chart.hbars { grid-template-columns: 1fr; gap: 6px; }
 .chart.hbars li { grid-template-columns: minmax(90px, 150px) 1fr auto auto; gap: 10px; padding: 3px 0; }
+.chart.hbars li > .chart-link { display: grid; grid-template-columns: subgrid; grid-column: 1 / -1; align-items: center; gap: 10px; }
+.chart li > .chart-link { display: grid; grid-template-columns: subgrid; grid-column: 1 / -1; align-items: center; gap: 8px; }
 .chart.hbars .lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .chart.hbars .lbl a { text-decoration: none; color: var(--text); } .chart.hbars .lbl a:hover { color: var(--orange-hover); }
 .chart.hbars .track { display: block; height: 12px; border-radius: 6px; background: #EDEEF1; overflow: hidden; } .chart.hbars .track i { display: block; height: 100%; border-radius: 6px; }
+.chart-link { display: contents; color: inherit; text-decoration: none; }
+.chart li:has(.chart-link):hover span, .chart li:has(.chart-link):hover .lbl { color: var(--orange-hover); }
+.chart li.is-active .lbl, .chart li.is-active > .chart-link > span:not(.track) { font-weight: 700; color: var(--text); }
+.chart li.is-active .track { box-shadow: 0 0 0 2px var(--orange); }
+.chart.hbars li { grid-template-columns: minmax(90px, 150px) 1fr auto auto; }
+@media (min-width: 1000px) { .charts.three { grid-template-columns: 1fr 1fr 1fr; } }
 .chart-note { display: block; font-size: 12px; color: var(--secondary); font-weight: 400; margin-top: -4px; }
 @media (min-width: 720px) { .charts { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; } }
 .prov { margin-top: 10px; font-size: 13px; color: var(--secondary); line-height: 1.5; } .prov a { color: var(--orange-hover); }

@@ -61,6 +61,9 @@
     for (const r of sorted) list.append(r);
     const count = $('[data-count]', section); if (count) count.textContent = fmt.format(shown) + (shown === 1 ? ' result' : ' results');
     const empty = $('[data-empty]', section); if (empty) empty.hidden = shown > 0;
+    /* charts above the list: mark the row that matches the active filter */
+    const map = { High: state.impact === 'High', Moderate: state.impact === 'Moderate', Low: state.impact === 'Low', 'LI-SaaS': state.impact === 'LI-SaaS', AWS: state.family === 'aws', 'Microsoft Azure': state.family === 'azure', 'Google Cloud': state.family === 'google', 'Oracle Cloud': state.family === 'oci' };
+    for (const li of $$('.chart li')) { const lbl = (li.querySelector('.lbl') || li.querySelector('span'))?.textContent.trim(); li.classList.toggle('is-active', !!map[lbl]); }
     /* query-string variants are not separate pages for search engines */
     let robots = $('meta[name="robots"]');
     if (active || (state.sort && state.sort !== 'agencies')) { if (!robots) { robots = el('meta', { name: 'robots', content: 'noindex,follow' }); document.head.append(robots); } }
@@ -78,6 +81,14 @@
     const render = () => { applyFilters(section, state); if (section.dataset.searchPage) renderSearch(state); };
     const setState = (s) => { state = s; writeParams(state); render(); };
     bindRail(section, rail, () => state, setState);
+    /* chart rows: merge the clicked filter into the current state (toggle if already active) */
+    for (const a of $$('.chart-link', section)) a.addEventListener('click', (e) => {
+      const href = a.getAttribute('href') || ''; const qi = href.indexOf('?'); if (qi < 0) return;
+      e.preventDefault();
+      const params = new URLSearchParams(href.slice(qi + 1)); const s = Object.assign({}, state);
+      for (const [k, v] of params) { if (s[k] === v) delete s[k]; else s[k] = v; }
+      setState(s); const list = $('[data-rows]', section); if (list) list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
     const open = $('[data-open-sheet]', section);
     if (open) open.addEventListener('click', () => {
       const sheet = el('div', { class: 'sheet', role: 'dialog', 'aria-label': 'Filters' });

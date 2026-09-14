@@ -34,7 +34,11 @@ Exact source status strings are preserved (FedRAMP Authorized/Ready/In
 Process; DoD PA/PA-C/IATT/Suspended). "Runs on" (a FedRAMP relationship) is
 kept distinct from "sold on a marketplace" (a search link unless an exact
 listing is on file). USAspending figures are labeled a floor and split into
-vendor-direct vs reseller. Every figure names its source and date. Keep these.
+vendor-direct vs reseller. Every figure names its source and date. "Impact level" means the FedRAMP baseline an
+offering was authorized against, never the FIPS-199 category of an agency system;
+FedRAMP 2026 Certification Classes are a separate concept and are not mapped onto
+impact levels. Charts on agency and category pages count authorization records, not
+usage or spend. Keep these.
 
 ## The two FedRAMP files
 `data.json` (daily) carries core information: descriptions, agencies, hosting,

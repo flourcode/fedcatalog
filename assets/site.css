@@ -325,8 +325,16 @@ a { color: inherit; }
 .chart.bar li { display: inline-grid; grid-template-columns: 10px auto auto auto; }
 .chart.hbars { grid-template-columns: 1fr; gap: 6px; }
 .chart.hbars li { grid-template-columns: minmax(90px, 150px) 1fr auto auto; gap: 10px; padding: 3px 0; }
+.chart.hbars li > .chart-link { display: grid; grid-template-columns: subgrid; grid-column: 1 / -1; align-items: center; gap: 10px; }
+.chart li > .chart-link { display: grid; grid-template-columns: subgrid; grid-column: 1 / -1; align-items: center; gap: 8px; }
 .chart.hbars .lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .chart.hbars .lbl a { text-decoration: none; color: var(--text); } .chart.hbars .lbl a:hover { color: var(--orange-hover); }
 .chart.hbars .track { display: block; height: 12px; border-radius: 6px; background: #EDEEF1; overflow: hidden; } .chart.hbars .track i { display: block; height: 100%; border-radius: 6px; }
+.chart-link { display: contents; color: inherit; text-decoration: none; }
+.chart li:has(.chart-link):hover span, .chart li:has(.chart-link):hover .lbl { color: var(--orange-hover); }
+.chart li.is-active .lbl, .chart li.is-active > .chart-link > span:not(.track) { font-weight: 700; color: var(--text); }
+.chart li.is-active .track { box-shadow: 0 0 0 2px var(--orange); }
+.chart.hbars li { grid-template-columns: minmax(90px, 150px) 1fr auto auto; }
+@media (min-width: 1000px) { .charts.three { grid-template-columns: 1fr 1fr 1fr; } }
 .chart-note { display: block; font-size: 12px; color: var(--secondary); font-weight: 400; margin-top: -4px; }
 @media (min-width: 720px) { .charts { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; } }
 .prov { margin-top: 10px; font-size: 13px; color: var(--secondary); line-height: 1.5; } .prov a { color: var(--orange-hover); }
