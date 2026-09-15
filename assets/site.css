@@ -40,6 +40,12 @@ a { color: inherit; }
 .nav a:hover { color: var(--text); } .nav a.is-current { color: var(--text); font-weight: 600; }
 .searchbar { max-width: 1100px; margin: 0 auto; padding: 0 var(--pad) 10px; }
 .searchbar.is-home { display: none; }
+.search { position: relative; }
+.ac { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 40; background: var(--page); border: 1px solid var(--separator); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.08); overflow: hidden; text-align: left; }
+.ac-item { display: grid; grid-template-columns: 76px 1fr; gap: 10px; align-items: center; padding: 9px 14px; text-decoration: none; border-top: 1px solid var(--separator); }
+.ac-item:first-child { border-top: 0; } .ac-item:hover, .ac-item.is-sel { background: var(--canvas); }
+.ac-kind { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--secondary); }
+.ac-lbl { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.3; } .ac-lbl small { display: block; font-size: 12px; font-weight: 400; color: var(--secondary); }
 .search { position: relative; display: flex; align-items: center; background: var(--canvas); border: 1px solid transparent; border-radius: 12px; min-height: 44px; padding: 0 4px 0 14px; }
 .search:focus-within { background: var(--page); border-color: var(--orange); box-shadow: 0 0 0 4px var(--orange-soft); }
 .search .glyph { color: var(--secondary); margin-right: 8px; flex: 0 0 auto; }
@@ -338,6 +344,8 @@ a { color: inherit; }
 @media (min-width: 1000px) { .charts.three { grid-template-columns: 1fr 1fr 1fr; } }
 .chart-note { display: block; font-size: 12px; color: var(--secondary); font-weight: 400; margin-top: -4px; }
 @media (min-width: 720px) { .charts { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; } }
+.tip { color: var(--secondary); cursor: help; text-decoration: underline dotted; text-underline-offset: 3px; }
+.fact span[title] { cursor: help; }
 .prov { margin-top: 10px; font-size: 13px; color: var(--secondary); line-height: 1.5; } .prov a { color: var(--orange-hover); }
 .builtby { border-top: 1px solid var(--separator); padding-top: 22px; } .builtby h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; } .builtby p { margin-top: 8px; font-size: 16px; line-height: 1.55; max-width: 66ch; color: var(--secondary); } .builtby a { color: var(--orange-hover); font-weight: 600; text-decoration: none; }
 .hero .try a { color: var(--text); font-weight: 600; text-decoration: none; } .hero .try a:hover { color: var(--orange-hover); }

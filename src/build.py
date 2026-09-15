@@ -167,10 +167,30 @@ def load():
     except Exception: listings = []
     by_vendor = defaultdict(list)
     for l in listings: by_vendor[l['vendor_slug']].append(l)
+    try:
+        raw20 = json.load(open(os.path.join(DATA, 'fedramp-20x.json')))
+        pk = raw20['data']['frc-cso-pkg'] if 'data' in raw20 else raw20.get('frc-cso-pkg', [])
+    except Exception: pk = []
+    packages = []
+    def _d(v): return v if isinstance(v, dict) else {}
+    def _l(v): return v if isinstance(v, list) else ([v] if isinstance(v, str) and v else [])
+    def _s(v): return v if isinstance(v, str) else (', '.join(str(i) for i in v) if isinstance(v, list) else '')
+    for x in pk:
+        if not isinstance(x, dict): continue
+        si = _d(x.get('serviceIdentification')); sp = _d(x.get('serviceProperties')); tc = _d(sp.get('trustCenter'))
+        docs = [d for d in _l(x.get('documentationOverview')) if isinstance(d, dict)]
+        overview = next((d.get('url') for d in docs if 'Overview' in _s(d.get('name')) and isinstance(d.get('url'), str)), None) or (tc.get('url') if isinstance(tc.get('url'), str) else '')
+        assessor = x.get('assessor'); assessor = _d(assessor).get('name') if isinstance(assessor, dict) else _s(assessor)
+        packages.append(dict(id=_s(si.get('fedRampPackageId')) or _s(x.get('ZD_frid_retro')), provider=_s(si.get('providerName')), name=_s(si.get('serviceName')), desc=_s(si.get('serviceDescription'))[:300],
+            types=[_s(t) for t in _l(sp.get('serviceType'))], deployment=_s(sp.get('deploymentModel')), functions=[_s(f) for f in _l(sp.get('businessCategory'))], trust=(tc.get('url') if isinstance(tc.get('url'), str) else ''), overview=overview or '',
+            assessor=_s(assessor), fetched=_s(x.get('last_fetched_timestamp'))[:10]))
+    packages = [p for p in packages if p['name'] or p['provider']]
+    packages.sort(key=lambda p: (p['provider'].lower(), p['name'].lower()))
+    pkg_by_id = {p['id']: p for p in packages if p['id']}
     dod = snap.get('dod') or {'rows': [], 'fetched': '', 'source': ''}
     onegov = snap.get('onegov') or {'agreements': [], 'checked': '', 'source': ''}
     return dict(products=products, by_id=by_id, vendors=vendors, functions=functions, fn_by_name=fn_by_name, agencies=agencies, agency_by_name=agency_by_name,
-                latest=snap.get('latest', []), meta=snap['meta'], dod=dod, onegov=onegov, listings=listings, listings_by_vendor=by_vendor)
+                latest=snap.get('latest', []), meta=snap['meta'], dod=dod, onegov=onegov, listings=listings, listings_by_vendor=by_vendor, packages=packages, pkg_by_id=pkg_by_id)
 
 def similar(db, p, n=6):
     cands = []
@@ -241,6 +261,11 @@ def rail_html(base, with_dod=True):
             + (group('DoD Impact Level (vendor)', 'dod', [('IL4', 'IL4 provisional authorization'), ('IL5', 'IL5 provisional authorization'), ('IL6', 'IL6 provisional authorization')]) if with_dod else '')
             + '<select aria-label="Sort" data-sort><option value="agencies">Sort: most agencies</option><option value="newest">Sort: newest authorization</option><option value="name">Sort: A–Z</option><option value="vendor">Sort: vendor</option></select>'
             + '<button type="button" class="clear" data-clear hidden>Clear filters</button></div>')
+def recent_block(products, n=4):
+    """The newest authorizations within this list, by changelog event date or auth date."""
+    rec = sorted([p for p in products if p['status_code'] == 'authorized' and (p.get('status_event') or p.get('auth_date'))], key=lambda p: (p.get('status_event') or p['auth_date']), reverse=True)[:n]
+    if not rec: return ''
+    return '<h2 class="h3" style="margin-top:6px">Recently authorized here</h2><div class="rows" style="margin-bottom:18px">' + ''.join(product_row(p, date=fmt_date(p.get('status_event') or p['auth_date'])) for p in rec) + '</div>'
 def results_page(crumbs, title, sub, products, head_extra=''):
     return (f'<section class="panel">{crumbs_html(crumbs)}<h1 class="h2" style="margin-top:10px">{esc(title)}' + (f'<small>{esc(sub)}</small>' if sub else '') + '</h1>' + head_extra
             + f'<div class="results">{rail_html("")}<div><div class="results-bar"><span class="count" data-count>{nfmt(len(products))} {"result" if len(products) == 1 else "results"}</span>'
@@ -383,6 +408,8 @@ def cloud_split(products):
     order = ['AWS', 'Microsoft Azure', 'Google Cloud', 'Oracle Cloud', 'Not recorded']
     return [(k, c[k]) for k in order if c.get(k)]
 
+PATH_TIP = 'Agency path: an agency sponsored the authorization and issued the ATO. JAB path: the Joint Authorization Board issued a provisional authorization that agencies reuse. Program path: the FedRAMP 20x process.'
+RECORD_TIP = 'A record means an agency issued an authorization for this offering or reused another agency’s. It does not show whether the agency bought, deployed or still uses it.'
 def signup_slot(context=''):
     return f'<div class="signup" data-signup data-context="{esc(context)}" hidden></div>'
 
@@ -400,10 +427,10 @@ def relativize(html_text, path):
     html_text = re.sub(r'\b(href|src|action)="(/(?!/)[^"]*)"', fix, html_text)
     return html_text.replace('<meta name="fc-base" content="/">', f'<meta name="fc-base" content="{prefix}">')
 
-def layout(db, *, path, title, description, body, noindex=False, jsonld=None, og_type='website', h1_check=True):
-    return relativize(_layout(db, path=path, title=title, description=description, body=body, noindex=noindex, jsonld=jsonld, og_type=og_type), path)
+def layout(db, *, path, title, description, body, noindex=False, jsonld=None, og_type='website', h1_check=True, og_image=None):
+    return relativize(_layout(db, path=path, title=title, description=description, body=body, noindex=noindex, jsonld=jsonld, og_type=og_type, og_image=og_image), path)
 
-def _layout(db, *, path, title, description, body, noindex=False, jsonld=None, og_type='website'):
+def _layout(db, *, path, title, description, body, noindex=False, jsonld=None, og_type='website', og_image=None):
     canonical = ORIGIN + path
     ld = ''.join(f'<script type="application/ld+json">{json.dumps(j, ensure_ascii=False)}</script>' for j in (jsonld or []))
     robots = '<meta name="robots" content="noindex,follow">' if noindex else ''
@@ -422,10 +449,13 @@ def _layout(db, *, path, title, description, body, noindex=False, jsonld=None, o
 <meta property="og:description" content="{esc(description)}">
 <meta property="og:url" content="{canonical}">
 <meta property="og:type" content="{og_type}">
-<meta property="og:image" content="{ORIGIN}/assets/fedcatalog-og.png">
+<meta property="og:image" content="{ORIGIN}{og_image or "/assets/fedcatalog-og.png"}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="FedCatalog: FedRAMP status changes" href="/feed.xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="fc-base" content="/">
 <link rel="stylesheet" href="/assets/site.css">
@@ -491,7 +521,8 @@ def page_home(db):
            "potentialAction": {"@type": "SearchAction", "target": {"@type": "EntryPoint", "urlTemplate": ORIGIN + "/search/?q={search_term_string}"}, "query-input": "required name=search_term_string"}},
           {"@context": "https://schema.org", "@type": "Organization", "@id": ORIGIN + "/#organization", "name": "FedCatalog", "url": ORIGIN + "/", "logo": ORIGIN + "/assets/fedcatalog-og.png",
            "description": "An independent reference connecting federal software authorization, government records and buying paths.", "founder": {"@id": ORIGIN + "/about/mark-flournoy/#mark"}}]
-    return layout(db, path='/', title='FedCatalog | Federal Software in One Place', description='Search federal software across FedRAMP, DoD, OneGov, GSA, SEWP and cloud marketplaces. Find authorization details, vendors and government buying paths in one place.', body=body, jsonld=ld)
+    og = og_home(db)
+    return layout(db, path='/', og_image=og, title='FedCatalog | Federal Software in One Place', description='Search federal software across FedRAMP, DoD, OneGov, GSA, SEWP and cloud marketplaces. Find authorization details, vendors and government buying paths in one place.', body=body, jsonld=ld)
 
 _all_changes = None
 def load_changes_all():
@@ -527,6 +558,7 @@ def status_family(s):
     return 'other'
 def page_product(db, p):
     v = db['vendors'][p['vendor_slug']]
+    pkg = db['pkg_by_id'].get(p['id'])
     events = recent_events(p)
     conflict = bool(p.get('record_status'))
     others = [x for x in v['products'] if x['id'] != p['id']]
@@ -546,6 +578,7 @@ def page_product(db, p):
                ('Assessor (3PAO)', esc(p['assessor']), '') if p['assessor'] else None,
                ('Leveraged by', f'{nfmt(p["leveraged_by"])} other offerings', 'FedRAMP offerings built on this one') if p['leveraged_by'] else None,
                ('Government sales', f'<a href="mailto:{esc(p["sales_email"])}">{esc(p["sales_email"])}</a>', 'Contact published on the FedRAMP listing') if p['sales_email'] else None,
+               ('FedRAMP 20x package', (f'<a href="{esc(pkg["overview"] or pkg["trust"])}" target="_blank" rel="noopener noreferrer">Certification package overview ↗</a>' if (pkg['overview'] or pkg['trust']) else 'Published'), ('Assessed by ' + pkg['assessor'] + ' · ' if pkg['assessor'] else '') + 'Vendor-published 20x certification data, fetched ' + fmt_date(pkg['fetched'])) if pkg else None,
                ('Data as of', esc(fmt_date(db['meta'].get('last_change'))), 'FedRAMP Marketplace, refreshed daily')]
     matrix = ''.join(f'<li><dt>{t}</dt><dd>{val}{("<small>" + esc(sub) + "</small>") if sub else ""}</dd></li>' for t, val, sub in [d for d in details if d])
     body = f'''
@@ -562,10 +595,10 @@ def page_product(db, p):
     <div class="cta">{(f'<a class="primary" href="{esc(p["website"])}" target="_blank" rel="noopener noreferrer">Visit government offering</a>') if p['website'] else ''}<a href="#buy">How to buy</a><button class="copy" type="button" data-copy="{esc(copy_summary(p, runs))}">Copy summary</button></div>
   </div>
   <div class="facts">
-    <div class="fact"><small>FedRAMP</small><b>{status_label(p)}</b><span>{esc(fact_status_sub)}</span></div>
+    <div class="fact"><small>FedRAMP</small><b>{status_label(p)}</b><span title="{PATH_TIP if p['auth_type'] else ''}">{esc(fact_status_sub)}{' ⓘ' if p['auth_type'] else ''}</span></div>
     <div class="fact"><small>FedRAMP impact level</small><b>{esc(p['impact'] or '—')}</b><span>{esc(p['deployment'] or ('Not yet published' if p.get('stub') else ''))}</span></div>
     <div class="fact"><small>Runs on</small><b>{runs_text(p)}</b><span>{'FedRAMP record' if p['runs'] else ('From the offering title' if p['runs_named'] else 'Not recorded by FedRAMP')}</span></div>
-    <div class="fact"><small>Agency authorizations</small><b>{ag}</b><span>{('Leveraged by ' + nfmt(p['leveraged_by']) + ' offerings') if p['leveraged_by'] else 'ATO or reuse on record'}</span></div>
+    <div class="fact"><small>Agency authorizations</small><b>{ag}</b><span title="{RECORD_TIP}">{('Leveraged by ' + nfmt(p['leveraged_by']) + ' offerings') if p['leveraged_by'] else 'ATO or reuse on record'} ⓘ</span></div>
   </div>
   <p class="prov">Source: FedRAMP Marketplace · refreshed {esc(fmt_date(db['meta'].get('last_change')))}{(' · DoD status: DoD Cyber Exchange · checked ' + esc(fmt_date(db['dod'].get('fetched')))) if dod else ''}{(' · OneGov: GSA ITVMO · checked ' + esc(fmt_date(db['onegov'].get('checked')))) if onegov else ''} · <a href="/methodology/">How the data works</a></p>
   <div class="section" id="buy"><h2>How to buy</h2><p class="sec-sub">Confirmed paths come from GSA and the FedRAMP record; searches are places to look.</p>{procurement_block(db, p, v)}<p class="note"><a href="https://www.fedramp.gov/marketplace/products/{esc(p['id'])}/" target="_blank" rel="noopener noreferrer">FedRAMP Marketplace listing ↗</a> · <a href="https://acrrepo.section508.gov/" target="_blank" rel="noopener noreferrer">Section 508 ACR Repository ↗</a> · <a href="https://sam.gov/search/?keywords={esc(p['vendor_key']).replace(' ', '%20')}" target="_blank" rel="noopener noreferrer">SAM.gov ↗</a></p></div>
@@ -579,17 +612,31 @@ def page_product(db, p):
   {correction_link('Offering', p['name'] + ' (' + p['vendor_key'] + ')', p['id'], url_product(p))}
 </section>'''
     dupname = sum(1 for x in db['products'] if x['name'] == p['name']) > 1
-    title = f'{p["name"]}{(" (" + p["impact"] + ", " + p["id"] + ")") if dupname else ""}: FedRAMP, Agencies & Procurement | FedCatalog'
+    title = f'{p["name"]}{(" (" + p["impact"] + ", " + p["id"] + ")") if dupname else ""}: FedRAMP Status, Agencies & How to Buy | FedCatalog'
     desc = f'{p["name"]} by {p["vendor_key"]}: {p["status"]}' + (f' at the {p["impact"]} impact level' if p['impact'] else '') + f', {ag} agency authorization record{"" if ag == 1 else "s"}, runs on {runs.lower() if runs != "Not recorded" else "unrecorded platforms"}, and where to buy it.'
-    return layout(db, path=url_product(p), title=title, description=desc[:300], body=body, jsonld=[crumbs_ld(crumbs)])
+    app_ld = {"@context": "https://schema.org", "@type": "SoftwareApplication", "name": p['name'], "url": ORIGIN + url_product(p), "applicationCategory": ', '.join(p['functions'][:3]) or 'Cloud service',
+              "operatingSystem": "Cloud", "publisher": {"@type": "Organization", "name": p['vendor_key'], "url": ORIGIN + url_vendor(v)},
+              "description": first_sentence(p['desc']) if p['desc'] else f'{p["name"]} by {p["vendor_key"]}, a cloud service offering tracked on the FedRAMP Marketplace.',
+              "sameAs": [u for u in [f'https://www.fedramp.gov/marketplace/products/{p["id"]}/', p.get('website') or None, (pkg['trust'] if pkg else None)] if u],
+              "additionalProperty": [x for x in [
+                  {"@type": "PropertyValue", "name": "FedRAMP status", "value": p['status']},
+                  {"@type": "PropertyValue", "name": "FedRAMP impact level", "value": p['impact']} if p['impact'] else None,
+                  {"@type": "PropertyValue", "name": "FedRAMP ID", "value": p['id']},
+                  {"@type": "PropertyValue", "name": "Agency authorization records", "value": len(p['agencies'])},
+                  {"@type": "PropertyValue", "name": "Runs on", "value": runs} if runs != 'Not recorded' else None] if x]}
+    return layout(db, path=url_product(p), title=title, description=desc[:300], body=body, jsonld=[crumbs_ld(crumbs), app_ld])
+DB_META_DATE = ''
 def copy_summary(p, runs):
-    return '\n'.join(x for x in [f'{p["vendor_key"]} — {p["name"]}', f'{p["status"]} · {p["impact"]} · {p["deployment"]}', f'Runs on: {runs}', f'Agency authorizations: {len(p["agencies"])}', 'Categories: ' + ', '.join(p['functions']), f'Gov offering: {p["website"]}' if p['website'] else '', f'FedCatalog: {ORIGIN}{url_product(p)}'] if x)
+    return '\n'.join(x for x in [f'{p["vendor_key"]} — {p["name"]}', f'{p["status"]}' + (f' · {p["impact"]}' if p['impact'] else '') + (f' · {p["deployment"]}' if p['deployment'] else ''), f'FedRAMP ID: {p["id"]}', f'Runs on: {runs}', f'Agency authorization records: {len(p["agencies"])}', ('Categories: ' + ', '.join(p['functions'])) if p['functions'] else '', f'Gov offering: {p["website"]}' if p['website'] else '', f'Source: FedRAMP Marketplace, data as of {fmt_date(DB_META_DATE)}', f'{ORIGIN}{url_product(p)}'] if x)
 
 def page_vendor(db, v):
     s = vendor_summary(v); onegov = onegov_for(db, v['slug']); dod = dod_rows_for(db, v['slug'])
     crumbs = [('FedCatalog', '/'), ('Vendors', '/vendors/'), (v['name'], None)]
     dod_pa = sorted({r['il'] for r in dod if r['status'].startswith('Provisional Authorization')})
-    stat = f'<span>{s["authorized"]} authorized</span><span>up to {esc(s["best"]["impact"])}</span><span>{len(s["agencies"])} {"agency" if len(s["agencies"]) == 1 else "agencies"}</span>' + (f'<span>DoD {"/".join(dod_pa)}</span>' if dod_pa else '') + ('<span class="tone-accent">OneGov agreement</span>' if onegov else '')
+    from collections import Counter as _C
+    sc = _C(p['status_code'] for p in v['products'] if p['status_code'] != 'delisted')
+    parts = [f'{sc[k]} {lbl}' for k, lbl in [('authorized', 'authorized'), ('ready', 'ready'), ('in-process', 'in process'), ('initial', 'initial implementation')] if sc.get(k)]
+    stat = f'<span>{esc(" · ".join(parts) if parts else "no current offerings")}</span><span>up to {esc(s["best"]["impact"])}</span><span>{len(s["agencies"])} {"agency" if len(s["agencies"]) == 1 else "agencies"}</span>' + (f'<span>DoD {"/".join(dod_pa)}</span>' if dod_pa else '') + ('<span class="tone-accent">OneGov agreement</span>' if onegov else '')
     comps = defaultdict(int)
     for p in v['products']:
         for x in similar(db, p, 12):
@@ -629,8 +676,8 @@ def spend_terms(v):
         return names[:3] or [key]
     return [key]
 
-def page_list(db, *, path, crumbs, title, sub, products, meta_title, meta_desc, head_extra=''):
-    return layout(db, path=path, title=meta_title, description=meta_desc, body=results_page(crumbs, title, sub, products, head_extra), jsonld=[crumbs_ld(crumbs)])
+def page_list(db, *, path, crumbs, title, sub, products, meta_title, meta_desc, head_extra='', og_image=None):
+    return layout(db, path=path, title=meta_title, description=meta_desc, body=results_page(crumbs, title, sub, products, head_extra), jsonld=[crumbs_ld(crumbs)], og_image=og_image)
 
 def page_agency(db, a):
     crumbs = [('FedCatalog', '/'), ('Agencies', '/agencies/'), (a['name'], None)]
@@ -642,8 +689,8 @@ def page_agency(db, a):
     n = len(a['products']); base = url_agency(a)
     charts = ('<div class="charts three">' + hbar_chart(cats, n, 'Top categories', f'Share of the {n} offerings with records here; an offering can be in several', cat_links)
               + hbar_chart([c for c in cloud_split(a['products']) if c[0] != 'Not recorded'], n, 'Where it runs', 'Where offerings with authorization records at this agency run; an offering can run on more than one cloud', CLOUD_LINKS(base))
-              + donut_chart(impact_split(a['products']), 'offerings', 'FedRAMP impact level', IMPACT_LINKS(base)) + '</div><p class="note" style="margin:6px 0 16px">Counts are FedRAMP authorization and reuse records at this agency, not purchases or deployments. Click a bar or a legend row to filter the list below.</p>')
-    head = ('<p class="sec-sub" style="margin:-2px 0 12px">See the software with authorization records at this agency, then filter by category, impact level and cloud environment.</p>' + charts + '<div class="chips" hidden style="margin:-4px 0 12px">' + ''.join(f'<a class="chip" href="{url_category(db["fn_by_name"][f])}">{esc(f)} · {c}</a>' for f, c in top if f in db['fn_by_name']) + '</div>'
+              + donut_chart(impact_split(a['products']), 'offerings', 'FedRAMP impact level', IMPACT_LINKS(base)) + '</div><p class="note" style="margin:6px 0 16px">Counts are FedRAMP authorization and reuse records at this agency, not purchases or deployments. Click a bar or a legend row to filter the list below.</p>' + recent_block(a['products']))
+    head = ('<p class="sec-sub" style="margin:-2px 0 12px">See the software with authorization records at this agency, then filter by category, impact level and cloud environment. <span class="tip" title="A record means this agency issued an authorization for the offering or reused another agency’s. It does not show whether the agency bought, deployed or still uses it.">What is a record? ⓘ</span></p>' + charts + '<div class="chips" hidden style="margin:-4px 0 12px">' + ''.join(f'<a class="chip" href="{url_category(db["fn_by_name"][f])}">{esc(f)} · {c}</a>' for f, c in top if f in db['fn_by_name']) + '</div>'
             + f'<p class="note" style="margin:0 0 12px"><a href="https://www.fedramp.gov/marketplace/agencies/{esc(a["id"])}/" target="_blank" rel="noopener noreferrer">This agency on the FedRAMP Marketplace ↗</a></p>')
     n = len(a['products'])
     return page_list(db, path=url_agency(a), crumbs=crumbs, title=a['name'], sub=f'{nfmt(n)} authorized offerings' + (f' · part of {a["parent"]}' if a['sub'] else ''), products=sorted(a['products'], key=lambda p: -len(p['agencies'])),
@@ -654,7 +701,7 @@ def page_category(db, f):
     short = f['name'].replace(' (AI)', '').replace(' (CMS)', '').replace(' (CRM)', '').replace(' (GRC)', '').replace(' (VPN)', '').replace(' (MDM)', '')
     base = url_category(f)
     head = ('<div class="charts">' + hbar_chart([c for c in cloud_split(products) if c[0] != 'Not recorded'], len(products), 'Where it runs', 'Share of ' + str(len(products)) + ' offerings; an offering can run on more than one cloud', CLOUD_LINKS(base))
-            + donut_chart(impact_split(products), 'offerings', 'FedRAMP impact level', IMPACT_LINKS(base)) + '</div><p class="note" style="margin:6px 0 14px">Click a bar or a legend row to filter the list below.</p>')
+            + donut_chart(impact_split(products), 'offerings', 'FedRAMP impact level', IMPACT_LINKS(base)) + '</div><p class="note" style="margin:6px 0 14px">Click a bar or a legend row to filter the list below.</p>' + recent_block(products))
     return page_list(db, path=url_category(f), crumbs=crumbs, title=f['name'], sub=CAT_DESC.get(f['name'], ''), products=products, head_extra=head,
                      meta_title=f'Federal {short} Software | FedCatalog', meta_desc=f'{len(products)} FedRAMP cloud offerings in {f["name"]}: {CAT_DESC.get(f["name"], "").lower()}. Status, impact level, agency adoption, hosting platform and procurement links for each.')
 
@@ -762,6 +809,124 @@ def CONTACT():
 <p>If a FedRAMP, DoD or OneGov fact looks wrong, email the page link and what you believe is incorrect. Public-source facts are corrected by re-checking the source; FedCatalog does not edit authorization, agency or spending data by hand.</p>
 <h2>Vendors</h2>
 <p>FedCatalog links to a search for your company on each marketplace and vehicle rather than to individual listings, so there is nothing to submit. If your FedRAMP record’s website is wrong or missing, correct it with FedRAMP; FedCatalog picks up the change on its next refresh.</p>"""
+
+
+# ------------------------------------------------------------------ share images (Open Graph), drawn from the same data as the page
+OG_DIR = 'assets/og'
+_OG = {'ORANGE': '#F25F3A', 'O2': '#F58A5C', 'O3': '#F7A987', 'G1': '#C9CBD1', 'G2': '#EDEEF1', 'TXT': '#1D1D1F', 'SEC': '#6E6E73', 'GREEN': '#248A3D', 'SEP': '#E5E5EA'}
+def _og_fonts():
+    from PIL import ImageFont
+    def pick(names, size):
+        for n in names:
+            if os.path.exists(n): return ImageFont.truetype(n, size)
+        return ImageFont.load_default()
+    return (lambda s: pick(['/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf', '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'], s),
+            lambda s: pick(['/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'], s))
+def _og_mark(size):
+    from PIL import Image, ImageDraw
+    fb, _ = _og_fonts(); c = _OG
+    m = Image.new('RGBA', (size, size), (0, 0, 0, 0)); d = ImageDraw.Draw(m)
+    d.rounded_rectangle([0, 0, size - 1, size - 1], radius=int(size * .22), fill=c['TXT']); d.text((size / 2, size * .46), 'FC', font=fb(int(size * .44)), fill='#fff', anchor='mm')
+    d.rounded_rectangle([size * .22, size * .74, size * .78, size * .80], radius=int(size * .03), fill=c['ORANGE']); return m
+def _og_base(sub=True):
+    from PIL import Image, ImageDraw
+    fb, fr = _og_fonts(); c = _OG
+    img = Image.new('RGB', (1200, 630), '#FFFFFF'); d = ImageDraw.Draw(img); d.rectangle([0, 0, 1200, 10], fill=c['ORANGE'])
+    img.paste(_og_mark(52), (72, 56), _og_mark(52)); d.text((138, 66), 'FedCatalog', font=fb(32), fill=c['TXT'])
+    d.text((72, 176), 'Federal', font=fb(70), fill=c['TXT']); d.text((72, 252), 'Software in', font=fb(70), fill=c['TXT']); d.text((72, 328), 'One Place', font=fb(70), fill=c['TXT'])
+    if sub: d.text((72, 430), 'FedRAMP, DoD, OneGov, GSA, SEWP', font=fr(22), fill=c['SEC']); d.text((72, 460), 'and marketplaces. Connected.', font=fr(22), fill=c['SEC'])
+    d.text((72, 566), 'fedcatalog.com', font=fr(20), fill=c['SEC'])
+    return img, d, fb, fr
+def _og_card(d, x, y, w, h): d.rounded_rectangle([x, y, x + w, y + h], radius=18, fill='#FFFFFF', outline=_OG['SEP'], width=2)
+def _og_hbar(d, fb, fr, x, y, w, label, count, pct, color, lw=150):
+    c = _OG; d.text((x, y - 2), _shorten(label, 17) if lw <= 150 else label, font=fr(15), fill=c['TXT']); d.rounded_rectangle([x + lw, y + 3, x + w - 60, y + 15], radius=6, fill=c['G2'])
+    if pct > 0: d.rounded_rectangle([x + lw, y + 3, x + lw + max(4, int((w - lw - 60) * min(pct, 1))), y + 15], radius=6, fill=color)
+    if count != '': d.text((x + w - 50, y - 2), str(count), font=fb(15), fill=c['TXT'])
+def _og_donut(d, cx, cy, r, parts):
+    d.arc([cx - r, cy - r, cx + r, cy + r], 0, 360, fill=_OG['G2'], width=14); a = -90
+    for pct, col in parts:
+        if pct > 0: d.arc([cx - r, cy - r, cx + r, cy + r], a, a + 360 * pct, fill=col, width=14); a += 360 * pct
+def _og_save(img, name):
+    os.makedirs(os.path.join(DIST, OG_DIR), exist_ok=True)
+    img.convert('RGB').quantize(colors=96, method=2).save(os.path.join(DIST, OG_DIR, name), optimize=True); return f'/{OG_DIR}/{name}'
+def _shorten(s, n): return s if len(s) <= n else s[:n - 1].rstrip() + '…'
+CX, CY, CW, CH = 660, 96, 470, 450
+def og_home(db):
+    from PIL import Image, ImageDraw
+    fb, fr = _og_fonts(); c = _OG
+    P = [p for p in db['products'] if p['status_code'] != 'delisted']
+    img = Image.new('RGB', (1200, 630), '#FFFFFF'); d = ImageDraw.Draw(img); d.rectangle([0, 0, 1200, 10], fill=c['ORANGE'])
+    img.paste(_og_mark(52), (72, 52), _og_mark(52)); d.text((138, 62), 'FedCatalog', font=fb(32), fill=c['TXT'])
+    d.text((72, 128), 'Federal Software in One Place', font=fb(60), fill=c['TXT']); d.text((72, 204), 'FedRAMP, DoD, OneGov, GSA, SEWP and marketplaces. Connected.', font=fr(22), fill=c['SEC'])
+    top_ag = [a for a in db['agencies'] if not a['sub'] and a['name'].startswith('Department of')][:3]
+    cyber = db['fn_by_name'].get('Cybersecurity & Risk Management'); cyber_products = [p for p in P if cyber and cyber['name'] in p['functions']]
+    aws_share = (sum(1 for p in cyber_products if 'aws' in p['families']) / len(cyber_products) * 100) if cyber_products else 0
+    cards = [('Agencies', 'What has records at ' + ', '.join(a['name'].replace('Department of ', '').replace('the ', '') for a in top_ag) + '…'), ('Categories', f'Cybersecurity: {len(cyber_products)} offerings, {aws_share:.0f}% on AWS'), ('Products', 'Status, impact, runs on, how to buy')]
+    for i, (title, sub) in enumerate(cards):
+        x = 72 + i * 368; _og_card(d, x, 262, 340, 262); d.text((x + 22, 282), title, font=fb(20), fill=c['TXT']); d.text((x + 22, 312), _shorten(sub, 46), font=fr(13), fill=c['SEC'])
+        if i == 0 and top_ag:
+            cats, _ = category_split(top_ag[0]['products'], 4); n = len(top_ag[0]['products'])
+            for j, (l, cnt) in enumerate(cats): _og_hbar(d, fb, fr, x + 22, 352 + j * 32, 296, l, '', cnt / n if n else 0, [c['ORANGE'], c['O2'], c['O3'], c['G1']][j], lw=120)
+        if i == 1 and cyber_products:
+            imp = dict(impact_split(cyber_products)); tot = sum(imp.values()) or 1
+            _og_donut(d, x + 92, 432, 46, [(imp.get('High', 0) / tot, c['ORANGE']), (imp.get('Moderate', 0) / tot, c['O2']), ((imp.get('Low', 0) + imp.get('LI-SaaS', 0)) / tot, c['G1'])]); d.text((x + 92, 432), str(len(cyber_products)), font=fb(16), fill=c['TXT'], anchor='mm')
+            d.text((x + 164, 404), f'High {imp.get("High", 0) / tot * 100:.0f}%', font=fr(15), fill=c['TXT']); d.text((x + 164, 430), f'Moderate {imp.get("Moderate", 0) / tot * 100:.0f}%', font=fr(15), fill=c['TXT']); d.text((x + 164, 456), f'Low {(imp.get("Low", 0) + imp.get("LI-SaaS", 0)) / tot * 100:.0f}%', font=fr(15), fill=c['TXT'])
+        if i == 2:
+            picks = sorted([p for p in P if p['status_code'] == 'authorized'], key=lambda p: -len(p['agencies']))[:3]
+            for j, p in enumerate(picks):
+                y = 350 + j * 52; d.rounded_rectangle([x + 22, y, x + 54, y + 32], radius=8, fill=c['G2']); d.text((x + 38, y + 16), p['vendor_key'][:1].upper(), font=fb(14), fill=c['SEC'], anchor='mm')
+                d.text((x + 64, y), _shorten(p['name'], 30), font=fb(13), fill=c['TXT']); d.text((x + 64, y + 17), f'{p["impact"]} · {len(p["agencies"])} agencies', font=fr(11), fill=c['SEC']); d.ellipse([x + 306, y + 8, x + 314, y + 16], fill=c['GREEN'])
+    d.text((72, 566), f'fedcatalog.com  ·  {nfmt(len(P))} offerings · {nfmt(len({p["vendor_slug"] for p in P}))} vendors · {nfmt(len(db["agencies"]))} agencies · {nfmt(sum(len(a["products"]) for a in db["agencies"]))} authorization records', font=fr(19), fill=c['SEC'])
+    os.makedirs(os.path.join(DIST, 'assets'), exist_ok=True); img.convert('RGB').quantize(colors=96, method=2).save(os.path.join(DIST, 'assets', 'fedcatalog-og.png'), optimize=True); return '/assets/fedcatalog-og.png'
+def og_agency(db, a):
+    img, d, fb, fr = _og_base(); c = _OG; _og_card(d, CX, CY, CW, CH)
+    n = len(a['products'])
+    d.text((CX + 28, CY + 26), _shorten(a['name'], 34), font=fb(23 if len(a['name']) <= 30 else 18), fill=c['TXT']); d.text((CX + 28, CY + 56), f'{n} authorized offering{"" if n == 1 else "s"}' + (f' · part of {_shorten(a["parent"], 30)}' if a['sub'] else ''), font=fr(14), fill=c['SEC'])
+    cats, _ = category_split(a['products'], 5)
+    d.text((CX + 28, CY + 100), 'TOP CATEGORIES', font=fb(11), fill=c['SEC'])
+    for i, (l, cnt) in enumerate(cats): _og_hbar(d, fb, fr, CX + 28, CY + 128 + i * 34, CW - 46, l, cnt, cnt / n if n else 0, [c['ORANGE'], c['O2'], c['O3'], c['G1'], c['G1']][i])
+    imp = dict(impact_split(a['products'])); tot = sum(imp.values()) or 1
+    d.text((CX + 28, CY + 318), 'FEDRAMP IMPACT LEVEL', font=fb(11), fill=c['SEC'])
+    _og_donut(d, CX + 72, CY + 382, 36, [(imp.get('High', 0) / tot, c['ORANGE']), (imp.get('Moderate', 0) / tot, c['O2']), ((imp.get('Low', 0) + imp.get('LI-SaaS', 0)) / tot, c['G1'])]); d.text((CX + 72, CY + 382), str(n), font=fb(16), fill=c['TXT'], anchor='mm')
+    lines = [f'{k} {v} · {v / tot * 100:.0f}%' for k, v in imp.items() if v][:3]
+    for i, t in enumerate(lines): d.text((CX + 130, CY + 350 + i * 26), t, font=fr(15), fill=c['TXT'])
+    return _og_save(img, f'agency-{a["slug"]}.png')
+def og_category(db, f, products):
+    img, d, fb, fr = _og_base(); c = _OG; _og_card(d, CX, CY, CW, CH)
+    n = len(products)
+    d.text((CX + 28, CY + 26), _shorten(f['name'], 34), font=fb(21 if len(f['name']) <= 30 else 17), fill=c['TXT']); d.text((CX + 28, CY + 56), f'{n} offerings', font=fr(14), fill=c['SEC'])
+    d.text((CX + 28, CY + 98), 'WHERE IT RUNS', font=fb(11), fill=c['SEC'])
+    clouds = [x for x in cloud_split(products) if x[0] != 'Not recorded'][:3]
+    for i, (l, cnt) in enumerate(clouds): _og_hbar(d, fb, fr, CX + 28, CY + 126 + i * 34, CW - 46, l, cnt, cnt / n if n else 0, [c['ORANGE'], c['O2'], c['O3']][i])
+    d.line([CX + 28, CY + 240, CX + CW - 28, CY + 240], fill=c['SEP'], width=2)
+    picks = sorted([p for p in products if p['status_code'] == 'authorized'], key=lambda p: -len(p['agencies']))[:3]
+    for i, p in enumerate(picks):
+        y = CY + 258 + i * 60; d.rounded_rectangle([CX + 28, y + 2, CX + 64, y + 38], radius=9, fill=c['G2']); d.text((CX + 46, y + 20), p['vendor_key'][:1].upper(), font=fb(16), fill=c['SEC'], anchor='mm')
+        d.text((CX + 76, y + 2), _shorten(p['name'], 34), font=fb(15), fill=c['TXT']); d.text((CX + 76, y + 22), _shorten(f'{p["vendor_key"]} · {p["impact"]}' + (' · ' + RUNS[p['runs'][0]] if p['runs'] else ''), 44), font=fr(12), fill=c['SEC'])
+        d.ellipse([CX + CW - 118, y + 10, CX + CW - 110, y + 18], fill=c['GREEN']); d.text((CX + CW - 104, y + 5), 'Authorized', font=fb(12), fill=c['GREEN'])
+    return _og_save(img, f'category-{f["slug"]}.png')
+def og_product(db, p, v):
+    img, d, fb, fr = _og_base(); c = _OG; _og_card(d, CX, CY, CW, CH)
+    d.rounded_rectangle([CX + 28, CY + 26, CX + 72, CY + 70], radius=11, fill=c['G2']); d.text((CX + 50, CY + 48), p['vendor_key'][:1].upper(), font=fb(18), fill=c['SEC'], anchor='mm')
+    d.text((CX + 84, CY + 26), _shorten(p['name'], 30), font=fb(20 if len(p['name']) <= 26 else 16), fill=c['TXT']); d.text((CX + 84, CY + 52), _shorten(p['vendor_key'], 40), font=fr(14), fill=c['SEC'])
+    runs = (RUNS[p['runs'][0]] if p['runs'] else (RUNS[p['runs_named'][0]] if p['runs_named'] else '—'))
+    facts = [('FEDRAMP', p['status_label'][:12], c['GREEN'] if p['status_code'] == 'authorized' else c['TXT']), ('IMPACT', p['impact'] or '—', c['TXT']), ('RUNS ON', _shorten(runs, 11), c['TXT']), ('AGENCIES', str(len(p['agencies'])), c['TXT'])]
+    for i, (k, val, col) in enumerate(facts):
+        x = CX + 28 + i * 106; d.rounded_rectangle([x, CY + 96, x + 96, CY + 154], radius=10, fill='#fff', outline=c['SEP'], width=1); d.text((x + 10, CY + 104), k, font=fb(9), fill=c['SEC']); d.text((x + 10, CY + 122), val, font=fb(14), fill=col)
+    d.text((CX + 28, CY + 182), 'HOW TO BUY', font=fb(11), fill=c['SEC'])
+    paths = []
+    onegov = onegov_for(db, v['slug']); listings = [l for l in db['listings_by_vendor'].get(v['slug'], []) if p['id'] in (l.get('fedramp_ids') or [])]
+    if onegov: paths.append(('GSA OneGov agreement', 'Government-wide pricing', True))
+    for l in listings[:1]: paths.append((MARKET_LABEL[l['market']] + ' listing', 'Verified for this offering', True))
+    if p.get('website'): paths.append(('Vendor direct', 'Government sales page', True))
+    paths.append(('GSA · SEWP · marketplaces', 'Places to check', False))
+    for i, (a_, b_, ok) in enumerate(paths[:3]):
+        y = CY + 206 + i * 56; d.line([CX + 28, y + 48, CX + CW - 28, y + 48], fill=c['SEP'], width=1)
+        if ok: d.line([CX + 28, y + 16, CX + 32, y + 20, CX + 40, y + 11], fill=c['GREEN'], width=3)
+        else: d.ellipse([CX + 29, y + 10, CX + 39, y + 20], outline=c['SEC'], width=2)
+        d.text((CX + 50, y + 6), a_, font=fb(15), fill=(c['GREEN'] if ok else c['SEC'])); d.text((CX + 50, y + 27), b_, font=fr(12), fill=c['SEC'])
+    d.text((CX + 28, CY + 392), 'Source: FedRAMP Marketplace · refreshed daily', font=fr(11), fill=c['SEC'])
+    return _og_save(img, f'product-{p["slug"]}.png')
 
 # ------------------------------------------------------------------ assets
 def write(path, content):
@@ -872,6 +1037,8 @@ def build_assets(db):
 @media (min-width: 1000px) { .charts.three { grid-template-columns: 1fr 1fr 1fr; } }
 .chart-note { display: block; font-size: 12px; color: var(--secondary); font-weight: 400; margin-top: -4px; }
 @media (min-width: 720px) { .charts { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; } }
+.tip { color: var(--secondary); cursor: help; text-decoration: underline dotted; text-underline-offset: 3px; }
+.fact span[title] { cursor: help; }
 .prov { margin-top: 10px; font-size: 13px; color: var(--secondary); line-height: 1.5; } .prov a { color: var(--orange-hover); }
 .builtby { border-top: 1px solid var(--separator); padding-top: 22px; } .builtby h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; } .builtby p { margin-top: 8px; font-size: 16px; line-height: 1.55; max-width: 66ch; color: var(--secondary); } .builtby a { color: var(--orange-hover); font-weight: 600; text-decoration: none; }
 .hero .try a { color: var(--text); font-weight: 600; text-decoration: none; } .hero .try a:hover { color: var(--orange-hover); }
@@ -884,9 +1051,9 @@ def build_assets(db):
     write('assets/site-text.js', open(os.path.join(SRC, 'templates', 'site-text.js')).read())
     write('assets/signup.js', open(os.path.join(SRC, 'templates', 'signup.js')).read())
     # search index (compact)
-    idx = [dict(id=p['id'], u=url_product(p), n=p['name'], v=p['vendor_key'], vs=p['vendor_slug'], f=p['functions'], s=p['status_code'], sl=p['status_label'], i=p['impact'], fam=p['families'], r=p['runs'], rn=p['runs_named'], a=len(p['agencies']), d=trunc(p['desc'], 140), dod=p.get('_dod', []), og=1 if p.get('_onegov') else 0) for p in db['products']]
+    idx = [dict(id=p['id'], u=url_product(p), n=p['name'], v=p['vendor_key'], vs=p['vendor_slug'], f=p['functions'], s=p['status_code'], sl=p['status_label'], i=p['impact'], fam=p['families'], r=p['runs'], rn=p['runs_named'], a=len(p['agencies']), d=trunc(p['desc'], 140), dod=p.get('_dod', []), og=1 if p.get('_onegov') else 0, ag=[db['agency_by_name'][n]['slug'] for n in p['agencies'] if n in db['agency_by_name']]) for p in db['products']]
     vend = [dict(n=v['name'], u=url_vendor(v), c=len(v['products']), dod=[dict(il=r['il'], st=r['status'], cso=r['cso']) for r in dod_rows_for(db, v['slug'])], og=1 if onegov_for(db, v['slug']) else 0) for v in db['vendors'].values()]
-    ags = [dict(n=a['name'], p=a['parent'] if a['sub'] else '', u=url_agency(a), c=len(a['products'])) for a in db['agencies']]
+    ags = [dict(n=a['name'], p=a['parent'] if a['sub'] else '', u=url_agency(a), c=len(a['products']), s=a['slug']) for a in db['agencies']]
     write('assets/search-index.json', json.dumps({'products': idx, 'vendors': vend, 'agencies': ags, 'functions': [f['name'] for f in db['functions']], 'catUrls': {f['name']: url_category(f) for f in db['functions']}}, ensure_ascii=False, separators=(',', ':')))
     # favicon + touch icon + OG image
     write('assets/favicon.svg', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1D1D1F"/><text x="32" y="41" text-anchor="middle" font-family="-apple-system,Inter,Segoe UI,sans-serif" font-size="28" font-weight="700" fill="#FFFFFF">FC</text><rect x="14" y="48" width="36" height="4" rx="2" fill="#F25F3A"/></svg>')
@@ -911,17 +1078,6 @@ def build_assets(db):
             md.text((size / 2, size * .46), 'FC', font=fontb(int(size * .44)), fill='#FFFFFF', anchor='mm')
             md.rounded_rectangle([size * .22, size * .74, size * .78, size * .80], radius=int(size * .03), fill='#F25F3A')
             return m
-        # Open Graph image 1200x630
-        img = Image.new('RGB', (1200, 630), '#FFFFFF'); d = ImageDraw.Draw(img)
-        d.rectangle([0, 0, 1200, 10], fill='#F25F3A')
-        img.paste(mark(96), (80, 96), mark(96))
-        d.text((196, 118), 'FedCatalog', font=fontb(56), fill='#1D1D1F')
-        d.text((80, 262), 'Federal Software', font=fontb(88), fill='#1D1D1F')
-        d.text((80, 362), 'in One Place', font=fontb(88), fill='#1D1D1F')
-        d.text((80, 490), 'FedRAMP, DoD, OneGov, GSA, SEWP and marketplaces. Connected.', font=fontr(30), fill='#6E6E73')
-        d.text((80, 560), 'fedcatalog.com', font=fontr(26), fill='#6E6E73')
-        os.makedirs(os.path.join(DIST, 'assets'), exist_ok=True)
-        img.save(os.path.join(DIST, 'assets', 'fedcatalog-og.png'))
         mark(180).convert('RGB').save(os.path.join(DIST, 'assets', 'apple-touch-icon.png'))
         # Brand kit for social profiles (not linked from the site)
         kit = os.path.join(ROOT, 'brand'); os.makedirs(kit, exist_ok=True)
@@ -932,7 +1088,7 @@ def build_assets(db):
         bd.rectangle([0, 0, 1584, 8], fill='#F25F3A'); banner.paste(mark(120), (96, 128), mark(120))
         bd.text((248, 138), 'FedCatalog', font=fontb(64), fill='#1D1D1F'); bd.text((248, 224), 'Federal Software in One Place  ·  fedcatalog.com', font=fontr(30), fill='#6E6E73')
         banner.save(os.path.join(kit, 'fedcatalog-linkedin-banner-1584x396.png'))
-        shutil.copy(os.path.join(DIST, 'assets', 'fedcatalog-og.png'), os.path.join(kit, 'fedcatalog-social-1200x630.png'))
+        pass  # the share image (assets/fedcatalog-og.png) is drawn with the home page from live counts
         shutil.copy(os.path.join(DIST, 'assets', 'favicon.svg'), os.path.join(kit, 'fedcatalog-mark.svg'))
     except Exception as e:
         print('image assets skipped:', e)
@@ -940,6 +1096,7 @@ def build_assets(db):
 # ------------------------------------------------------------------ build
 def build():
     db = load()
+    global DB_META_DATE; DB_META_DATE = (db['meta'].get('last_change') or TODAY)[:10]
     # tag products with vendor-level onegov/dod for row data attributes
     for p in db['products']:
         p['_onegov'] = bool(onegov_for(db, p['vendor_slug']))
@@ -975,7 +1132,7 @@ def build():
         + f'<a class="cat" href="/agencies/"><b>Agencies</b><span>What each agency has authorized</span><small>{nfmt(len(db["agencies"]))} agencies</small><span class="chev" aria-hidden="true">›</span></a>'
         + f'<a class="cat" href="/buy/"><b>How to buy</b><span>OneGov, marketplaces, GSA, SEWP and vendor direct</span><small>Buying paths</small><span class="chev" aria-hidden="true">›</span></a>'
         + '</div><h2 class="h3">By category</h2><div class="cats">' + ''.join(cat_link(f) for f in db['functions']) + '</div><h2 class="h3">Other ways to browse</h2><div class="quick" style="justify-content:flex-start">'
-        + ''.join(f'<a href="{url_cloud(c)}">Runs on {esc(RUNS[c])}</a>' for c in RUNS) + '<a href="/fedramp/authorized/">Authorized</a><a href="/fedramp/in-process/">In process</a><a href="/fedramp/ready/">Ready</a><a href="/fedramp/initial-implementation/">Initial Implementation</a><a href="/fedramp/high/">High</a><a href="/fedramp/moderate/">Moderate</a><a href="/fedramp/low/">Low</a><a href="/fedramp/li-saas/">LI-SaaS</a><a href="/agencies/">By agency</a><a href="/onegov/">OneGov agreements</a><a href="/dod/">DoD Impact Level</a></div></section>', jsonld=[crumbs_ld([("FedCatalog", "/"), ("Browse", None)])]))
+        + ''.join(f'<a href="{url_cloud(c)}">Runs on {esc(RUNS[c])}</a>' for c in RUNS) + '<a href="/fedramp/authorized/">Authorized</a><a href="/fedramp/in-process/">In process</a><a href="/fedramp/ready/">Ready</a><a href="/fedramp/initial-implementation/">Initial Implementation</a><a href="/fedramp/20x/">FedRAMP 20x</a><a href="/fedramp/high/">High</a><a href="/fedramp/moderate/">Moderate</a><a href="/fedramp/low/">Low</a><a href="/fedramp/li-saas/">LI-SaaS</a><a href="/agencies/">By agency</a><a href="/onegov/">OneGov agreements</a><a href="/dod/">DoD Impact Level</a></div></section>', jsonld=[crumbs_ld([("FedCatalog", "/"), ("Browse", None)])]))
     # status / impact
     for code, label in [('authorized', 'FedRAMP Authorized'), ('in-process', 'In process'), ('ready', 'FedRAMP Ready'), ('initial', 'Initial Implementation')]:
         prods = sorted([p for p in db['products'] if p['status_code'] == code], key=lambda p: -len(p['agencies']))
@@ -1008,6 +1165,19 @@ def build():
     crumbs = [('FedCatalog', '/'), ('Browse', '/categories/'), ('OneGov', None)]
     add('/onegov/', layout(db, path='/onegov/', title='GSA OneGov Software Agreements | FedCatalog', description=f'All {len(ag)} current GSA OneGov agreements: vendor, discount, expiry, contract vehicle, eligibility and included products, as published by GSA’s ITVMO.',
         body=f'<section class="panel narrow">{crumbs_html(crumbs)}<h1 class="h2" style="margin-top:10px">OneGov agreements<small>GSA-negotiated, government-wide pricing. {len(ag)} agreements as published by GSA’s ITVMO. Ordering details are behind a government login; agencies still follow FAR 8.4 ordering procedures.</small></h1><ul class="awards">' + ''.join(onegov_row_html(a, True, db) for a in ag) + f'</ul><p class="source">Source: GSA ITVMO OneGov current agreements · checked {esc(fmt_date(db["onegov"].get("checked")))} · <a href="{esc(db["onegov"].get("source", ""))}" target="_blank" rel="noopener noreferrer">itvmo.gsa.gov</a></p></section>', jsonld=[crumbs_ld(crumbs)]))
+    # FedRAMP 20x
+    x20 = sorted([p for p in db['products'] if p['impact'].startswith('20x') and p['status_code'] != 'delisted'], key=lambda p: -len(p['agencies']))
+    pk = db['packages']
+    def pkg_row(k):
+        prod = db['by_id'].get(k['id'])
+        name = f'<a href="{url_product(prod)}">{esc(k["name"])}</a>' if prod else esc(k['name'])
+        links = ' · '.join(x for x in [f'<a href="{esc(k["overview"])}" target="_blank" rel="noopener noreferrer">Package overview ↗</a>' if k['overview'] else '', f'<a href="{esc(k["trust"])}" target="_blank" rel="noopener noreferrer">Trust center ↗</a>' if k['trust'] and k['trust'] != k['overview'] else ''] if x)
+        return (f'<li><div class="award-head"><b>{name}</b><span>{esc(", ".join(k["types"]) or "")}</span></div><p class="award-meta">{esc(k["provider"])}' + (f' · {esc(k["deployment"])}' if k['deployment'] else '') + (f' · Assessor: {esc(k["assessor"])}' if k['assessor'] else '') + (f' · {esc(prod["status"])}' if prod else ' · Not yet in the daily FedRAMP record') + f'</p><p class="award-desc">{esc(trunc(k["desc"], 180))}</p>' + (f'<div class="award-links">{links}</div>' if links else '') + '</li>')
+    body20 = (f'<section class="panel narrow">{crumbs_html([("FedCatalog", "/"), ("Browse", "/categories/"), ("FedRAMP 20x", None)])}<h1 class="h2" style="margin-top:10px">FedRAMP 20x<small>FedRAMP’s newer, faster certification process. Providers publish their own machine-readable certification packages; FedRAMP records the result as a 20x Low or 20x Moderate certification.</small></h1>'
+              f'<h2 class="h3">20x certifications in the catalog</h2><p class="note" style="margin:0 0 10px">{len(x20)} offerings the FedRAMP record marks as 20x Low or 20x Moderate.</p><div class="rows">' + ''.join(product_row(p) for p in x20) + '</div>'
+              f'<h2 class="h3" style="margin-top:32px">Published 20x certification packages</h2><p class="note" style="margin:0 0 10px">{len(pk)} packages published by providers to FedRAMP’s public repository. A published package is not itself a certification; the FedRAMP record decides status. Where the package matches an offering in the catalog, the name links to it.</p><ul class="awards">' + ''.join(pkg_row(k) for k in pk) + '</ul>'
+              '<p class="source">Sources: FedRAMP Marketplace data (20x impact levels) and the FedRAMP certification package repository (vendor-published overviews), both refreshed nightly.</p></section>')
+    add('/fedramp/20x/', layout(db, path='/fedramp/20x/', title='FedRAMP 20x Certifications and Packages | FedCatalog', description=f'{len(x20)} offerings certified under FedRAMP 20x and {len(pk)} vendor-published 20x certification packages, with assessor, service type, trust center and links to the FedRAMP record.', body=body20, jsonld=[crumbs_ld([("FedCatalog", "/"), ("Browse", "/categories/"), ("FedRAMP 20x", None)])]))
     # Buy
     onegov_vendor_slugs = {a['vendor_slug'] for a in db['onegov']['agreements'] if a.get('vendor_slug')}
     onegov_products = sorted([p for p in db['products'] if p['vendor_slug'] in onegov_vendor_slugs], key=lambda p: -len(p['agencies']))
@@ -1039,16 +1209,29 @@ def build():
     add('/buy/', layout(db, path='/buy/', title='Where Government Buys Software: Marketplaces, OneGov, GSA, SEWP | FedCatalog', description='The places federal software is bought — GSA OneGov, vendor direct, AWS, Azure and Google Cloud marketplaces, GSA MAS, GSA Advantage, NASA SEWP and the CDM APL — with direct links and useful intersections.', body=buy_body, jsonld=[crumbs_ld([("FedCatalog", "/"), ("How to buy", None)])]))
     add('/buy/onegov-software/', page_list(db, path='/buy/onegov-software/', crumbs=[('FedCatalog', '/'), ('How to buy', '/buy/'), ('OneGov vendors’ FedRAMP offerings', None)], title='FedRAMP offerings from OneGov vendors', sub='Cloud service offerings whose vendor holds a current GSA OneGov agreement. The agreement may cover a subset of these products; confirm scope on the GSA agreement page.', products=onegov_products,
         meta_title='FedRAMP Software from GSA OneGov Vendors | FedCatalog', meta_desc=f'{len(onegov_products)} FedRAMP cloud offerings from the {len(onegov_vendor_slugs)} vendors with current GSA OneGov agreements, with impact level, agency adoption and procurement paths.'))
+    # RSS feed of status changes
+    items = [x for x in load_changes() if (x.get('from_status') or '') != (x.get('to_status') or '')][:60]
+    def rss_item(x):
+        p = db['by_id'].get(x['product_id']); link = ORIGIN + (url_product(p) if p else '/new/')
+        title = f'{x["cso"]} ({x["csp"]}): {x["to_status"]}'
+        descr = f'{x["csp"]} — {x["cso"]} moved to {x["to_status"]}' + (f' from {x["from_status"]}' if x.get('from_status') else '') + (f' ({x["cert_path"]} path)' if x.get('cert_path') else '') + f' on {x["transition_date"][:10]}, per the FedRAMP status changelog.'
+        dt = datetime.datetime.fromisoformat(x['transition_date'][:19]).strftime('%a, %d %b %Y %H:%M:%S +0000')
+        return f'<item><title>{esc(title)}</title><link>{link}</link><guid isPermaLink="false">{esc(x["product_id"])}-{esc(x["transition_date"][:10])}-{esc(x["to_status"])}</guid><pubDate>{dt}</pubDate><description>{esc(descr)}</description></item>'
+    write('feed.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>FedCatalog: FedRAMP status changes</title><link>' + ORIGIN + '/new/</link><atom:link href="' + ORIGIN + '/feed.xml" rel="self" type="application/rss+xml"/><description>Newly authorized, ready, in-process and delisted cloud service offerings, from the FedRAMP status changelog. Rebuilt nightly.</description><language>en-us</language><lastBuildDate>' + datetime.datetime.now(datetime.timezone.utc).strftime('%a, %d %b %Y %H:%M:%S +0000') + '</lastBuildDate>' + ''.join(rss_item(x) for x in items) + '</channel></rss>\n')
     # New
     ch = load_changes()[:120]
     add('/new/', layout(db, path='/new/', title='New and Changed FedRAMP Authorizations | FedCatalog', description='The latest FedRAMP status changes: newly authorized, ready, in process and delisted cloud service offerings, as recorded by the FedRAMP PMO.',
-        body=f'<section class="panel narrow">{crumbs_html([("FedCatalog", "/"), ("New", None)])}<h1 class="h2" style="margin-top:10px">New and changed<small>Status changes on the FedRAMP Marketplace, newest first. Last {len(ch)} changes as recorded by the FedRAMP PMO.</small></h1>{signup_slot('new')}<ul class="new">' + ''.join(change_row(db, x) for x in ch) + f'</ul><p class="source">Source: FedRAMP status changelog · built {esc(fmt_date(TODAY))}</p></section>', jsonld=[crumbs_ld([("FedCatalog", "/"), ("New", None)])]))
+        body=f'<section class="panel narrow">{crumbs_html([("FedCatalog", "/"), ("New", None)])}<h1 class="h2" style="margin-top:10px">New and changed<small>Status changes on the FedRAMP Marketplace, newest first. Last {len(ch)} changes as recorded by the FedRAMP PMO. <a href="/feed.xml">RSS feed</a></small></h1>{signup_slot('new')}<ul class="new">' + ''.join(change_row(db, x) for x in ch) + f'</ul><p class="source">Source: FedRAMP status changelog · built {esc(fmt_date(TODAY))}</p></section>', jsonld=[crumbs_ld([("FedCatalog", "/"), ("New", None)])]))
     # static pages
     add('/about/', page_static(db, '/about/', 'About', 'About FedCatalog | FedCatalog', 'Who built FedCatalog and why: one person putting scattered federal software information in one place, from public sources.', ABOUT))
     mark_ld = {"@context": "https://schema.org", "@type": "ProfilePage", "mainEntity": {"@type": "Person", "@id": ORIGIN + "/about/mark-flournoy/#mark", "name": "Mark Flournoy", "url": ORIGIN + "/about/mark-flournoy/",
                "description": "Builds and maintains FedCatalog. Six years supporting Federal Partner Sales at AWS; earlier sales roles at F5, Red Hat, Western Digital and STEC; 20 years in the U.S. Marines.", "image": ORIGIN + "/assets/mark.jpg", "sameAs": ["https://www.linkedin.com/in/markflournoy/"], "worksFor": {"@id": ORIGIN + "/#organization"}}}
     add('/about/mark-flournoy/', page_static(db, '/about/mark-flournoy/', 'Mark Flournoy', 'Mark Flournoy | FedCatalog', 'Mark Flournoy builds and maintains FedCatalog. Six years supporting Federal Partner Sales at AWS, earlier sales roles at F5, Red Hat, Western Digital and STEC, and 20 years in the Marines.', MARK, jsonld=[mark_ld]))
-    add('/methodology/', page_static(db, '/methodology/', 'Methodology', 'Data Sources & Methodology | FedCatalog', 'Where every FedCatalog figure comes from: FedRAMP Marketplace, DoD Cyber Exchange, GSA OneGov, USAspending and procurement sources, what each means, and the editorial policy.', METHODOLOGY))
+    dataset_ld = {"@context": "https://schema.org", "@type": "Dataset", "name": "FedCatalog federal software catalog", "url": ORIGIN + "/", "description": "Cloud service offerings tracked on the FedRAMP Marketplace with status, impact level, agency authorization records, hosting platform, DoD Impact Level listings and GSA OneGov agreements, consolidated and refreshed daily from public sources.",
+                  "creator": {"@id": ORIGIN + "/#organization"}, "license": "https://creativecommons.org/publicdomain/zero/1.0/", "isBasedOn": ["https://www.fedramp.gov/marketplace/", "https://public.cyber.mil/dccs/cso/", "https://itvmo.gsa.gov/onegov/", "https://www.usaspending.gov/"],
+                  "dateModified": (db['meta'].get('last_change') or TODAY)[:10], "temporalCoverage": "2011/..", "keywords": ["FedRAMP", "federal software", "cloud authorization", "DoD Impact Level", "OneGov", "government procurement"],
+                  "distribution": [{"@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": ORIGIN + "/assets/search-index.json"}]}
+    add('/methodology/', page_static(db, '/methodology/', 'Methodology', 'Data Sources & Methodology | FedCatalog', 'Where every FedCatalog figure comes from: FedRAMP Marketplace, DoD Cyber Exchange, GSA OneGov, USAspending and procurement sources, what each means, and the editorial policy.', METHODOLOGY, jsonld=[dataset_ld]))
     add('/privacy/', page_static(db, '/privacy/', 'Privacy', 'Privacy | FedCatalog', 'FedCatalog’s privacy practices in plain English: no accounts, no sale of personal information, no tracking cookies.', PRIVACY))
     add('/terms/', page_static(db, '/terms/', 'Terms', 'Terms of Use | FedCatalog', 'Terms of use for FedCatalog, an independent federal software reference: informational use, accuracy, external links, trademarks and liability.', TERMS))
     add('/contact/', page_static(db, '/contact/', 'Contact', 'Contact FedCatalog | FedCatalog', 'Questions, corrections and vendor listing updates for FedCatalog.', CONTACT()))
@@ -1062,8 +1245,11 @@ def build():
 <p class="links"><a href="/software/">Browse software</a> · <a href="/vendors/">Vendors</a> · <a href="/agencies/">Agencies</a> · <a href="/buy/">How to buy</a> · <a href="/">Home</a></p></section>'''))
     # sitemap, robots, CNAME
     lastmod = (db['meta'].get('last_change') or TODAY)[:10]
-    write('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{ORIGIN}{u}</loc><lastmod>{lastmod}</lastmod></url>\n' for u in urls) + '</urlset>\n')
-    write('robots.txt', f'User-agent: *\nAllow: /\n\nSitemap: {ORIGIN}/sitemap.xml\n')
+    buckets = {'software': [u for u in urls if u.startswith('/software/')], 'vendors': [u for u in urls if u.startswith('/vendors/')], 'agencies': [u for u in urls if u.startswith('/agencies/')], 'browse': [u for u in urls if not u.startswith(('/software/', '/vendors/', '/agencies/'))]}
+    for name, lst in buckets.items():
+        write(f'sitemap-{name}.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{ORIGIN}{u}</loc><lastmod>{lastmod}</lastmod></url>\n' for u in lst) + '</urlset>\n')
+    write('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <sitemap><loc>{ORIGIN}/sitemap-{name}.xml</loc><lastmod>{lastmod}</lastmod></sitemap>\n' for name in buckets) + '</sitemapindex>\n')
+    write('robots.txt', f'User-agent: *\nAllow: /\nDisallow: /search/\nDisallow: /*?\n\nSitemap: {ORIGIN}/sitemap.xml\n')
     write('CNAME', 'fedcatalog.com\n')
     print('built', len(urls), 'indexable pages into', DIST)
     return urls

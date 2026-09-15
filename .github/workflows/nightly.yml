@@ -39,6 +39,13 @@ jobs:
           python3 -c "import json; json.load(open('/tmp/changelog.json'))"
           cp /tmp/changelog.json src/data/changelog.json
 
+      - name: Refresh the FedRAMP 20x package file (keeps last good copy on failure)
+        continue-on-error: true
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/FedRAMP/marketplace-fedramp-gov-data/main/fedramp-frc-cso-pkg.json -o /tmp/frc.json
+          python3 -c "import json; json.load(open('/tmp/frc.json'))"
+          cp /tmp/frc.json src/data/fedramp-20x.json
+
       - name: Generate the site
         run: python3 src/build.py
 

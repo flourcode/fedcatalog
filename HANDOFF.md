@@ -51,6 +51,13 @@ last 365 days, so Initial Implementation listings appear without reviving
 2018-era leftovers), flags pages where the two files disagree, and excludes
 delisted offerings from lists and counts while keeping their pages.
 
+## Other generated outputs
+`feed.xml` — RSS of the last 60 FedRAMP status changes (linked from every page's
+head and the New page). `sitemap.xml` is an index of four sitemaps. The 20x page
+reads `src/data/fedramp-20x.json` (FedRAMP's vendor-published certification
+packages, refreshed nightly, keep-last-good); the parser tolerates the uneven
+JSON vendors publish.
+
 ## If FedRAMP changes its data format
 `data.json` is FedRAMP's "legacy" file. If it stops updating or changes shape,
 `build_snapshot.py` is the only file that reads it (the `compact()` function).

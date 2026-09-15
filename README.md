@@ -192,7 +192,7 @@ address mail to nowhere.
 
 1. Add `fedcatalog.com` as a **Domain property** (verify with the DNS record
    Google gives you; add it in Route 53).
-2. Submit `https://fedcatalog.com/sitemap.xml`.
+2. Submit `https://fedcatalog.com/sitemap.xml` (it is an index of four sitemaps: software, vendors, agencies, browse; Search Console reports each).
 3. Use *URL inspection* on the homepage, one vendor page, one product page, one
    category and one agency page; confirm "URL is on Google" or "can be indexed".
 4. Watch *Pages* under Indexing over the following weeks. Do not request

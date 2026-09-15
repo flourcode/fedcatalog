@@ -130,23 +130,23 @@
   const STOP = new Set(['i', 'a', 'an', 'the', 'need', 'for', 'to', 'of', 'and', 'or', 'with', 'that', 'can', 'use', 'my', 'our', 'we', 'tool', 'tools', 'software', 'product', 'products', 'platform', 'solution', 'ready', 'want', 'looking', 'in', 'on', 'is', 'what', 'something', 'internal', 'government', 'federal', 'agency', 'gov']);
   function interpret(query) {
     const q = query.toLowerCase().trim(), filters = {};
-    if (/\bhigh\b/.test(q)) filters.impact = 'High'; else if (/\bmoderate\b/.test(q)) filters.impact = 'Moderate'; else if (/\bli-?saas\b/.test(q)) filters.impact = 'LI-SaaS'; else if (/\blow\b/.test(q)) filters.impact = 'Low';
+    if (/\bhigh\b/.test(q)) filters.impact = 'High'; else if (/\b(moderate|mod)\b/.test(q)) filters.impact = 'Moderate'; else if (/\bli-?saas\b/.test(q)) filters.impact = 'LI-SaaS'; else if (/\blow\b/.test(q)) filters.impact = 'Low';
     if (/\b(authori[sz]ed|certified)\b/.test(q)) filters.status = 'authorized'; else if (/\bin[ -]process\b/.test(q)) filters.status = 'in-process';
-    if (/\baws\b|\bgovcloud\b/.test(q) && !/^aws$/.test(q)) filters.family = 'aws';
-    if (/\bazure\b/.test(q) && !/^azure$/.test(q)) filters.family = 'azure';
+    if (/\b(aws ?govcloud|govcloud|aws gov)\b/.test(q)) filters.runs = 'aws-gov'; else if (/\baws\b/.test(q) && !/^aws$/.test(q)) filters.family = 'aws';
+    if (/\bazure ?gov(ernment)?\b/.test(q)) filters.runs = 'azure-gov'; else if (/\bazure\b/.test(q) && !/^azure$/.test(q)) filters.family = 'azure';
     if (/\bgcp\b|\bgoogle cloud\b|\bon google\b/.test(q)) filters.family = 'google';
-    const il = q.match(/\bil ?([2456])\b/); if (il) filters.dod = 'IL' + il[1];
+    const il = q.match(/\b(?:il[ -]?|impact level )([2456])\b/); if (il) filters.dod = 'IL' + il[1];
     if (/\bonegov\b/.test(q)) filters.onegov = '1';
     const functions = new Set(), covered = new Set();
     for (const [re, fns] of SYN) { const m = q.match(new RegExp(re.source, 'gi')); if (!m) continue; for (const f of fns) functions.add(f); for (const hit of m) for (const t of hit.toLowerCase().split(/[^a-z0-9+#.]+/)) if (t) covered.add(t); }
-    const terms = q.replace(/\b(fedramp|high|moderate|low|li-?saas|authori[sz]ed|certified|in[ -]process|on aws|aws|azure|gcp|google|govcloud|il ?[2456]|dod|onegov|marketplace)\b/g, ' ').split(/[^a-z0-9+#.]+/).filter(t => t.length > 1 && !STOP.has(t) && !covered.has(t));
+    const terms = q.replace(/\b(fedramp|high|moderate|mod|low|li-?saas|authori[sz]ed|certified|in[ -]process|on aws|aws ?govcloud|aws gov|aws|azure ?gov(ernment)?|azure|gcp|google|govcloud|il[ -]?[2456]|impact level [2456]|dod|onegov|marketplace|at|for)\b/g, ' ').split(/[^a-z0-9+#.]+/).filter(t => t.length > 1 && !STOP.has(t) && !covered.has(t));
     return { filters, functions: Array.from(functions), terms, soft: Array.from(covered).filter(t => t.length > 2 && !STOP.has(t)) };
   }
   let INDEX = null;
   const BASE = (document.querySelector('meta[name="fc-base"]') || {}).content || '/';
   async function loadIndex() { if (!INDEX) { const r = await fetch(BASE + 'assets/search-index.json'); INDEX = await r.json(); } return INDEX; }
   function vendorKey(name) { return String(name || '').replace(/\s*\(.*?\)\s*/g, ' ').replace(/[.,]+$/, '').replace(/,?\s*\b(inc|llc|corp|corporation|incorporated|company|co|ltd|lp|plc|pbc)\b\.?$/i, '').trim(); }
-  const AGENCY_ALIASES = { va: 'Department of Veterans Affairs', dhs: 'Department of Homeland Security', dod: 'Department of Defense', disa: 'Defense Information Systems Agency', hhs: 'Department of Health and Human Services', doe: 'Department of Energy', usda: 'Department of Agriculture', doj: 'Department of Justice', dol: 'Department of Labor', dot: 'Department of Transportation', doi: 'Department of the Interior', ed: 'Department of Education', hud: 'Department of Housing and Urban Development', gsa: 'General Services Administration', nasa: 'National Aeronautics and Space Administration', epa: 'Environmental Protection Agency', ssa: 'Social Security Administration', cisa: 'Cybersecurity and Infrastructure Security Agency', cbp: 'Customs and Border Protection', fema: 'Federal Emergency Management Agency', irs: 'Internal Revenue Service', navy: 'Department of the Navy', army: 'Department of the Army', usaf: 'United States Air Force', 'air force': 'United States Air Force', marines: 'United States Marine Corps', usmc: 'United States Marine Corps', treasury: 'Department of the Treasury', state: 'Department of State', commerce: 'Department of Commerce', nih: 'National Institutes of Health', cdc: 'Centers for Disease Control and Prevention', fda: 'Food and Drug Administration', cms: 'Centers for Medicare & Medicaid Services', nrc: 'Nuclear Regulatory Commission', usps: 'United States Postal Service' };
+  const AGENCY_ALIASES = { va: 'Department of Veterans Affairs', dhs: 'Department of Homeland Security', dod: 'Department of Defense', disa: 'Defense Information Systems Agency', hhs: 'Department of Health and Human Services', doe: 'Department of Energy', usda: 'Department of Agriculture', doj: 'Department of Justice', dol: 'Department of Labor', dot: 'Department of Transportation', doi: 'Department of the Interior', ed: 'Department of Education', hud: 'Department of Housing and Urban Development', gsa: 'General Services Administration', nasa: 'National Aeronautics and Space Administration', epa: 'Environmental Protection Agency', ssa: 'Social Security Administration', cisa: 'Cybersecurity and Infrastructure Security Agency', cbp: 'Customs and Border Protection', fema: 'Federal Emergency Management Agency', irs: 'Internal Revenue Service', navy: 'Department of the Navy', army: 'Department of the Army', usaf: 'United States Air Force', 'air force': 'United States Air Force', marines: 'United States Marine Corps', usmc: 'United States Marine Corps', treasury: 'Department of the Treasury', state: 'Department of State', commerce: 'Department of Commerce', nih: 'National Institutes of Health', cdc: 'Centers for Disease Control and Prevention', fda: 'Food and Drug Administration', cms: 'Centers for Medicare & Medicaid Services', nrc: 'Nuclear Regulatory Commission', usps: 'United States Postal Service', energy: 'Department of Energy', veterans: 'Department of Veterans Affairs', interior: 'Department of the Interior', agriculture: 'Department of Agriculture', labor: 'Department of Labor', education: 'Department of Education', justice: 'Department of Justice', transportation: 'Department of Transportation', homeland: 'Department of Homeland Security', 'homeland security': 'Department of Homeland Security', 'veterans affairs': 'Department of Veterans Affairs', 'health and human services': 'Department of Health and Human Services', defense: 'Department of Defense', 'air force': 'United States Air Force', 'space force': 'United States Space Force' };
   function findAgencies(q) {
     const words = q.toLowerCase().replace(/[^a-z0-9 &]/g, ' ').split(/\s+/).filter(Boolean);
     const alias = AGENCY_ALIASES[q.toLowerCase().trim()] || words.map(w => AGENCY_ALIASES[w]).find(Boolean);
@@ -164,12 +164,27 @@
     return hits.sort((a, b) => ((target && norm(a.n) === target) ? -1 : 0) - ((target && norm(b.n) === target) ? -1 : 0) || b.c - a.c).slice(0, 5);
   }
   function findVendor(text) { const key = vendorKey(text).toLowerCase(); if (!key) return null; const hits = INDEX.vendors.filter(v => v.n.toLowerCase() === key); if (hits.length) return hits[0]; const part = INDEX.vendors.filter(v => v.n.toLowerCase().includes(key) || key.includes(v.n.toLowerCase())); return part.sort((a, b) => a.n.length - b.n.length)[0] || null; }
+  function agencyFilterFor(q) {
+    /* An agency named in the query becomes a filter when there is also a product/capability term: "zero trust VA", "siem at energy". */
+    const norm = s => String(s || '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+    const words = norm(q).split(' ').filter(Boolean); if (words.length < 2) return null;
+    for (let n = Math.min(4, words.length - 1); n >= 1; n--) for (let i = 0; i + n <= words.length; i++) {
+      const phrase = words.slice(i, i + n).join(' '); const alias = AGENCY_ALIASES[phrase];
+      const hit = (INDEX.agencies || []).find(a => (alias && norm(a.n) === norm(alias)) || (n >= 2 && norm(a.n) === phrase));
+      if (hit) return { agency: hit, rest: words.filter((_, k) => k < i || k >= i + n).join(' ') };
+    }
+    return null;
+  }
   function search(q, extra) {
-    const it = interpret(q), f = Object.assign({}, it.filters, extra), out = [];
+    const af = agencyFilterFor(q);
+    const it = interpret(af && af.rest.replace(/\b(at|for|in)\b/g, '').trim() ? af.rest : q), f = Object.assign({}, it.filters, extra), out = [];
+    if (af && (it.terms.length || it.functions.length)) { f.agencySlug = af.agency.s; it.agency = af.agency; }
     for (const p of INDEX.products) {
       if (f.impact && p.i !== f.impact && !(f.impact === 'Moderate' && p.i === '20x Moderate') && !(f.impact === 'Low' && p.i === '20x Low')) continue;
       if (f.status && p.s !== f.status) continue;
       if (f.family && !p.fam.includes(f.family)) continue;
+      if (f.runs && !(p.r || []).includes(f.runs) && !(p.rn || []).includes(f.runs)) continue;
+      if (f.agencySlug && !(p.ag || []).includes(f.agencySlug)) continue;
       if (f.agencies && p.a < Number(f.agencies)) continue;
       if (f.dod && !(p.dod || []).includes(f.dod)) continue;
       if (f.onegov && !p.og) continue;
@@ -207,7 +222,7 @@
     const { it, results, strong } = search(q, {});
     clear(out);
     title.textContent = '“' + q + '”';   // finalised below once agency matches are known
-    const read = []; if (it.functions.length) read.push(it.functions.join(', ')); if (it.filters.impact) read.push('impact ' + it.filters.impact); if (it.filters.status) read.push(it.filters.status.replace('-', ' ')); if (it.filters.family) read.push('runs on ' + FAMILY_LABEL[it.filters.family]); if (it.filters.dod) read.push('vendor with DoD ' + it.filters.dod + ' provisional authorization'); if (it.filters.onegov) read.push('OneGov vendor');
+    const read = []; if (it.functions.length) read.push(it.functions.join(', ')); if (it.filters.impact) read.push('impact ' + it.filters.impact); if (it.filters.status) read.push(it.filters.status.replace('-', ' ')); if (it.filters.family) read.push('runs on ' + FAMILY_LABEL[it.filters.family]); if (it.filters.runs) read.push('runs on ' + RUNS[it.filters.runs]); if (it.agency) read.push('with records at ' + it.agency.n); if (it.filters.dod) read.push('vendor with DoD ' + it.filters.dod + ' provisional authorization'); if (it.filters.onegov) read.push('OneGov vendor');
     if (read.length) title.append(el('small', { text: 'Read as ' + read.join(' · ') }));
     if (vs) { const a = findVendor(vs[1]), b = findVendor(vs[2]); if (a && b) out.append(el('p', { class: 'note', style: 'margin-bottom:12px' }, ['Compare: ', el('a', { href: BASE + a.u.replace(/^\//, ''), text: a.n }), ' and ', el('a', { href: BASE + b.u.replace(/^\//, ''), text: b.n }), ' — open each vendor page for offerings, impact levels, agency records and purchasing options side by side.'])); }
     const agencies = findAgencies(q);
@@ -232,6 +247,7 @@
     const more = el('div', { class: 'more' }); const btn = el('button', { class: 'btn alt', type: 'button', onclick: () => draw() });
     function draw() { for (const p of results.slice(shown, shown + PAGE)) { const r = rowFromIndex(p); r.dataset.rank = String(results.indexOf(p)); list.append(r); } shown = Math.min(results.length, shown + PAGE); clear(more); if (shown < results.length) { btn.textContent = 'Show ' + Math.min(PAGE, results.length - shown) + ' more'; more.append(btn); } applyFilters(section, state || readParams()); }
     out.append(list, more); draw();
+    const cnt = $('[data-count]', section); if (cnt && !Object.keys(readParams()).some(k => k !== 'sort')) cnt.textContent = fmt.format(results.length) + (results.length === 1 ? ' result' : ' results');
     document.title = '“' + q + '” — Search | FedCatalog';
   }
 
@@ -277,6 +293,40 @@
     } catch (e) { const n = $('.note', section); if (n) n.textContent = 'Couldn’t reach USAspending.gov right now (' + e.message + '). The data is public at usaspending.gov.'; }
   }
 
+  /* ---------- Autocomplete: offerings, vendors, agencies as you type ---------- */
+  function setupAutocomplete() {
+    for (const input of $$('input[type=search][name=q]')) {
+      const form = input.closest('form'); if (!form) continue;
+      const box = el('div', { class: 'ac', role: 'listbox', hidden: true }); form.append(box);
+      let timer, items = [], sel = -1;
+      const norm = s => String(s || '').toLowerCase();
+      const render = () => { clear(box); items.forEach((it, i) => box.append(el('a', { class: 'ac-item' + (i === sel ? ' is-sel' : ''), href: it.u, role: 'option', 'aria-selected': String(i === sel), onmousedown: (e) => e.preventDefault() }, [el('span', { class: 'ac-kind', text: it.k }), el('span', { class: 'ac-lbl' }, [it.n, it.s ? el('small', { text: it.s }) : null])]))); box.hidden = !items.length; };
+      input.addEventListener('input', () => {
+        clearTimeout(timer); const q = norm(input.value).trim(); if (q.length < 2) { items = []; render(); return; }
+        timer = setTimeout(async () => {
+          await loadIndex(); const sq = q.replace(/\s+/g, ''); const out = [];
+          const starts = (s) => norm(s).startsWith(q) || norm(s).replace(/\s+/g, '').startsWith(sq);
+          const has = (s) => norm(s).includes(q) || norm(s).replace(/\s+/g, '').includes(sq);
+          for (const v of INDEX.vendors.filter(v => starts(v.n)).concat(INDEX.vendors.filter(v => !starts(v.n) && has(v.n))).slice(0, 3)) out.push({ k: 'Vendor', n: v.n, s: v.c + (v.c === 1 ? ' offering' : ' offerings'), u: BASE + v.u.replace(/^\//, '') });
+          for (const f of INDEX.functions.filter(f => has(f)).slice(0, 2)) out.push({ k: 'Category', n: f, s: '', u: BASE + INDEX.catUrls[f].replace(/^\//, '') });
+          const alias = AGENCY_ALIASES[q]; for (const a of (INDEX.agencies || []).filter(a => (alias && norm(a.n) === norm(alias)) || starts(a.n) || has(a.n)).slice(0, 3)) out.push({ k: 'Agency', n: a.n, s: a.c + ' authorized offerings', u: BASE + a.u.replace(/^\//, '') });
+          for (const p of INDEX.products.filter(p => starts(p.n)).concat(INDEX.products.filter(p => !starts(p.n) && has(p.n))).slice(0, 4)) out.push({ k: 'Offering', n: p.n, s: p.v + ' · ' + p.sl, u: BASE + p.u.replace(/^\//, '') });
+          const lead = alias ? out.filter(it => it.k === 'Agency' && norm(it.n) === norm(alias)) : []; const rest = out.filter(it => !lead.includes(it));
+          items = lead.concat(rest).slice(0, 9); sel = -1; render();
+        }, 120);
+      });
+      input.addEventListener('keydown', (e) => {
+        if (box.hidden) return;
+        if (e.key === 'ArrowDown') { e.preventDefault(); sel = (sel + 1) % items.length; render(); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); sel = (sel - 1 + items.length) % items.length; render(); }
+        else if (e.key === 'Enter' && sel >= 0) { e.preventDefault(); location.href = items[sel].u; }
+        else if (e.key === 'Escape') { items = []; render(); }
+      });
+      input.addEventListener('blur', () => setTimeout(() => { box.hidden = true; }, 150));
+      input.addEventListener('focus', () => { if (items.length) box.hidden = false; });
+    }
+  }
+
   /* ---------- 4. Small behaviours ---------- */
   function renderSignup() {
     const cfg = window.FEDCATALOG_SIGNUP; if (!cfg || !/^https?:\/\//.test(cfg.formUrl || '')) return;
@@ -289,7 +339,7 @@
     }
   }
   function setup() {
-    renderSignup();
+    renderSignup(); setupAutocomplete();
     if (window.FEDCATALOG_TEXT) for (const n of $$('[data-text]')) { const t = window.FEDCATALOG_TEXT[n.dataset.text]; if (typeof t === 'string' && t.trim() && n.textContent.trim() !== t.trim()) n.textContent = t; }
     const here = location.pathname;
     for (const a of $$('.nav a')) { const h = new URL(a.getAttribute('href'), location.href).pathname; if (h !== '/' && (here === h || here.startsWith(h) || (/\/categories\/$/.test(h) && /\/(categories|cloud|fedramp|dod|onegov)\//.test(here)))) a.classList.add('is-current'); }

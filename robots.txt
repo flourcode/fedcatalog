@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /search/
+Disallow: /*?
 
 Sitemap: https://fedcatalog.com/sitemap.xml

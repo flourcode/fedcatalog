@@ -16,7 +16,12 @@ def exists(path, frm='/index.html'):
     if p == '.': p = '/'
     return os.path.isfile(os.path.join(DIST, p.lstrip('/'))) or os.path.isfile(os.path.join(DIST, p.strip('/'), 'index.html'))
 problems = Counter(); titles = Counter(); sample = {}
-sitemap = set(re.findall(r'<loc>https://fedcatalog\.com(.*?)</loc>', open(os.path.join(DIST, 'sitemap.xml')).read()))
+import glob
+sitemap = set()
+for sm in glob.glob(os.path.join(DIST, 'sitemap*.xml')):
+    txt = open(sm).read()
+    if '<sitemapindex' in txt: continue
+    sitemap |= set(re.findall(r'<loc>https://fedcatalog\.com(.*?)</loc>', txt))
 for rel, h in pages.items():
     t = re.search(r'<title>(.*?)</title>', h, re.S); titles[t.group(1) if t else ''] += 1
     if not t or not t.group(1).strip(): problems['missing title'] += 1
