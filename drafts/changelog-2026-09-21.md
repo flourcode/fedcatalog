@@ -1,0 +1,26 @@
+# Full changelog · 2026-09-07 to 2026-09-21
+
+- 2026-09-18 · Spectro Cloud — Palette VerteX · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/spectro-cloud-palette-vertex-fr2531434700/
+- 2026-09-18 · TimeLooper Xplore — TimeLooper Inc. · Low · PMO Review → FedRAMP Authorized · https://fedcatalog.com/software/timelooper-inc/
+- 2026-09-17 · Cisco Systems, Inc — Cisco Cloud Control with AgenticOps · — → Initial Implementation · https://fedcatalog.com/software/cisco-cloud-control-with-agenticops/
+- 2026-09-17 · Tactical Takedown LLC — TNT Business Resilience Platform · — → Initial Implementation · https://fedcatalog.com/software/tnt-business-resilience-platform/
+- 2026-09-17 · Signifi Solutions Inc. — SignifiVISION · — → Initial Implementation · https://fedcatalog.com/software/signifivision/
+- 2026-09-17 · NavigatorCRE — NavigatorCRE · — → Initial Implementation · https://fedcatalog.com/software/navigatorcre/
+- 2026-09-17 · ThinkTrends LLC — ThinkTrends AI Platform · — → Initial Implementation · https://fedcatalog.com/software/thinktrends-ai-platform/
+- 2026-09-15 · Pinecone Systems, Inc. — Pinecone Vector Database · — → Initial Implementation · https://fedcatalog.com/software/pinecone-vector-database/
+- 2026-09-15 · Remedio Technologies Inc — Remedio · — → Initial Implementation · https://fedcatalog.com/software/remedio/
+- 2026-09-14 · Progressive Expert Consulting — Collaboative Learning Environment · — → Initial Implementation · https://fedcatalog.com/software/collaboative-learning-environment/
+- 2026-09-14 · InEight, Inc. — InEight Document US Government · Moderate · FedRAMP Ready → FedRAMP In Process · https://fedcatalog.com/software/ineight-document/
+- 2026-09-11 · 86Borders — ConnectAllCare · — → Initial Implementation · https://fedcatalog.com/software/connectallcare/
+- 2026-09-10 · Vastian — Vastian (MediaLab by Vastian) · — → Initial Implementation · https://fedcatalog.com/software/vastian-medialab-by-vastian/
+- 2026-09-10 · Dayforce — Dayforce HCM, Public Sector · — → Initial Implementation · https://fedcatalog.com/software/dayforce-hcm-public-sector/
+- 2026-09-10 · e-Builder, A Trimble Company — Trimble Unity Construct Government Edition · FedRAMP Authorized → No Status Found
+- 2026-09-10 · Unison — Bidscale · Moderate · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/bidscale/
+- 2026-09-09 · Silkline.ai — Silkline · — → Initial Implementation · https://fedcatalog.com/software/silkline/
+- 2026-09-09 · Trisotech — Digital Enterprise Suite FedRAMP Edition · Low · Agency Review → FedRAMP Authorized · https://fedcatalog.com/software/digital-enterprise-suite-fedramp-edition/
+- 2026-09-08 · Skyward IT Solutions — Alira · — → Initial Implementation · https://fedcatalog.com/software/alira/
+- 2026-09-08 · Meterbox Inc. — Meterbox · — → Initial Implementation · https://fedcatalog.com/software/meterbox/
+- 2026-09-08 · ElvoAI — ElvoAI · — → Initial Implementation · https://fedcatalog.com/software/elvoai/
+- 2026-09-08 · ConnectSecure — ConnectSecure Vulnerability and Compliance Manager · — → Initial Implementation · https://fedcatalog.com/software/connectsecure-vulnerability-and-compliance-manager/
+- 2026-09-08 · Microsoft Azure Goverment Cloud — Benchmark Construction Estimator · — → Initial Implementation · https://fedcatalog.com/software/benchmark-construction-estimator/
+- 2026-09-08 · Simuhealth Technologies Inc. — Simuhealth · — → Initial Implementation · https://fedcatalog.com/software/simuhealth/
