@@ -1,0 +1,28 @@
+# Full changelog · 2026-09-11 to 2026-09-25
+
+- 2026-09-24 · Mycroft Technologies Inc — Mycroft GRC Platform · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/mycroft-grc-platform/
+- 2026-09-23 · TrackVia, Inc. — TrackVia Government · Moderate · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/trackvia-government/
+- 2026-09-23 · Thomson Reuters — Thomson Reuters Risk & Fraud (TR R&F) · Moderate · Agency Review → FedRAMP In Process · https://fedcatalog.com/software/thomson-reuters-risk-and-fraud-tr-r-and-f/
+- 2026-09-23 · Thomson Reuters — Thomson Reuters Legal Research (TR LR) · Moderate · Agency Review → FedRAMP In Process · https://fedcatalog.com/software/thomson-reuters-legal-research-tr-lr/
+- 2026-09-23 · Eleven Labs Inc. — ElevenLabs Platform · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/elevenlabs-platform/
+- 2026-09-22 · Egnyte, Inc — EgnyteGov · Moderate · FedRAMP Ready → FedRAMP In Process · https://fedcatalog.com/software/egnytegov/
+- 2026-09-21 · VirtualDojo, Inc. — VirtualDojo AI CRM · — → Initial Implementation · https://fedcatalog.com/software/virtualdojo-ai-crm/
+- 2026-09-21 · SUPER-CSP — SuperFile · — → Initial Implementation · https://fedcatalog.com/software/superfile/
+- 2026-09-21 · Toonimo Inc. — Toonimo Digital Adoption Platform · — → Initial Implementation · https://fedcatalog.com/software/toonimo-digital-adoption-platform/
+- 2026-09-21 · DigiCert, Inc. — DigiCert for Government · — → Initial Implementation · https://fedcatalog.com/software/digicert-for-government/
+- 2026-09-21 · Dexcom Inc. — Dexcom Clarity for Government · Moderate · Agency Review → FedRAMP In Process · https://fedcatalog.com/software/dexcom-clarity-for-government/
+- 2026-09-21 · Net-Inspect LLC — Net-Inspect Enterprise Quality Management (EQM) · Moderate · FedRAMP Ready → FedRAMP In Process · https://fedcatalog.com/software/net-inspect-enterprise-quality-management-eqm/
+- 2026-09-21 · SentiLink Corp — SentiLink · Moderate · FedRAMP Ready → FedRAMP In Process · https://fedcatalog.com/software/sentilink/
+- 2026-09-18 · Spectro Cloud — Palette VerteX · Moderate · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/spectro-cloud-palette-vertex-fr2531434700/
+- 2026-09-18 · TimeLooper Xplore — TimeLooper Inc. · Low · PMO Review → FedRAMP Authorized · https://fedcatalog.com/software/timelooper-inc/
+- 2026-09-17 · Cisco Systems, Inc — Cisco Cloud Control with AgenticOps · — → Initial Implementation · https://fedcatalog.com/software/cisco-cloud-control-with-agenticops/
+- 2026-09-17 · Tactical Takedown LLC — TNT Business Resilience Platform · — → Initial Implementation · https://fedcatalog.com/software/tnt-business-resilience-platform/
+- 2026-09-17 · Signifi Solutions Inc. — SignifiVISION · — → Initial Implementation · https://fedcatalog.com/software/signifivision/
+- 2026-09-17 · NavigatorCRE — NavigatorCRE · — → Initial Implementation · https://fedcatalog.com/software/navigatorcre/
+- 2026-09-17 · ThinkTrends LLC — ThinkTrends AI Platform · — → Initial Implementation · https://fedcatalog.com/software/thinktrends-ai-platform/
+- 2026-09-17 · Wisedocs USA Inc. — Wisedocs for Government · Initial Implementation → FedRAMP In Process · https://fedcatalog.com/software/wisedocs-for-government/
+- 2026-09-15 · Pinecone Systems, Inc. — Pinecone Vector Database · — → Initial Implementation · https://fedcatalog.com/software/pinecone-vector-database/
+- 2026-09-15 · Remedio Technologies Inc — Remedio · — → Initial Implementation · https://fedcatalog.com/software/remedio/
+- 2026-09-14 · Progressive Expert Consulting — Collaboative Learning Environment · — → Initial Implementation · https://fedcatalog.com/software/collaboative-learning-environment/
+- 2026-09-14 · InEight, Inc. — InEight Document US Government · Moderate · FedRAMP Ready → FedRAMP In Process · https://fedcatalog.com/software/ineight-document/
+- 2026-09-11 · 86Borders — ConnectAllCare · — → Initial Implementation · https://fedcatalog.com/software/connectallcare/
