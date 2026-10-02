@@ -1,0 +1,24 @@
+# Full changelog · 2026-09-18 to 2026-10-02
+
+- 2026-09-30 · VisualVault LLC — VisualVault Cloud · — → Initial Implementation · https://fedcatalog.com/software/visualvault-visualvault-cloud-fr2635930482/
+- 2026-09-30 · Advent Business Company Inc. — Enablement® · — → Initial Implementation · https://fedcatalog.com/software/advent-business-enablement-fr2635930439/
+- 2026-09-30 · CodeSignal, Inc. — CodeSignal Platform · — → Initial Implementation · https://fedcatalog.com/software/codesignal-platform/
+- 2026-09-30 · SOFware, LLC — FORGE · — → Initial Implementation · https://fedcatalog.com/software/forge/
+- 2026-09-29 · LexisNexis Risk Solutions — LexisNexis Risk Enterprise Platform · Moderate · Agency Review → FedRAMP In Process · https://fedcatalog.com/software/lexisnexis-risk-enterprise-platform/
+- 2026-09-25 · MyEvaluations.com Inc. — MyEvaluations · — → Initial Implementation · https://fedcatalog.com/software/myevaluations/
+- 2026-09-25 · CrowdStrike, Inc. — CrowdStrike Falcon Platform IL5 SaaS · High · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/crowdstrike-falcon-platform-il5-saas/
+- 2026-09-24 · Mycroft Technologies Inc — Mycroft GRC Platform · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/mycroft-grc-platform/
+- 2026-09-23 · TrackVia, Inc. — TrackVia Government · Moderate · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/trackvia-government/
+- 2026-09-23 · Thomson Reuters — Thomson Reuters Risk & Fraud (TR R&F) · Moderate · Agency Review → FedRAMP In Process · https://fedcatalog.com/software/thomson-reuters-risk-and-fraud-tr-r-and-f/
+- 2026-09-23 · Thomson Reuters — Thomson Reuters Legal Research (TR LR) · Moderate · Agency Review → FedRAMP In Process · https://fedcatalog.com/software/thomson-reuters-legal-research-tr-lr/
+- 2026-09-23 · Eleven Labs Inc. — ElevenLabs Platform · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/elevenlabs-platform/
+- 2026-09-22 · Egnyte, Inc — EgnyteGov · Moderate · FedRAMP Ready → FedRAMP In Process · https://fedcatalog.com/software/egnytegov/
+- 2026-09-21 · VirtualDojo, Inc. — VirtualDojo AI CRM · — → Initial Implementation · https://fedcatalog.com/software/virtualdojo-ai-crm/
+- 2026-09-21 · SUPER-CSP — SuperFile · — → Initial Implementation · https://fedcatalog.com/software/superfile/
+- 2026-09-21 · Toonimo Inc. — Toonimo Digital Adoption Platform · — → Initial Implementation · https://fedcatalog.com/software/toonimo-digital-adoption-platform/
+- 2026-09-21 · DigiCert, Inc. — DigiCert for Government · — → Initial Implementation · https://fedcatalog.com/software/digicert-for-government/
+- 2026-09-21 · Dexcom Inc. — Dexcom Clarity for Government · Moderate · Agency Review → FedRAMP In Process · https://fedcatalog.com/software/dexcom-clarity-for-government/
+- 2026-09-21 · Net-Inspect LLC — Net-Inspect Enterprise Quality Management (EQM) · Moderate · FedRAMP Ready → FedRAMP In Process · https://fedcatalog.com/software/net-inspect-enterprise-quality-management-eqm/
+- 2026-09-21 · SentiLink Corp — SentiLink · Moderate · FedRAMP Ready → FedRAMP In Process · https://fedcatalog.com/software/sentilink/
+- 2026-09-18 · Spectro Cloud — Palette VerteX · Moderate · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/spectro-cloud-palette-vertex-fr2531434700/
+- 2026-09-18 · TimeLooper Xplore — TimeLooper Inc. · Low · PMO Review → FedRAMP Authorized · https://fedcatalog.com/software/timelooper-inc/
