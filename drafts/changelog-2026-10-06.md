@@ -1,0 +1,20 @@
+# Full changelog · 2026-09-22 to 2026-10-06
+
+- 2026-10-05 · Ardoq Inc — Ardoq · — → Initial Implementation · https://fedcatalog.com/software/ardoq/
+- 2026-10-02 · RegScale — RegScale Trust Center · — → Initial Implementation · https://fedcatalog.com/software/regscale-trust-center/
+- 2026-10-02 · Dossier, Inc. — Dossier for Government · — → Initial Implementation · https://fedcatalog.com/software/dossier-for-government/
+- 2026-10-02 · Caldera AI Inc. — Mesa · — → Initial Implementation · https://fedcatalog.com/software/mesa/
+- 2026-10-02 · HealthEdge Software, Inc — HealthEdge Integrated Solution Suite · — → Initial Implementation · https://fedcatalog.com/software/healthedge-integrated-solution-suite/
+- 2026-09-30 · VisualVault LLC — VisualVault Cloud · — → Initial Implementation · https://fedcatalog.com/software/visualvault-visualvault-cloud-fr2635930482/
+- 2026-09-30 · Advent Business Company Inc. — Enablement® · — → Initial Implementation · https://fedcatalog.com/software/advent-business-enablement-fr2635930439/
+- 2026-09-30 · CodeSignal, Inc. — CodeSignal Platform · — → Initial Implementation · https://fedcatalog.com/software/codesignal-platform/
+- 2026-09-30 · SOFware, LLC — FORGE · — → Initial Implementation · https://fedcatalog.com/software/forge/
+- 2026-09-29 · LexisNexis Risk Solutions — LexisNexis Risk Enterprise Platform · Moderate · Agency Review → FedRAMP In Process · https://fedcatalog.com/software/lexisnexis-risk-enterprise-platform/
+- 2026-09-25 · MyEvaluations.com Inc. — MyEvaluations · — → Initial Implementation · https://fedcatalog.com/software/myevaluations/
+- 2026-09-25 · CrowdStrike, Inc. — CrowdStrike Falcon Platform IL5 SaaS · High · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/crowdstrike-falcon-platform-il5-saas/
+- 2026-09-24 · Mycroft Technologies Inc — Mycroft GRC Platform · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/mycroft-grc-platform/
+- 2026-09-23 · TrackVia, Inc. — TrackVia Government · Moderate · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/trackvia-government/
+- 2026-09-23 · Thomson Reuters — Thomson Reuters Risk & Fraud (TR R&F) · Moderate · Agency Review → FedRAMP In Process · https://fedcatalog.com/software/thomson-reuters-risk-and-fraud-tr-r-and-f/
+- 2026-09-23 · Thomson Reuters — Thomson Reuters Legal Research (TR LR) · Moderate · Agency Review → FedRAMP In Process · https://fedcatalog.com/software/thomson-reuters-legal-research-tr-lr/
+- 2026-09-23 · Eleven Labs Inc. — ElevenLabs Platform · FedRAMP In Process → FedRAMP Authorized · https://fedcatalog.com/software/elevenlabs-platform/
+- 2026-09-22 · Egnyte, Inc — EgnyteGov · Moderate · FedRAMP Ready → FedRAMP In Process · https://fedcatalog.com/software/egnytegov/
